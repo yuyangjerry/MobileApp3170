@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         createNotificationChannel();
         NotificationBuilder builder = new NotificationBuilder();
-        builder.createNotification(this);
+        builder.createNotification(this, "my notification", "this is a notification");
         //find the input fields and the sign in button views by id and
         //assign them to the respective references.
         //The R class is a reference to the project resources, such as the view's ids, images, layout

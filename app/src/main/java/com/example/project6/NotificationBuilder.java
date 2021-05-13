@@ -15,11 +15,11 @@ public class NotificationBuilder {
     private int id = 0;
 
 
-    public void createNotification(Context context){
+    public void createNotification(Context context, String title, String content){
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.notification_icon)
-                .setContentTitle("My notification")
-                .setContentText("Much longer text that cannot fit one line...")
+                .setContentTitle(title)
+                .setContentText(content)
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText("Much longer text that cannot fit one line..."))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
