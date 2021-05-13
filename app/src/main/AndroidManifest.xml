@@ -12,14 +12,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Project6">
+        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".UserProfile"></activity>
         <activity
             android:name=".QRScanner"
             android:label="@string/title_activity_q_r_scanner"
             android:theme="@style/Theme.Project6.NoActionBar"/>
-        <activity android:name=".UserProfile" />
-        <activity
-            android:name=".MainActivity"
-            android:windowSoftInputMode="adjustResize">
+        <activity android:name=".MainActivity" android:windowSoftInputMode="adjustResize">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
