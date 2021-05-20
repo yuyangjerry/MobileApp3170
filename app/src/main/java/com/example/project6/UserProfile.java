@@ -41,16 +41,16 @@ public class UserProfile extends AppCompatActivity {
         linkDoctor = findViewById(R.id.link_doctor_button);
 
         //get the auth client
-        AuthClient auth = FakeAuthClient.getClient();
-
-        //get the currently signed in user
-        User user = auth.getSignedInUser();
-
-        //set the text of the views with user data
-        firstName.setText(user.getFirstName());
-        lastName.setText(user.getLastName());
-        email.setText(user.getEmail());
-        uuid.setText(user.getUuid().toString());
+//        AuthClient auth = FakeAuthClient.getClient();
+//
+//        //get the currently signed in user
+//        User user = auth.getSignedInUser();
+//
+//        //set the text of the views with user data
+//        firstName.setText(user.getFirstName());
+//        lastName.setText(user.getLastName());
+//        email.setText(user.getEmail());
+//        uuid.setText(user.getUuid().toString());
 
 
         //When patient wants to link to doctor

@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         //files etc..
 
         emailInput = findViewById(R.id.email_input);
-        passwordInput = findViewById(R.id.password_input);
+
 
         signInButton = findViewById(R.id.sign_in_button);
 
@@ -51,28 +51,6 @@ public class MainActivity extends AppCompatActivity {
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Get the auth client
-                AuthClient auth = FakeAuthClient.getClient();
-
-                //retrieve the text from the email and password fields
-                String email = emailInput.getText().toString();
-                String password = passwordInput.getText().toString();
-
-                //If sign in is successful
-                if(auth.signIn(email, password)) {
-                    //Launch the next activity through an intent.
-                    //Intent objects are used to send the user from one activity to the other,
-                    //but also to start background services or perform similar messaging tasks between
-                    //the various components of an application.
-                    //In this case this is an explicit intent because we specify the activity that
-                    // we want to launch: UserProfile.class.
-                    Intent intent = new Intent(context, UserProfile.class);
-                    startActivity(intent);
-                }else {
-                    //If sign in fails, display a toast message
-                    Toast.makeText(context, "Email and password do not match",
-                            Toast.LENGTH_LONG).show();
-                }
 
 
             }
