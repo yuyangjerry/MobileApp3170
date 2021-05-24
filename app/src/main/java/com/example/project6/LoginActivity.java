@@ -4,12 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.project6.Database.DatabaseTest;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.text.ParseException;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -43,6 +45,17 @@ public class LoginActivity extends AppCompatActivity {
             public void onSigninSuccess(FirebaseUser user) {
                 UpdateUI();
                 Toast.makeText(context,  "Welcome", Toast.LENGTH_SHORT).show();
+
+                // FOR TESTING POSTING TO DATABASE
+                /*
+                try {
+                    new DatabaseTest().testAddNewPatient();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                 */
+
+                new DatabaseTest().testAddReading();
             }
 
             @Override
