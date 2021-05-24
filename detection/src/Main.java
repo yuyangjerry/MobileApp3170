@@ -3,6 +3,6 @@
 public class Main {
 
     public static void main(String[] args){
-        DetectionAlgorithm.runDetection();
+        DetectionAlgorithm.runDetection(50,6);
     }
 }
