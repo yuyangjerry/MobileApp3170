@@ -13,19 +13,19 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseUser;
+
 public class UserProfile extends AppCompatActivity {
 
-    TextView firstName;   //we are going to fill this textviews with the user information
+    //we are going to fill this textviews with the user information
     TextView email;
-    TextView lastName;
     TextView uuid;
 
     Button linkDoctor;
+    Button notificationButton;
 
     public final static int QR_CODE_REQUEST_CODE = 1;
     public final static int CAMERA_PERMISSION_REQUEST_CODE = 2;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,24 +33,18 @@ public class UserProfile extends AppCompatActivity {
         setContentView(R.layout.activity_user_profile);
 
         //get all needed views by id
-        firstName = findViewById(R.id.first_name);
-        lastName = findViewById(R.id.last_name);
         email = findViewById(R.id.email);
         uuid = findViewById(R.id.uuid);
 
         linkDoctor = findViewById(R.id.link_doctor_button);
+        notificationButton = findViewById(R.id.notificationButton);
 
-        //get the auth client
-//        AuthClient auth = FakeAuthClient.getClient();
-//
-//        //get the currently signed in user
-//        User user = auth.getSignedInUser();
-//
-//        //set the text of the views with user data
-//        firstName.setText(user.getFirstName());
-//        lastName.setText(user.getLastName());
-//        email.setText(user.getEmail());
-//        uuid.setText(user.getUuid().toString());
+        //get the currently signed in user
+        FirebaseUser user = FireBaseAuthClient.getSignedInUser();
+
+        //set the text of the views with user data
+        email.setText(user.getEmail());
+        uuid.setText(user.getUid());
 
 
         //When patient wants to link to doctor
@@ -64,6 +58,11 @@ public class UserProfile extends AppCompatActivity {
                 Intent intent = new Intent(this, QRScanner.class);
                 startActivityForResult(intent, QR_CODE_REQUEST_CODE);
             }
+        });
+
+        NotificationBuilder builder = new NotificationBuilder();
+        notificationButton.setOnClickListener(l -> {
+            builder.createNotification(this, "Abnormal Heart Rate", "An abnormal heart rate was detected. We recommend you get proper medical assistance.");
         });
     }
 

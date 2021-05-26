@@ -22,9 +22,7 @@ public class FireBaseAuthClient {
             instance = new FireBaseAuthClient();
         }
 
-
         instance.mAuth = FirebaseAuth.getInstance();
-
         instance.mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {

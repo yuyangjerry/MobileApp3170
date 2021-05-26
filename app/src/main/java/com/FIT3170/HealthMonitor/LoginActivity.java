@@ -3,17 +3,18 @@ package com.FIT3170.HealthMonitor;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private EditText emailEditText;
-    private EditText pswdEditText;
+    private TextInputLayout emailLayout;
+    private TextInputLayout pswdLayout;
     private Button signInBtn;
 
     @Override
@@ -24,18 +25,19 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void getComponentIDs(){
-        emailEditText = findViewById(R.id.email_input);
-        pswdEditText = findViewById(R.id.password_edit_text);
+        emailLayout = findViewById(R.id.email_input);
+        pswdLayout = findViewById(R.id.password_edit_text);
         signInBtn = findViewById(R.id.sign_in_button);
 
         signInBtn.setOnClickListener(view -> {
 
-           login(emailEditText.getText().toString(), pswdEditText.getText().toString());
+           login(emailLayout.getEditText().getText().toString(), pswdLayout.getEditText().getText().toString());
 
         });
     }
     private void login(String email, String password){
         Context context = this;
+        pswdLayout.setError("");
         FireBaseAuthClient.signIn(email, password, new SignInConsumer(){
 
             @Override
@@ -46,15 +48,13 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onSigninFailure() {
-                Toast.makeText(context,  "Invalid Login", Toast.LENGTH_SHORT).show();
+                pswdLayout.setError("Email or password do not match");
             }
         });
     }
 
     private void UpdateUI(){
-
+        Intent intent = new Intent(this, UserProfile.class);
+        startActivity(intent);
     }
-
-
-
 }

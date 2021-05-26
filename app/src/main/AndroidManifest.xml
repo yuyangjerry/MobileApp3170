@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Project6">
-        <activity android:name="com.FIT3170.HealthMonitor.LoginActivity">
+        <activity
+            android:name="com.FIT3170.HealthMonitor.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,12 +27,6 @@
             android:label="@string/title_activity_q_r_scanner"
             android:theme="@style/Theme.Project6.NoActionBar"/>
         <activity android:name="com.FIT3170.HealthMonitor.MainActivity" android:windowSoftInputMode="adjustResize">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

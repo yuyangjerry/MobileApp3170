@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
 
         emailInput = findViewById(R.id.email_input);
 
-
         signInButton = findViewById(R.id.sign_in_button);
 
         Context context = this; // the context is a reference to the activity itself
@@ -55,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
 
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
