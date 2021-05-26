@@ -13,7 +13,7 @@ public class NotificationBuilder {
 
 
     public void createNotification(Context context, String title, String content){
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "com.FIT3170.HealthMonitor")
                 .setSmallIcon(R.drawable.notification_icon)
                 .setContentTitle(title)
                 .setStyle(new NotificationCompat.BigTextStyle()
