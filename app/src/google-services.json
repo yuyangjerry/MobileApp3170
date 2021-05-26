@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1178573807",
+    "project_id": "fit3170-mobile-app",
+    "storage_bucket": "fit3170-mobile-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1178573807:android:33f7bbf00450579ef5b41a",
+        "android_client_info": {
+          "package_name": "com.FIT3170.HealthMonitor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1178573807-5q4r3kme1c2b6ursglrd21cj09jirsb8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZIXV28i8GKENPJWdrT2UQLy7kODwwon8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1178573807-5q4r3kme1c2b6ursglrd21cj09jirsb8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
