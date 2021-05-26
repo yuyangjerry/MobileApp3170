@@ -1,4 +1,4 @@
-package com.example.project6;
+package com.FIT3170.HealthMonitor;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;

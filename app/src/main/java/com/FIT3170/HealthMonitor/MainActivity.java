@@ -1,17 +1,15 @@
-package com.example.project6;
+package com.FIT3170.HealthMonitor;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 /**
  * This is the main activity, i.e. the activity that appears when the app is launched.

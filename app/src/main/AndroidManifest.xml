@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.project6">
+    package="com.FIT3170.HealthMonitor">
 
     <!--    This is needed for scanning the QR code-->
     <uses-permission android:name="android.permission.CAMERA" />
@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Project6">
-        <activity android:name=".LoginActivity">
+        <activity android:name="com.FIT3170.HealthMonitor.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,12 +20,12 @@
             </intent-filter>
 
         </activity>
-        <activity android:name=".UserProfile"></activity>
+        <activity android:name="com.FIT3170.HealthMonitor.UserProfile"></activity>
         <activity
-            android:name=".QRScanner"
+            android:name="com.FIT3170.HealthMonitor.QRScanner"
             android:label="@string/title_activity_q_r_scanner"
             android:theme="@style/Theme.Project6.NoActionBar"/>
-        <activity android:name=".MainActivity" android:windowSoftInputMode="adjustResize">
+        <activity android:name="com.FIT3170.HealthMonitor.MainActivity" android:windowSoftInputMode="adjustResize">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

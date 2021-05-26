@@ -1,4 +1,4 @@
-package com.example.project6;
+package com.FIT3170.HealthMonitor;
 
 
 import com.google.firebase.auth.FirebaseUser;

@@ -1,16 +1,11 @@
-package com.example.project6;
+package com.FIT3170.HealthMonitor;
 
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.zxing.Result;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import android.view.View;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 

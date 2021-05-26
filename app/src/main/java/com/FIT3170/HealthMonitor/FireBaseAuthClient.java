@@ -1,8 +1,4 @@
-package com.example.project6;
-
-import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
+package com.FIT3170.HealthMonitor;
 
 import androidx.annotation.NonNull;
 
