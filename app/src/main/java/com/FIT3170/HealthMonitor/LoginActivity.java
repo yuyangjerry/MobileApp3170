@@ -54,7 +54,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void UpdateUI(){
-        Intent intent = new Intent(this, UserProfile.class);
-        startActivity(intent);
+//        Intent intent = new Intent(this, UserProfile.class);
+//        startActivity(intent);
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
     }
 }
