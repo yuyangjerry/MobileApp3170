@@ -35,33 +35,29 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_with_drawer);
         Context context = this; // the context is a reference to the activity itself
-                                // that we are going to need in the listener below
-
-        //Set an onCLickListener on the button. This is an anonymous subclass of
-        //View.OnClickListener whose onClick method will be called when the user clicks the button.
         InitialiseFields();
         //load the home fragment
         loadFragment(new HomeFragment());
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth = FirebaseAuth.getInstance();
 
     }
-    private void InitialiseFields() {
-        //setting up toolbar
 
-        mAuth = FirebaseAuth.getInstance();
+    private void InitialiseFields() {
         drawerLayout = findViewById(R.id.drawer_layout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close);
-
         // pass the Open and Close toggle for the drawer layout listener
         // to toggle the button
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
         // to make the Navigation drawer icon always appear on the action bar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         navigationView = findViewById(R.id.navigationViewDrawer);
-
         setupDrawerContent( navigationView);
-
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
