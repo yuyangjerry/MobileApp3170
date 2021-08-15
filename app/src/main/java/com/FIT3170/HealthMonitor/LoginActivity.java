@@ -29,12 +29,19 @@ public class LoginActivity extends AppCompatActivity {
         pswdLayout = findViewById(R.id.password_edit_text);
         signInBtn = findViewById(R.id.sign_in_button);
 
+        //make login easier
+        emailLayout.getEditText().setText("exampleuser@project6.com");
+        pswdLayout.getEditText().setText("exampleuser@project6.com");
+
+
         signInBtn.setOnClickListener(view -> {
 
-           login(emailLayout.getEditText().getText().toString(), pswdLayout.getEditText().getText().toString());
+            login(emailLayout.getEditText().getText().toString(), pswdLayout.getEditText().getText().toString());
 
         });
     }
+
+
     private void login(String email, String password){
         Context context = this;
         pswdLayout.setError("");

@@ -101,12 +101,18 @@ public class MainActivity extends AppCompatActivity {
 
     public void selectDrawerItem(MenuItem item) {
         Fragment fragment = null;
-        switch(item.getItemId()){
+        //Add more items via res/menu/drawermenu.xml
+        switch(item.getItemId()) {
 
             case R.id.Home:
                 Intent history = new Intent(MainActivity.this, UserProfile.class);
                 startActivity(history);
                 break;
+
+            case R.id.dashboard:
+                loadFragment(new DashBoardFragment());
+                break;
+
             case R.id.signOut:
                 mAuth.signOut();
                 drawerLayout.closeDrawer(GravityCompat.START);
