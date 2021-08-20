@@ -113,6 +113,10 @@ public class MainActivity extends AppCompatActivity {
                 loadFragment(new DashBoardFragment());
                 break;
 
+            case R.id.user_profile:
+                loadFragment(new UserProfileFragment());
+                break;
+
             case R.id.signOut:
                 mAuth.signOut();
                 drawerLayout.closeDrawer(GravityCompat.START);
