@@ -15,7 +15,10 @@
         <item
             android:id="@+id/user_profile"
             android:title="Profile" />
-
+        <item
+            android:id="@+id/add_doctor"
+            android:icon="@drawable/ic_baseline_add_24"
+            android:title="Add Doctor" />
         <item
             android:id="@+id/settings"
             android:title="Settings" />
