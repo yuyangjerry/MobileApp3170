@@ -16,9 +16,9 @@
             android:id="@+id/user_profile"
             android:title="Profile" />
         <item
-            android:id="@+id/add_doctor"
+            android:id="@+id/doctors"
             android:icon="@drawable/ic_baseline_add_24"
-            android:title="Add Doctor" />
+            android:title="Doctors" />
         <item
             android:id="@+id/settings"
             android:title="Settings" />

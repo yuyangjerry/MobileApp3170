@@ -113,6 +113,10 @@ public class MainActivity extends AppCompatActivity {
                 loadFragment(new DashBoardFragment());
                 break;
 
+            case R.id.doctors:
+                loadFragment(new DoctorsFragment());
+                break;
+
             case R.id.user_profile:
                 loadFragment(new UserProfileFragment());
                 break;
