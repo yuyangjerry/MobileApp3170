@@ -125,7 +125,7 @@ public class UserProfile {
     }
 
     static public String getPhone(){
-        return instance.profile.getString("phone")
+        return instance.profile.getString("phone");
     }
 
 }
