@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/AndroidAppFIT3170/app/src/main/res/drawable/card_style_background.xml" value="0.34010416666666665" />
+        <entry key="..\:/AndroidAppFIT3170/app/src/main/res/drawable/rounded_header.xml" value="0.34010416666666665" />
+        <entry key="..\:/AndroidAppFIT3170/app/src/main/res/layout/dashboard_card_layout.xml" value="0.3229166666666667" />
+        <entry key="..\:/AndroidAppFIT3170/app/src/main/res/layout/fragment_dash_board.xml" value="0.3145833333333333" />
+        <entry key="..\:/AndroidAppFIT3170/app/src/main/res/layout/fragment_dashboard.xml" value="0.33" />
+        <entry key="..\:/AndroidAppFIT3170/app/src/main/res/menu/drawermenu.xml" value="0.3145833333333333" />
+      </map>
+    </option>
+  </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+</project>
