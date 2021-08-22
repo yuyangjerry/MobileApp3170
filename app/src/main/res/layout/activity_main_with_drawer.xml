@@ -17,17 +17,16 @@
         android:layout_height="match_parent">
 
 
-
         <FrameLayout
             android:id="@+id/fragment_container"
 
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="40dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
 
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
 
         </FrameLayout>
@@ -35,13 +34,13 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigationViewDrawer"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:layout_marginTop="40dp"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/drawermenu"/>
+        app:menu="@menu/drawermenu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
