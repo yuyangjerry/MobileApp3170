@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Project6</string>
+    <string name="app_name">Heartsight</string>
     <string name="sign_in_button_text">SignIn</string>
     <string name="password_input_lable_text">Password</string>
     <string name="email_input_lable_text">Email</string>
