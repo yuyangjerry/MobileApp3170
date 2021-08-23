@@ -62,7 +62,7 @@ public class DoctorsFragment extends Fragment {
                         //TODO: put doc into a vew in the doctor list
 
                         //TODO: when the user clicks on "view doctor profile button"
-                        // for this user, put doc into an intent and send it to the doctor
+                        // for this user, put doctorIds[index] into an intent and send it to the doctor
                         // profile fragment/activity
                     }
                 });
