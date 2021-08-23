@@ -2,6 +2,7 @@ package com.FIT3170.HealthMonitor;
 
 import androidx.annotation.NonNull;
 
+import com.FIT3170.HealthMonitor.database.UserProfile;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -28,8 +29,13 @@ public class FireBaseAuthClient {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
                     instance.currentUser = instance.mAuth.getCurrentUser();
-                    consumer.onSigninSuccess(instance.currentUser);
-
+                    UserProfile.fetch((v, err) -> {
+                        if(err != null){
+                            consumer.onSigninFailure();
+                        }else{
+                            consumer.onSigninSuccess(instance.currentUser);
+                        }
+                    });
                 }else{
                     consumer.onSigninFailure();
                 }
