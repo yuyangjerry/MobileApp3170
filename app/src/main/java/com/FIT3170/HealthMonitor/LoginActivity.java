@@ -30,8 +30,8 @@ public class LoginActivity extends AppCompatActivity {
         signInBtn = findViewById(R.id.sign_in_button);
 
         //make login easier
-        emailLayout.getEditText().setText("exampleuser@project6.com");
-        pswdLayout.getEditText().setText("exampleuser@project6.com");
+        emailLayout.getEditText().setText("examplepatient@project6.com");
+        pswdLayout.getEditText().setText("examplepatient@project6.com");
 
 
         signInBtn.setOnClickListener(view -> {
