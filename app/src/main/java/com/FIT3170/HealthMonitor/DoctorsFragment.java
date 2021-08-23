@@ -18,7 +18,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.FIT3170.HealthMonitor.database.DoctorProfile;
+import com.FIT3170.HealthMonitor.database.UserProfile;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Arrays;
 
 public class DoctorsFragment extends Fragment {
 
@@ -36,11 +40,34 @@ public class DoctorsFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //TODO:
+
         // 1. get all doctor ids
-        // 1. get all doctors profiles
-        // 1. for every doctor
-        //      - add a fragment that links to the doctor profile
+        String doctorIds[] = UserProfile.getLinkedDoctorIds();
+
+        if(doctorIds == null || doctorIds.length == 0){
+            //Well, seems like there are no linkded doctors
+            //TODO: display that there are no linked doctors
+        }else{
+            DoctorProfile doctors[] = new DoctorProfile[doctorIds.length];
+
+            // 2. get all doctors profiles
+            for (int i = 0; i < doctors.length; i++) {
+                final int index = i;
+                doctors[index] = new DoctorProfile(doctorIds[index], (succes, error) -> {
+                    if (error != null) {
+                        //oops, something went wrong, probably a network error
+                    } else {
+                        //Success!, we can use doctors[imdex] now
+                        DoctorProfile doc = doctors[index];
+                        //TODO: put doc into a vew in the doctor list
+
+                        //TODO: when the user clicks on "view doctor profile button"
+                        // for this user, put doc into an intent and send it to the doctor
+                        // profile fragment/activity
+                    }
+                });
+            }
+        }
 
         linkDoctorButton = view.findViewById(R.id.link_new_doctor_button);
 
