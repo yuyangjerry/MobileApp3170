@@ -22,7 +22,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.FIT3170.HealthMonitor.database.UserProfile;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.auth.User;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,11 +43,10 @@ public class HomeFragment extends Fragment {
         email = view.findViewById(R.id.email);
         uuid = view.findViewById(R.id.uuid);
         //get the currently signed in user
-        FirebaseUser user = FireBaseAuthClient.getSignedInUser();
-
+        
         //set the text of the views with user data
-        email.setText(user.getEmail());
-        uuid.setText(user.getUid());
+        email.setText(UserProfile.getEmail());
+        uuid.setText(UserProfile.getUid());
 
     }
     @Override
