@@ -219,6 +219,8 @@ public class UserProfile {
 
             //Update doctor's patients
             t.set(doctorPatientRef, profileView);
+            
+            //TODO: delete the invite
 
             return null;
 
