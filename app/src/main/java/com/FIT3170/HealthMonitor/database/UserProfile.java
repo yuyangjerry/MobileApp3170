@@ -148,14 +148,6 @@ public class UserProfile {
         if(temp == null){
             doctorIds = new ArrayList<String>();
         }else{
-            //TODO: test this line!
-            //TODO: test this line!
-            //TODO: test this line!
-            //TODO: test this line!
-            //TODO: test this line!
-            //TODO: test this line!
-            //TODO: test this line!
-            //TODO: test this line!
             doctorIds = (List<String>)temp;
         }
 
