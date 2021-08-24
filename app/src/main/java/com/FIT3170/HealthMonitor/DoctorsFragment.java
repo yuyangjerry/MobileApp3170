@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,12 +48,16 @@ public class DoctorsFragment extends Fragment {
 
         if(doctorIds == null || doctorIds.length == 0){
             //Well, seems like there are no linkded doctors
+            Log.i("DOCTORS", "No linked doctors");
             //TODO: display that there are no linked doctors
         }else{
             DoctorProfile doctors[] = new DoctorProfile[doctorIds.length];
 
             // 2. get all doctors profiles
             for (int i = 0; i < doctors.length; i++) {
+                Log.i("DOCTORS", doctorIds[i]);
+
+                //Re-declaring i as as final so that we can safely access it inside the callback
                 final int index = i;
                 doctors[index] = new DoctorProfile(doctorIds[index], (succes, error) -> {
                     if (error != null) {

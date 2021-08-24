@@ -148,6 +148,14 @@ public class UserProfile {
         if(temp == null){
             doctorIds = new ArrayList<String>();
         }else{
+            //TODO: test this line!
+            //TODO: test this line!
+            //TODO: test this line!
+            //TODO: test this line!
+            //TODO: test this line!
+            //TODO: test this line!
+            //TODO: test this line!
+            //TODO: test this line!
             doctorIds = (List<String>)temp;
         }
 
@@ -203,14 +211,14 @@ public class UserProfile {
 
             //Ensure the doctor id in the invite matches the doctor id in the qr code
             String inviteDoctorId = invite.getString("doctorId");
-            if(inviteDoctorId != doctorId){
+            if(!inviteDoctorId.equals(doctorId)){
                 throw new FirebaseFirestoreException(errorMessage, FirebaseFirestoreException.Code.ABORTED);
             }
 
             //Ensure the invite is not expired
             //Note, this code does not throw if validUntil is not specified in the invite
             Timestamp validUntil = invite.getTimestamp("validUntil");
-            if(validUntil != null && validUntil.compareTo(Timestamp.now()) > 0 ){
+            if(validUntil != null && validUntil.compareTo(Timestamp.now()) < 0 ){
                 throw new FirebaseFirestoreException(errorMessage, FirebaseFirestoreException.Code.ABORTED);
             }
 
@@ -236,7 +244,7 @@ public class UserProfile {
         }).addOnFailureListener(l -> {
             //Something went wrong
             //If we detected an invalid invite we let the user know
-            if(l.getCause().getMessage() == errorMessage){
+            if(l.getMessage() == errorMessage){
                 onLink.onCall(null, new Exception(errorMessage));
             }
             //Otherwise we report it as an unknown error
@@ -251,8 +259,20 @@ public class UserProfile {
         return instance.uid;
     }
 
+    /**
+     * Helper method to avoid runtime cast exceptions
+     * @param o
+     * @return
+     */
+    static private String stringOrNull(Object o){
+        if(o == null){
+            return null;
+        }
+        return (String)o;
+    }
+
     static public String getGivenName() {
-        return (String)instance.modifiableProfile.get(GIVEN_NAME_KEY);
+        return stringOrNull(instance.modifiableProfile.get(GIVEN_NAME_KEY));
     }
 
     static public void setGivenName(String givenName){
@@ -260,7 +280,7 @@ public class UserProfile {
     }
 
     static public String getBloodType(){
-        return (String)instance.modifiableProfile.get(BLOOD_TYPE_KEY);
+        return stringOrNull(instance.modifiableProfile.get(BLOOD_TYPE_KEY));
     }
 
     static public void setBloodType(String bloodType){
@@ -268,7 +288,7 @@ public class UserProfile {
     }
 
     static public String getWeight(){
-        return (String)instance.modifiableProfile.get(WEIGHT_KEY);
+        return stringOrNull(instance.modifiableProfile.get(WEIGHT_KEY));
     }
 
     static public void setWeight(String weight){
@@ -276,7 +296,7 @@ public class UserProfile {
     }
 
     static public String getHeight(){
-        return (String)instance.modifiableProfile.get(HEIGHT_KEY);
+        return stringOrNull(instance.modifiableProfile.get(HEIGHT_KEY));
     }
 
     static public void setHeight(String height){
@@ -284,7 +304,9 @@ public class UserProfile {
     }
 
     static public Timestamp getDateOfBirth(){
-        return (Timestamp) instance.modifiableProfile.get(DATE_OF_BIRTH_KEY);
+        Object o = instance.modifiableProfile.get(DATE_OF_BIRTH_KEY);
+
+        return o == null ? null : (Timestamp)o;
     }
 
     static public void setDateOfBirth(Timestamp timestamp){
@@ -292,12 +314,21 @@ public class UserProfile {
     }
 
     static public String[] getLinkedDoctorIds(){
-        List<String> doctorIds = (List<String>) instance.modifiableProfile.get(DOCTORS_KEY);
-        return (String[])doctorIds.toArray();
+        Object o = instance.modifiableProfile.get(DOCTORS_KEY);
+        if(o == null){
+            return null;
+        }
+        List<Object> l = (List<Object>) o;
+        String[] s = new String[l.size()];
+
+        for(int i = 0; i < l.size(); i++){
+            s[i] = (String)l.get(i);
+        }
+        return s;
     }
 
     static public String getFamilyName() {
-        return (String)instance.modifiableProfile.get(FAMILY_NAME_KEY);
+        return stringOrNull(instance.modifiableProfile.get(FAMILY_NAME_KEY));
     }
 
     static public void setFamilyName(String familyName){
@@ -305,11 +336,11 @@ public class UserProfile {
     }
 
     static public String getEmail(){
-        return (String)instance.modifiableProfile.get(EMAIL_KEY);
+        return stringOrNull(instance.modifiableProfile.get(EMAIL_KEY));
     }
 
     static public String getGender(){
-        return (String)instance.modifiableProfile.get(GENDER_KEY);
+        return stringOrNull(instance.modifiableProfile.get(GENDER_KEY));
     }
 
     static public  void setGender(String gender){
@@ -317,7 +348,7 @@ public class UserProfile {
     }
 
     static public String getMaritalStatus(){
-        return (String)instance.modifiableProfile.get(MARITAL_STATUS_KEY);
+        return stringOrNull(instance.modifiableProfile.get(MARITAL_STATUS_KEY));
     }
 
     static public void setMaritalStatus(String maritalStatus){
@@ -325,7 +356,7 @@ public class UserProfile {
     }
 
     static public String getPhone(){
-        return (String)instance.modifiableProfile.get(PHONE_KEY);
+        return stringOrNull(instance.modifiableProfile.get(PHONE_KEY));
     }
 
     static public void setPhone(String phone){
