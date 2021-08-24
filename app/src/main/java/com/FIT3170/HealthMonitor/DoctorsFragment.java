@@ -2,6 +2,7 @@ package com.FIT3170.HealthMonitor;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -93,8 +94,8 @@ public class DoctorsFragment extends Fragment {
             //if the user scanned a qr code
             if(resultCode == Activity.RESULT_OK){
                 //show the url
-                String url = data.getStringExtra(QRScanner.RESPONSE_INTENT_URL_KEY);
-                Toast.makeText(context, "URL: " + url, Toast.LENGTH_LONG).show();
+                String qrCodeData = data.getStringExtra(QRScanner.RESPONSE_INTENT_QR_DATA_KEY);
+                linkDoctor(qrCodeData);
             }else{
                 //otherwise show an error message
                 Toast.makeText(context, "Could not scan QRcode.", Toast.LENGTH_LONG).show();
@@ -118,6 +119,51 @@ public class DoctorsFragment extends Fragment {
             } else {  //Otherwise show an error message
                 Toast.makeText(context, "You need to provide permission to use your camera in order to scan QRcode.", Toast.LENGTH_LONG).show();
             }
+        }
+    }
+
+    /**
+     * Perform the actual linking after scanning the qr code
+     * @param qrCodeData
+     */
+    private void linkDoctor(String qrCodeData){
+        QrCodeValidator validator = new QrCodeValidator(qrCodeData);
+
+        if(validator.isValid()){
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Are you sure?")
+                    .setMessage("This doctor will have access to your sensor data after linking")
+                    .setPositiveButton("Link", (dialog, which) -> {
+                        UserProfile.linkDoctor(
+                                validator.getInviteId(),
+                                validator.getDoctorId(),
+                                (v, error) -> {
+                                    dialog.dismiss();
+
+                                    if(error != null){
+                                        new AlertDialog.Builder(getContext())
+                                                .setTitle("Unable to link doctor")
+                                                .setMessage(error.getMessage())
+                                                .setPositiveButton("Ok", null)
+                                                .show();
+                                    }else{
+                                        new AlertDialog.Builder(getContext())
+                                                .setTitle("Linked successfully!")
+                                                .setPositiveButton("Ok", null)
+                                                .show();
+                                    }
+                                }
+                        );
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+
+        }else{
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Invalid QR-Code")
+                    .setMessage("The scanned QR-Code is invalid")
+                    .setPositiveButton("Ok", null)
+                    .show();
         }
     }
 }
