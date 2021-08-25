@@ -2,10 +2,12 @@ package com.FIT3170.HealthMonitor;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +20,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.FIT3170.HealthMonitor.database.DoctorProfile;
+import com.FIT3170.HealthMonitor.database.UserProfile;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Arrays;
 
 public class DoctorsFragment extends Fragment {
 
@@ -36,11 +42,38 @@ public class DoctorsFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //TODO:
+
         // 1. get all doctor ids
-        // 1. get all doctors profiles
-        // 1. for every doctor
-        //      - add a fragment that links to the doctor profile
+        String doctorIds[] = UserProfile.getLinkedDoctorIds();
+
+        if(doctorIds == null || doctorIds.length == 0){
+            //Well, seems like there are no linkded doctors
+            Log.i("DOCTORS", "No linked doctors");
+            //TODO: display that there are no linked doctors
+        }else{
+            DoctorProfile doctors[] = new DoctorProfile[doctorIds.length];
+
+            // 2. get all doctors profiles
+            for (int i = 0; i < doctors.length; i++) {
+                Log.i("DOCTORS", doctorIds[i]);
+
+                //Re-declaring i as as final so that we can safely access it inside the callback
+                final int index = i;
+                doctors[index] = new DoctorProfile(doctorIds[index], (succes, error) -> {
+                    if (error != null) {
+                        //oops, something went wrong, probably a network error
+                    } else {
+                        //Success!, we can use doctors[imdex] now
+                        DoctorProfile doc = doctors[index];
+                        //TODO: put doc into a vew in the doctor list
+
+                        //TODO: when the user clicks on "view doctor profile button"
+                        // for this user, put doctorIds[index] into an intent and send it to the doctor
+                        // profile fragment/activity
+                    }
+                });
+            }
+        }
 
         linkDoctorButton = view.findViewById(R.id.link_new_doctor_button);
 
@@ -66,8 +99,8 @@ public class DoctorsFragment extends Fragment {
             //if the user scanned a qr code
             if(resultCode == Activity.RESULT_OK){
                 //show the url
-                String url = data.getStringExtra(QRScanner.RESPONSE_INTENT_URL_KEY);
-                Toast.makeText(context, "URL: " + url, Toast.LENGTH_LONG).show();
+                String qrCodeData = data.getStringExtra(QRScanner.RESPONSE_INTENT_QR_DATA_KEY);
+                linkDoctor(qrCodeData);
             }else{
                 //otherwise show an error message
                 Toast.makeText(context, "Could not scan QRcode.", Toast.LENGTH_LONG).show();
@@ -91,6 +124,51 @@ public class DoctorsFragment extends Fragment {
             } else {  //Otherwise show an error message
                 Toast.makeText(context, "You need to provide permission to use your camera in order to scan QRcode.", Toast.LENGTH_LONG).show();
             }
+        }
+    }
+
+    /**
+     * Perform the actual linking after scanning the qr code
+     * @param qrCodeData
+     */
+    private void linkDoctor(String qrCodeData){
+        QrCodeValidator validator = new QrCodeValidator(qrCodeData);
+
+        if(validator.isValid()){
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Are you sure?")
+                    .setMessage("This doctor will have access to your sensor data after linking")
+                    .setPositiveButton("Link", (dialog, which) -> {
+                        UserProfile.linkDoctor(
+                                validator.getInviteId(),
+                                validator.getDoctorId(),
+                                (v, error) -> {
+                                    dialog.dismiss();
+
+                                    if(error != null){
+                                        new AlertDialog.Builder(getContext())
+                                                .setTitle("Unable to link doctor")
+                                                .setMessage(error.getMessage())
+                                                .setPositiveButton("Ok", null)
+                                                .show();
+                                    }else{
+                                        new AlertDialog.Builder(getContext())
+                                                .setTitle("Linked successfully!")
+                                                .setPositiveButton("Ok", null)
+                                                .show();
+                                    }
+                                }
+                        );
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+
+        }else{
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Invalid QR-Code")
+                    .setMessage("The scanned QR-Code is invalid")
+                    .setPositiveButton("Ok", null)
+                    .show();
         }
     }
 }
