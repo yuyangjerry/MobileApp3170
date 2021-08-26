@@ -18,7 +18,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseUser;
 
-public class UserProfile extends AppCompatActivity {
+public class UserProfileActivity extends AppCompatActivity {
 
     //we are going to fill this textviews with the user information
     TextView email;

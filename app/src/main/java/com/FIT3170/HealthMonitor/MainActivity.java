@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         switch(item.getItemId()) {
 
             case R.id.Home:
-                Intent history = new Intent(MainActivity.this, UserProfile.class);
+                Intent history = new Intent(MainActivity.this, UserProfileActivity.class);
                 startActivity(history);
                 break;
 

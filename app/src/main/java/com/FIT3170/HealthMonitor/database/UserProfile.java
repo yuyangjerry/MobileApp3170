@@ -280,7 +280,9 @@ public class UserProfile {
     }
 
     static public String getWeight(){
-        return stringOrNull(instance.modifiableProfile.get(WEIGHT_KEY));
+        // return stringOrNull(instance.modifiableProfile.get(WEIGHT_KEY));
+        Object o = instance.modifiableProfile.get(WEIGHT_KEY);
+        return o==null?null:String.valueOf(o);
     }
 
     static public void setWeight(String weight){
@@ -288,7 +290,9 @@ public class UserProfile {
     }
 
     static public String getHeight(){
-        return stringOrNull(instance.modifiableProfile.get(HEIGHT_KEY));
+        // return stringOrNull(instance.modifiableProfile.get(HEIGHT_KEY));
+        Object o = instance.modifiableProfile.get(HEIGHT_KEY);
+        return o==null?null:String.valueOf(o);
     }
 
     static public void setHeight(String height){
