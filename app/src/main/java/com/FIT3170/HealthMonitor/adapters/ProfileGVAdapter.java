@@ -1,4 +1,4 @@
-package com.FIT3170.HealthMonitor;
+package com.FIT3170.HealthMonitor.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,9 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.FIT3170.HealthMonitor.ProfileAttributeModel;
+import com.FIT3170.HealthMonitor.R;
 
 import java.util.ArrayList;
 

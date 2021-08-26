@@ -121,6 +121,10 @@ public class MainActivity extends AppCompatActivity {
                 loadFragment(new UserProfileFragment());
                 break;
 
+            case R.id.notifications:
+                loadFragment(new NotificationHistory());
+                break;
+
             case R.id.signOut:
                 mAuth.signOut();
                 drawerLayout.closeDrawer(GravityCompat.START);
