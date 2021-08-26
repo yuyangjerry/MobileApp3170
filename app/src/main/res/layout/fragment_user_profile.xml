@@ -15,7 +15,7 @@
         tools:context=".UserProfileFragment">
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/patientName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="John Doe"
@@ -23,7 +23,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/idGVcourses" />
+
+        />
 
         <GridView
         android:id="@+id/idGVcourses"
@@ -34,7 +35,7 @@
         android:verticalSpacing="6dp"
         tools:layout_editor_absoluteX="27dp"
         tools:layout_editor_absoluteY="-80dp"
-            android:layout_marginTop="40dp"/>
+            android:layout_marginTop="60dp"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
