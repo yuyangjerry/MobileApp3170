@@ -2,9 +2,15 @@ package com.FIT3170.HealthMonitor.database;
 
 import com.FIT3170.HealthMonitor.FireBaseAuthClient;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.SetOptions;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -128,12 +134,137 @@ public class UserProfile {
         instance.modifiableProfile = MapDeepCopier.deepCopy(instance.backupProfile);
     }
 
+    /**
+     * Link this user with a new doctor
+     * @param inviteId the invite id used to generate the qr code
+     * @param doctorId the doctor id to which to link
+     * @param onLink a callback. in case of error, the error message is user friendly
+     */
+    static public void linkDoctor(String inviteId, String doctorId, Callback<Boolean, Exception> onLink){
+        //Get the current list of doctors
+        Object temp = instance.modifiableProfile.get(DOCTORS_KEY);
+
+        List<String> doctorIds;
+        if(temp == null){
+            doctorIds = new ArrayList<String>();
+        }else{
+            doctorIds = (List<String>)temp;
+        }
+
+        //Check if we have room for another doctor
+        if(doctorIds.size() >= 10){
+            onLink.onCall(null, new Exception("You are already linked to the maximum number of doctors."));
+            return;
+        }
+
+        //Check if we are already linked to this doctor
+        if(doctorIds.contains(doctorId)){
+            onLink.onCall(null, new Exception("You are already linked to this doctor."));
+            return;
+        }
+
+        //Now we re getting ready for the transaction
+
+        //Get a ref to the invite doc
+        DocumentReference inviteRef = instance.db
+                .collection("invites")
+                .document(inviteId);
+
+        //Get a ref to the patient profile
+        DocumentReference profileRef = instance.db
+                .collection("patients")
+                .document(getUid());
+
+        //Get a ref to /doctors/:doctorId/linkedPatients/
+        DocumentReference doctorPatientRef = instance.db
+                .collection("doctors")
+                .document(doctorId)
+                .collection("linkedPatients")
+                .document(getUid());
+
+        String errorMessage = "This invite is not valid.";
+
+        //Create the object that will be stored at
+        // /doctors/:doctorId/linkedPatients/:patientId
+        Map<String, Object> profileView = new HashMap<String, Object>();
+        profileView.put(GIVEN_NAME_KEY, getGivenName());
+        profileView.put(FAMILY_NAME_KEY, getFamilyName());
+        profileView.put(DATE_OF_BIRTH_KEY, getDateOfBirth());
+
+        //Start the transaction
+        instance.db.runTransaction(t -> {
+            //Get the invite
+            DocumentSnapshot invite = t.get(inviteRef);
+
+            //Ensure the invite exists
+            if(!invite.exists()){
+                throw new FirebaseFirestoreException(errorMessage, FirebaseFirestoreException.Code.ABORTED);
+            }
+
+            //Ensure the doctor id in the invite matches the doctor id in the qr code
+            String inviteDoctorId = invite.getString("doctorId");
+            if(!inviteDoctorId.equals(doctorId)){
+                throw new FirebaseFirestoreException(errorMessage, FirebaseFirestoreException.Code.ABORTED);
+            }
+
+            //Ensure the invite is not expired
+            //Note, this code does not throw if validUntil is not specified in the invite
+            Timestamp validUntil = invite.getTimestamp("validUntil");
+            if(validUntil != null && validUntil.compareTo(Timestamp.now()) < 0 ){
+                throw new FirebaseFirestoreException(errorMessage, FirebaseFirestoreException.Code.ABORTED);
+            }
+
+            //Finally update patient profile
+            t.update(profileRef, DOCTORS_KEY, FieldValue.arrayUnion(doctorId));
+
+            //Update doctor's patients
+            t.set(doctorPatientRef, profileView);
+            
+            //TODO: delete the invite
+
+            return null;
+
+        }).addOnSuccessListener(l -> {
+            //The transaction run successfully!,
+            // we simply need to update our local copy of the data
+            doctorIds.add(doctorId);
+            instance.modifiableProfile.put(DOCTORS_KEY, doctorIds);
+            instance.backupProfile.put(DOCTORS_KEY, doctorIds);
+
+            onLink.onCall(true, null);
+
+        }).addOnFailureListener(l -> {
+            //Something went wrong
+            //If we detected an invalid invite we let the user know
+            if(l.getMessage() == errorMessage){
+                onLink.onCall(null, new Exception(errorMessage));
+            }
+            //Otherwise we report it as an unknown error
+            else{
+                onLink.onCall(null, new Exception("Unable to link doctor, try again later."));
+            }
+        });
+
+    }
+
     static public String getUid() {
         return instance.uid;
     }
 
+    /**
+     * Helper method to avoid runtime cast exceptions
+     * @param o
+     * @return
+     */
+    static private String stringOrNull(Object o){
+        if(o == null){
+            return null;
+        }
+        return (String)o;
+    }
+
     static public String getGivenName() {
-        return (String)instance.modifiableProfile.get(GIVEN_NAME_KEY);
+        return stringOrNull(instance.modifiableProfile.get(GIVEN_NAME_KEY));
     }
 
     static public void setGivenName(String givenName){
@@ -141,7 +272,7 @@ public class UserProfile {
     }
 
     static public String getBloodType(){
-        return (String)instance.modifiableProfile.get(BLOOD_TYPE_KEY);
+        return stringOrNull(instance.modifiableProfile.get(BLOOD_TYPE_KEY));
     }
 
     static public void setBloodType(String bloodType){
@@ -149,7 +280,9 @@ public class UserProfile {
     }
 
     static public String getWeight(){
-        return (String)instance.modifiableProfile.get(WEIGHT_KEY);
+        // return stringOrNull(instance.modifiableProfile.get(WEIGHT_KEY));
+        Object o = instance.modifiableProfile.get(WEIGHT_KEY);
+        return o==null?null:String.valueOf(o);
     }
 
     static public void setWeight(String weight){
@@ -157,7 +290,9 @@ public class UserProfile {
     }
 
     static public String getHeight(){
-        return (String)instance.modifiableProfile.get(HEIGHT_KEY);
+        // return stringOrNull(instance.modifiableProfile.get(HEIGHT_KEY));
+        Object o = instance.modifiableProfile.get(HEIGHT_KEY);
+        return o==null?null:String.valueOf(o);
     }
 
     static public void setHeight(String height){
@@ -165,7 +300,9 @@ public class UserProfile {
     }
 
     static public Timestamp getDateOfBirth(){
-        return (Timestamp) instance.modifiableProfile.get(DATE_OF_BIRTH_KEY);
+        Object o = instance.modifiableProfile.get(DATE_OF_BIRTH_KEY);
+
+        return o == null ? null : (Timestamp)o;
     }
 
     static public void setDateOfBirth(Timestamp timestamp){
@@ -173,12 +310,21 @@ public class UserProfile {
     }
 
     static public String[] getLinkedDoctorIds(){
-        List<String> doctorIds = (List<String>) instance.modifiableProfile.get(DOCTORS_KEY);
-        return (String[])doctorIds.toArray();
+        Object o = instance.modifiableProfile.get(DOCTORS_KEY);
+        if(o == null){
+            return null;
+        }
+        List<Object> l = (List<Object>) o;
+        String[] s = new String[l.size()];
+
+        for(int i = 0; i < l.size(); i++){
+            s[i] = (String)l.get(i);
+        }
+        return s;
     }
 
     static public String getFamilyName() {
-        return (String)instance.modifiableProfile.get(FAMILY_NAME_KEY);
+        return stringOrNull(instance.modifiableProfile.get(FAMILY_NAME_KEY));
     }
 
     static public void setFamilyName(String familyName){
@@ -186,11 +332,11 @@ public class UserProfile {
     }
 
     static public String getEmail(){
-        return (String)instance.modifiableProfile.get(EMAIL_KEY);
+        return stringOrNull(instance.modifiableProfile.get(EMAIL_KEY));
     }
 
     static public String getGender(){
-        return (String)instance.modifiableProfile.get(GENDER_KEY);
+        return stringOrNull(instance.modifiableProfile.get(GENDER_KEY));
     }
 
     static public  void setGender(String gender){
@@ -198,7 +344,7 @@ public class UserProfile {
     }
 
     static public String getMaritalStatus(){
-        return (String)instance.modifiableProfile.get(MARITAL_STATUS_KEY);
+        return stringOrNull(instance.modifiableProfile.get(MARITAL_STATUS_KEY));
     }
 
     static public void setMaritalStatus(String maritalStatus){
@@ -206,7 +352,7 @@ public class UserProfile {
     }
 
     static public String getPhone(){
-        return (String)instance.modifiableProfile.get(PHONE_KEY);
+        return stringOrNull(instance.modifiableProfile.get(PHONE_KEY));
     }
 
     static public void setPhone(String phone){

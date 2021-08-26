@@ -8,8 +8,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
+import android.widget.TextView;
 
+import com.FIT3170.HealthMonitor.adapters.ProfileGVAdapter;
+import com.FIT3170.HealthMonitor.database.UserProfile;
+
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,6 +31,7 @@ public class UserProfileFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     GridView profileGV;
+    TextView profileTV;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -73,14 +81,27 @@ public class UserProfileFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         profileGV = view.findViewById(R.id.idGVcourses);
+        profileTV = view.findViewById(R.id.patientName);
+
+        String patientName = UserProfile.getGivenName() + " " + UserProfile.getFamilyName();
+
+        profileTV.setText(patientName);
+
+        Date dob = UserProfile.getDateOfBirth().toDate();
+        String height = UserProfile.getHeight() + "cm";
+        String weight = UserProfile.getWeight() + "kg";
+
+        Format formatter = new SimpleDateFormat("dd/MM/yyyy");
+
+        String dobString = formatter.format(dob);
 
         ArrayList<ProfileAttributeModel> profileModelArrayList = new ArrayList<ProfileAttributeModel>();
-        profileModelArrayList.add(new ProfileAttributeModel("Age", "21 Years"));
-        profileModelArrayList.add(new ProfileAttributeModel("Blood", "O+"));
-        profileModelArrayList.add(new ProfileAttributeModel("Gender", "Male"));
-        profileModelArrayList.add(new ProfileAttributeModel("Height", "174cm"));
-        profileModelArrayList.add(new ProfileAttributeModel("Weight", "70 Kg"));
-        profileModelArrayList.add(new ProfileAttributeModel("DoB", "01/05/2000"));
+        profileModelArrayList.add(new ProfileAttributeModel("Date of Birth", dobString));
+        profileModelArrayList.add(new ProfileAttributeModel("Blood", UserProfile.getBloodType()));
+        profileModelArrayList.add(new ProfileAttributeModel("Gender", UserProfile.getGender()));
+        profileModelArrayList.add(new ProfileAttributeModel("Height", height));
+        profileModelArrayList.add(new ProfileAttributeModel("Weight", weight));
+        profileModelArrayList.add(new ProfileAttributeModel("Marital Status", UserProfile.getMaritalStatus()));
 
         ProfileGVAdapter adapter = new ProfileGVAdapter(getActivity(), profileModelArrayList);
         profileGV.setAdapter(adapter);

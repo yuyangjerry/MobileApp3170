@@ -43,7 +43,7 @@ public class HomeFragment extends Fragment {
         email = view.findViewById(R.id.email);
         uuid = view.findViewById(R.id.uuid);
         //get the currently signed in user
-        
+
         //set the text of the views with user data
         email.setText(UserProfile.getEmail());
         uuid.setText(UserProfile.getUid());
