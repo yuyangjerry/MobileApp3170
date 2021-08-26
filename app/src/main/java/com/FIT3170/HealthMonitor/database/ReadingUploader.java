@@ -17,10 +17,10 @@ public class ReadingUploader {
     private static ReadingUploader instance = null;
     private FirebaseFirestore db;
 
-    public static final String START_TIME_KEY = "startTime";
-    public static final String DATA_KEY = "data";
-    public HashMap<String,Object> toUpload= new HashMap<>();
-    public HashMap<String,Object> lastUpload= new HashMap<>();
+    private static final String START_TIME_KEY = "startTime";
+    private static final String DATA_KEY = "data";
+    private HashMap<String,Object> toUpload= new HashMap<>();
+    private HashMap<String,Object> lastUpload= new HashMap<>();
 
     private Long currentStartTime;
     private Long nextStartTime;
@@ -34,7 +34,7 @@ public class ReadingUploader {
         patientId = UserProfile.getUid();
     }
 
-    public ReadingUploader getInstance(){
+    public static ReadingUploader getInstance(){
         // create instance if doesn't exist
         if (instance == null){
             instance = new ReadingUploader();
@@ -49,8 +49,11 @@ public class ReadingUploader {
      */
     public void addData(Integer ECGReading){
 
+        Log.i("ECG DATA", "Adding some data" );
+
         // get current time
         long currentTimeMillis = System.currentTimeMillis();
+
 
         if (currentStartTime == null){
             currentStartTime = currentTimeMillis;
@@ -69,6 +72,7 @@ public class ReadingUploader {
             nextStartTime += ONE_MIN_IN_MILLIS;
         }
 
+        Log.i("ECG DATA", "currentTime: " + currentTimeMillis + " next: " + nextStartTime + " Diff: " + (nextStartTime-currentTimeMillis) );
         currentData.add(ECGReading);
     }
 
@@ -89,6 +93,8 @@ public class ReadingUploader {
      */
     private void upload()  {
 
+        Log.i("ECG DATA", "Uploading" );
+
         //upload to firebase
         if(toUpload != null){
 
@@ -102,11 +108,11 @@ public class ReadingUploader {
                             // clear current data
                             currentData.clear();
                         }else{
-                            Log.i("uploadProblem", "upload unsuccessful");
+                            Log.i("EGC DATA", "upload unsuccessful");
                         }
                     });
         }else{
-            Log.i("uploadProblem", "toUpload is null");
+            Log.i("ECG DATA", "toUpload is null");
         }
     }
 
