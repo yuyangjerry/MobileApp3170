@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.FIT3170.HealthMonitor.database.ReadingUploader;
 import com.google.firebase.auth.FirebaseUser;
 
 public class UserProfileActivity extends AppCompatActivity {
@@ -51,6 +52,13 @@ public class UserProfileActivity extends AppCompatActivity {
         NotificationBuilder builder = new NotificationBuilder();
         notificationButton.setOnClickListener(l -> {
             builder.createNotification(this, "Abnormal Heart Rate", "An abnormal heart rate was detected. We recommend you get proper medical assistance.");
+
+            // FOR TESTING add Data
+            // TODO: DELETE THIS
+            // this adds a value to reading uploader
+            // should be called when a reading is received from the device
+            ReadingUploader.getInstance().addData(2000);
+
         });
     }
 
