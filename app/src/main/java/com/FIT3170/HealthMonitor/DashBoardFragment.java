@@ -144,9 +144,9 @@ public class DashBoardFragment extends Fragment {
 
     @Override
     public void onResume() {
-        Log.d("debug", "HomeFragment: onResume");
         super.onResume();
-        startService();
+        Log.d("debug", "HomeFragment: onResume");
+        bindService();
     }
 
     @Override
@@ -161,11 +161,16 @@ public class DashBoardFragment extends Fragment {
         }
     }
 
-    private void startService(){
-        Intent serviceIntent = new Intent(getActivity(), BluetoothService.class);
-        getActivity().startService(serviceIntent);
-        bindService();
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
+
+//    private void startService(){
+//        Intent serviceIntent = new Intent(getActivity(), BluetoothService.class);
+//        getActivity().startService(serviceIntent);
+//        bindService();
+//    }
 
     private void bindService() {
         Intent serviceIntent = new Intent(getActivity(), BluetoothService.class);
@@ -176,12 +181,12 @@ public class DashBoardFragment extends Fragment {
     Observer<DataPacket> dataPacketObserver = new Observer<DataPacket>() {
         @Override
         public void onChanged(DataPacket dataPacket) {
-//            Log.d("debug","-----------------------------");
-//            Log.d("debug", "Data Packet Size: "+ dataPacket.getData().size()+"");
-//            for (DataPoint dataPoint : dataPacket.getData()) {
-//                Log.d("debug", dataPoint.getValue()+", "+dataPoint.getTime());
-//            }
-//            Log.d("debug","-----------------------------");
+            Log.d("debug","-----------------------------");
+            Log.d("debug", "Data Packet Size: "+ dataPacket.getData().size()+"");
+            for (DataPoint dataPoint : dataPacket.getData()) {
+                Log.d("debug", dataPoint.getValue()+", "+dataPoint.getTime());
+            }
+            Log.d("debug","-----------------------------");
         }
     };
 
