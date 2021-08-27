@@ -3,117 +3,139 @@ import android.util.Log;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /*
-This class keeps track of ECG readings as they are received and uploads to the database every minute
+    This class keeps track of ECG readings as they are received and uploads to the database every minute
 
-This is a singleton because there should only be one channel uploading readings to the database
+    This is a singleton because there should only be one channel uploading readings to the database
+
+    1. call start() to begin periodic uploads
+    2. use addData() to add packets (5 secs of data)
+    3. call stop() when session is finished
  */
 
 public class ReadingUploader {
 
     private static ReadingUploader instance = null;
-    private FirebaseFirestore db;
+    private final FirebaseFirestore db;
 
     private static final String START_TIME_KEY = "startTime";
     private static final String DATA_KEY = "data";
-    private HashMap<String,Object> toUpload= new HashMap<>();
-    private HashMap<String,Object> lastUpload= new HashMap<>();
+    private static final String PATIENT_KEY = "patientId";
+    private final HashMap<String, Object> toUpload = new HashMap<>();
+    private HashMap<String, Object> lastUpload = new HashMap<>();
 
-    private Long currentStartTime;
-    private Long nextStartTime;
-    private LinkedList<Integer> currentData = new LinkedList<>();
+    private Date currentStartTime;
+    private final ArrayList currentData = new ArrayList<>();
     private static final int ONE_MIN_IN_MILLIS = 60000;
-    private String patientId;
+    private final String patientId;
+    private final Timer uploadTimer;
 
-    private ReadingUploader(){
+    //TODO: remove this timer
+    private final Timer mockSensorTime;
+
+    private ReadingUploader() {
         db = FirebaseFirestore.getInstance();
         // get current userId
         patientId = UserProfile.getUid();
+        uploadTimer = new Timer();
+
+        //TODO:remove this
+        mockSensorTime = new Timer();
     }
 
-    public static ReadingUploader getInstance(){
+    public static ReadingUploader getInstance() {
         // create instance if doesn't exist
-        if (instance == null){
+        if (instance == null) {
             instance = new ReadingUploader();
         }
 
         return instance;
     }
 
+    public void start() {
+
+        uploadTimer.schedule(new Upload(), ONE_MIN_IN_MILLIS, ONE_MIN_IN_MILLIS);
+
+        //TODO: remove this
+        // this is adding data every 5 seconds
+        mockSensorTime.schedule(new MockSensorService(), 0, 5000);
+    }
+
+    public void stop() {
+        // stop timer
+        uploadTimer.cancel();
+        //TODO remove this line
+        mockSensorTime.cancel();
+
+        // run upload one most time to post remaining data
+        new Upload().run();
+    }
+
+
     /**
-     * Receives incoming EGC data as an integer and attaches a timestamp
-     * Data will be collated in currentData and then uploaded to the Database every minute
+     * Receives incoming EGC data contained in a DataPacket
+     * @param dataPacket
      */
-    public void addData(Integer ECGReading){
+    public void addData(DataPacket dataPacket) {
 
-        Log.i("ECG DATA", "Adding some data" );
+        Log.i("ECG DATA", "Adding data");
 
-        // get current time
-        long currentTimeMillis = System.currentTimeMillis();
+        if (currentStartTime == null) {
+            currentStartTime = new Date();
+        }
+
+        currentData.addAll(dataPacket.getData());
+
+    }
 
 
-        if (currentStartTime == null){
-            currentStartTime = currentTimeMillis;
-            nextStartTime = currentStartTime + ONE_MIN_IN_MILLIS;
+    class Upload extends TimerTask {
+        public void run() {
+            Log.i("ECG DATA", "Uploading");
 
-        }else if(currentTimeMillis >= nextStartTime){
-
-            // create Map to store data to be uploaded
-            toUpload.put(START_TIME_KEY, toUNIX(currentStartTime));
+            toUpload.put(PATIENT_KEY, patientId);
+            toUpload.put(START_TIME_KEY, currentStartTime);
             toUpload.put(DATA_KEY, currentData);
 
-            upload();
+            //upload to firebase
+            if (currentStartTime != null & !currentData.isEmpty()) {
 
-            // update current and next StartTime
-            currentStartTime = nextStartTime;
-            nextStartTime += ONE_MIN_IN_MILLIS;
-        }
-
-        Log.i("ECG DATA", "currentTime: " + currentTimeMillis + " next: " + nextStartTime + " Diff: " + (nextStartTime-currentTimeMillis) );
-        currentData.add(ECGReading);
-    }
-
-    public void stopUploading(){
-        //TODO: upload last part of data
-    }
-
-    /*
-    converts time in milliseconds to Unix time
-     */
-    private Long toUNIX(Long timeInMillis){
-        return timeInMillis/1000;
-    }
-
-    /*
-        pushed readings to the database
-        TODO: callback
-     */
-    private void upload()  {
-
-        Log.i("ECG DATA", "Uploading" );
-
-        //upload to firebase
-        if(toUpload != null){
-
-            db
-                    .collection("patients/" + patientId + "/readings")
-                    .add(toUpload)
-                    .addOnCompleteListener(l -> {
-                        if(l.isSuccessful()){
-                            // update last uploaded
-                            lastUpload = toUpload;
-                            // clear current data
-                            currentData.clear();
-                        }else{
-                            Log.i("EGC DATA", "upload unsuccessful");
-                        }
-                    });
-        }else{
-            Log.i("ECG DATA", "toUpload is null");
+                db
+                        .collection("ECGData")
+                        .add(toUpload)
+                        .addOnCompleteListener(l -> {
+                            if (l.isSuccessful()) {
+                                Log.i("EGC DATA", "upload successful");
+                                // update last uploaded
+                                lastUpload = toUpload;
+                                // clear current data
+                                currentData.clear();
+                                currentStartTime = null;
+                            } else {
+                                Log.i("EGC DATA", "upload unsuccessful");
+                            }
+                        });
+            } else {
+                Log.i("ECG DATA", "toUpload is null");
+            }
         }
     }
 
+
+    // This is used to mimic receiving packets from Sensor service
+    // can be removed once integrated
+    static class MockSensorService extends TimerTask {
+
+        @Override
+        public void run() {
+            ReadingUploader.getInstance().addData(new DataPacket());
+        }
+    }
 }
+
