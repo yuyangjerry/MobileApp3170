@@ -5,9 +5,10 @@
       <map>
         <entry key="..\:/Users/lasit/Documents/Software Projects/Monash/FIT3170/MobileApp3170/app/src/main/res/layout/activity_main.xml" value="0.21927083333333333" />
         <entry key="..\:/Users/lasit/Documents/Software Projects/Monash/FIT3170/MobileApp3170/app/src/main/res/layout/activity_main_with_drawer.xml" value="0.21927083333333333" />
+        <entry key="..\:/Users/lasit/Documents/Software Projects/Monash/FIT3170/MobileApp3170/app/src/main/res/layout/btle_device_list_item.xml" value="0.25" />
         <entry key="..\:/Users/lasit/Documents/Software Projects/Monash/FIT3170/MobileApp3170/app/src/main/res/layout/content_q_r_scanner.xml" value="0.21927083333333333" />
         <entry key="..\:/Users/lasit/Documents/Software Projects/Monash/FIT3170/MobileApp3170/app/src/main/res/layout/fragment_first.xml" value="0.21927083333333333" />
-        <entry key="..\:/Users/lasit/Documents/Software Projects/Monash/FIT3170/MobileApp3170/app/src/main/res/layout/fragment_home.xml" value="0.21927083333333333" />
+        <entry key="..\:/Users/lasit/Documents/Software Projects/Monash/FIT3170/MobileApp3170/app/src/main/res/layout/fragment_home.xml" value="0.25" />
       </map>
     </option>
   </component>
