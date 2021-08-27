@@ -12,7 +12,7 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 public class QRScanner extends AppCompatActivity implements ZXingScannerView.ResultHandler {
 
     private ZXingScannerView mScannerView;
-    public static final String RESPONSE_INTENT_URL_KEY = "QRCODE";
+    public static final String RESPONSE_INTENT_QR_DATA_KEY = "QRCODE";
 
     @Override
     public void onCreate(Bundle state) {
@@ -41,7 +41,7 @@ public class QRScanner extends AppCompatActivity implements ZXingScannerView.Res
     public void handleResult(Result rawResult) {
         // Do something with the result here
         Intent intent = new Intent();
-        intent.putExtra(RESPONSE_INTENT_URL_KEY, rawResult.getText());
+        intent.putExtra(RESPONSE_INTENT_QR_DATA_KEY, rawResult.getText());
         setResult(RESULT_OK, intent);
         finish();
     }

@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         switch(item.getItemId()) {
 
             case R.id.Home:
-                Intent history = new Intent(MainActivity.this, UserProfile.class);
+                Intent history = new Intent(MainActivity.this, UserProfileActivity.class);
                 startActivity(history);
                 break;
 
@@ -119,6 +119,10 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.user_profile:
                 loadFragment(new UserProfileFragment());
+                break;
+
+            case R.id.notifications:
+                loadFragment(new NotificationHistory());
                 break;
 
             case R.id.signOut:
