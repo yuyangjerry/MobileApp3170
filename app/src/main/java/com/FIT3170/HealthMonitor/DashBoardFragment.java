@@ -1,7 +1,10 @@
 package com.FIT3170.HealthMonitor;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +13,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
+import com.FIT3170.HealthMonitor.bluetooth.BluetoothService;
+import com.FIT3170.HealthMonitor.bluetooth.BluetoothServiceViewModel;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -23,6 +30,9 @@ public class DashBoardFragment extends Fragment {
 
     private LineChart bPMLineChart;
     private TextView heartRateTextView;
+
+    private BluetoothService service;
+    private BluetoothServiceViewModel model;
 
 
     public DashBoardFragment() {
@@ -101,6 +111,8 @@ public class DashBoardFragment extends Fragment {
         LineData data = new LineData(dummySet);
         bPMLineChart.setData(data);
     }
+
+
 
 
 }

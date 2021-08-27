@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         mAuth = FirebaseAuth.getInstance();
 
+        // Initiliaze the Bluetooth Service
     }
 
     private void InitialiseFields() {
@@ -105,8 +106,9 @@ public class MainActivity extends AppCompatActivity {
         switch(item.getItemId()) {
 
             case R.id.Home:
-                Intent history = new Intent(MainActivity.this, UserProfileActivity.class);
-                startActivity(history);
+//                Intent history = new Intent(MainActivity.this, UserProfileActivity.class);
+//                startActivity(history);
+                loadFragment(new HomeFragment());
                 break;
 
             case R.id.dashboard:
