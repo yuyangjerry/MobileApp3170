@@ -2,8 +2,6 @@ package com.FIT3170.HealthMonitor.database;
 
 import com.google.firebase.Timestamp;
 
-import java.sql.Time;
-
 public class UserSignUpData {
 
     private String givenName;

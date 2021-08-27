@@ -47,12 +47,12 @@ public class FireBaseAuthClient {
     }
 
     /**
-     * Sign up crates a user inside Authentication and a patient inside Firestore
+     * Sign up creates a user inside Authentication and a patient inside Firestore
      * @param data the data to populate the patient in Firestore
      * @param password the user password in cleartext
      * @param consumer a SignUpConsumer that will be called depending on the outcome.
      */
-    static void SignUp(UserSignUpData data, String password, SignUpConsumer consumer){
+    static public void signUp(UserSignUpData data, String password, SignUpConsumer consumer){
         if (instance == null){
             instance = new FireBaseAuthClient();
         }
