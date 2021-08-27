@@ -122,9 +122,14 @@ public class BluetoothService extends Service {
     // Stops the service
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
+        stopSelf();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
         mHandler.removeCallbacks(transferBufferToSink);
         BleManager.getInstance().disconnectAllDevice();
-        stopSelf();
     }
 
     public void startScan() {
