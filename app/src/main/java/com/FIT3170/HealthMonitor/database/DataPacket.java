@@ -3,6 +3,7 @@ package com.FIT3170.HealthMonitor.database;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class is used to communicate between the sensor service and the uploader.
@@ -10,7 +11,7 @@ import java.util.ArrayList;
  */
 public class DataPacket {
 
-    private ArrayList<DataPoint> dataArray;
+    private List<DataPoint> dataArray;
 
     /**
      * This is the constructor that should be used when created by Sensor Service
@@ -18,7 +19,7 @@ public class DataPacket {
      * This could be changed to receiving ArrayList of arrays and this constructor could convert to DataPoints
      * @param dataPoints
      */
-    public DataPacket(ArrayList<DataPoint> dataPoints){
+    public DataPacket(List<DataPoint> dataPoints){
         dataArray = dataPoints;
     }
 
@@ -39,7 +40,7 @@ public class DataPacket {
         }
     }
 
-    public ArrayList getData(){
+    public List<DataPoint> getData(){
         return dataArray;
     }
 

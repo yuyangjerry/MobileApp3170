@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.FIT3170.HealthMonitor.adapters.ListAdapter_BleDevices;
 import com.FIT3170.HealthMonitor.bluetooth.BluetoothService;
 import com.FIT3170.HealthMonitor.bluetooth.BluetoothServiceViewModel;
+import com.FIT3170.HealthMonitor.database.DataPacket;
 import com.FIT3170.HealthMonitor.database.UserProfile;
 import com.clj.fastble.data.BleDevice;
 
@@ -43,6 +44,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private BleDevice mDevice;
     private Boolean mIsScanning;
     private BluetoothServiceViewModel model;
+    private DataPacket buffer;
     public static final int REQUEST_FINE_LOCATION = 2;
 
     // UI
@@ -203,7 +205,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             }
             // Update UI about changes to device
             // ...
-//            mDevice = bleDevice;
+            mDevice = bleDevice;
         }
     };
 

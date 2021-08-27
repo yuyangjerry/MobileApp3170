@@ -18,6 +18,8 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.FIT3170.HealthMonitor.bluetooth.BluetoothService;
 import com.FIT3170.HealthMonitor.bluetooth.BluetoothServiceViewModel;
+import com.FIT3170.HealthMonitor.database.DataPacket;
+import com.FIT3170.HealthMonitor.database.DataPoint;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -31,8 +33,11 @@ public class DashBoardFragment extends Fragment {
     private LineChart bPMLineChart;
     private TextView heartRateTextView;
 
-    private BluetoothService service;
+    private BluetoothService mService;
+    private int mConnectionStatus;
     private BluetoothServiceViewModel model;
+
+    private DataPacket mDataPacket;
 
 
     public DashBoardFragment() {
@@ -50,6 +55,10 @@ public class DashBoardFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        // Set View Model
+        model = ViewModelProviders.of(this).get(BluetoothServiceViewModel.class);
+        setObservers();
+
         //get all needed views by id
 
         bPMLineChart = view.findViewById(R.id.line_chart);
@@ -111,6 +120,77 @@ public class DashBoardFragment extends Fragment {
         LineData data = new LineData(dummySet);
         bPMLineChart.setData(data);
     }
+
+    private void setObservers() {
+        model.getBinder().observe(getActivity(), new Observer<BluetoothService.BluetoothBinder>() {
+            @Override
+            public void onChanged(BluetoothService.BluetoothBinder bluetoothBinder) {
+                if(bluetoothBinder == null){
+                    Log.d("debug", "onChanged: unbound to service.");
+                }
+                else{
+                    Log.d("debug", "onChanged: bound to service.");
+                    mService = bluetoothBinder.getService();
+
+                    mConnectionStatus = mService.getConnectionStatus().getValue();
+                    mService.getConnectionStatus().observe(getActivity(), connectionStatusObserver);
+
+                    mDataPacket = mService.getDataPacket().getValue();
+                    mService.getDataPacket().observe(getActivity(), dataPacketObserver);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        Log.d("debug", "HomeFragment: onResume");
+        super.onResume();
+        startService();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d("debug", "HomeFragment: onStop");
+//        if (mDevice != null) {
+//            disconnectAllDevices();
+//        }
+        if(model.getBinder() != null){
+            getActivity().unbindService(model.getServiceConnection());
+        }
+    }
+
+    private void startService(){
+        Intent serviceIntent = new Intent(getActivity(), BluetoothService.class);
+        getActivity().startService(serviceIntent);
+        bindService();
+    }
+
+    private void bindService() {
+        Intent serviceIntent = new Intent(getActivity(), BluetoothService.class);
+        getActivity().bindService(serviceIntent, model.getServiceConnection(), Context.BIND_AUTO_CREATE);
+    }
+
+    // Work on this function here
+    Observer<DataPacket> dataPacketObserver = new Observer<DataPacket>() {
+        @Override
+        public void onChanged(DataPacket dataPacket) {
+//            Log.d("debug","-----------------------------");
+//            Log.d("debug", "Data Packet Size: "+ dataPacket.getData().size()+"");
+//            for (DataPoint dataPoint : dataPacket.getData()) {
+//                Log.d("debug", dataPoint.getValue()+", "+dataPoint.getTime());
+//            }
+//            Log.d("debug","-----------------------------");
+        }
+    };
+
+    Observer<Integer> connectionStatusObserver = new Observer<Integer>() {
+        @Override
+        public void onChanged(Integer integer) {
+            Log.d("debug", "Connection status: "+integer.toString());
+        }
+    };
 
 
 

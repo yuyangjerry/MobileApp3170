@@ -7,11 +7,19 @@ package com.FIT3170.HealthMonitor.database;
  */
 public class DataPoint {
 
-    public int value;
-    public long timeInMillis;
+    private int value;
+    private long timeInMillis;
 
-    DataPoint(int value, long timeInMillis){
+    public DataPoint(int value, long timeInMillis){
         this.value = value;
         this.timeInMillis = timeInMillis;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public long getTime() {
+        return timeInMillis;
     }
 }
