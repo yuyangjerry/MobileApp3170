@@ -137,21 +137,32 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         });
     }
 
+    // Important!
+    // Only remove observers if you do not want to persistently perform some action with the sensor packet
+    // data once it is received
+    public void removeObservers() {
+        Log.d("debug","Observers Removed");
+        if(mService != null){
+            // Remove Observers
+            mService.getmBleDevice().removeObserver(bleDeviceObserver);
+            mService.isScanning().removeObserver(isScanningObserver);
+            mService.getmScanResult().removeObserver(scanResultObserver);
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         Log.d("debug", "HomeFragment: onResume");
-        bindService();
+        startService();
     }
 
     @Override
     public void onStop() {
         super.onStop();
         Log.d("debug", "HomeFragment: onStop");
-//        if (mDevice != null) {
-//            disconnectAllDevices();
-//        }
         if(model.getBinder() != null){
+            removeObservers();
             getActivity().unbindService(model.getServiceConnection());
         }
     }
@@ -161,6 +172,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         super.onDestroy();
     }
 
+    private void startService() {
+        Intent serviceIntent = new Intent(getActivity(), BluetoothService.class);
+        getActivity().startService(serviceIntent);
+        bindService();
+    }
 
     private void bindService() {
         Intent serviceIntent = new Intent(getActivity(), BluetoothService.class);

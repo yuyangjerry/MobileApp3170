@@ -5,7 +5,6 @@ plugins {
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "29.0.3"
 
     defaultConfig {
         applicationId "com.FIT3170.HealthMonitor"
@@ -53,8 +52,8 @@ dependencies {
     implementation 'me.dm7.barcodescanner:zxing:1.9'
 
     // Lifecycle components
-    def archLifecycleVersion = '1.1.1'
-    implementation "android.arch.lifecycle:extensions:$archLifecycleVersion"
-    annotationProcessor "android.arch.lifecycle:compiler:$archLifecycleVersion"
+    def arch_version = "2.1.0"
+    implementation "androidx.lifecycle:lifecycle-extensions:$arch_version"
+
 
 }

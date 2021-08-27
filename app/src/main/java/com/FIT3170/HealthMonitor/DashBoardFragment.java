@@ -60,7 +60,6 @@ public class DashBoardFragment extends Fragment {
         setObservers();
 
         //get all needed views by id
-
         bPMLineChart = view.findViewById(R.id.line_chart);
         heartRateTextView = view.findViewById(R.id.heart_rate_text);
 
@@ -127,6 +126,7 @@ public class DashBoardFragment extends Fragment {
             public void onChanged(BluetoothService.BluetoothBinder bluetoothBinder) {
                 if(bluetoothBinder == null){
                     Log.d("debug", "onChanged: unbound to service.");
+                    mService = null;
                 }
                 else{
                     Log.d("debug", "onChanged: bound to service.");
@@ -145,19 +145,32 @@ public class DashBoardFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("debug", "HomeFragment: onResume");
-        bindService();
+        Log.d("debug", "DashboardFragment: onResume");
+        startService();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Log.d("debug", "HomeFragment: onStop");
+        Log.d("debug", "DashboardFragment: onStop");
 //        if (mDevice != null) {
 //            disconnectAllDevices();
 //        }
         if(model.getBinder() != null){
+            removeObservers();
             getActivity().unbindService(model.getServiceConnection());
+        }
+    }
+
+    // Important!
+    // Only remove observers if you do not want to persistently perform some action with the sensor packet
+    // data once it is received
+    public void removeObservers() {
+        Log.d("debug","Observers Removed");
+        if(mService != null){
+            // Remove Observers
+            mService.getDataPacket().removeObserver(dataPacketObserver);
+            mService.getConnectionStatus().removeObserver(connectionStatusObserver);
         }
     }
 
@@ -166,11 +179,11 @@ public class DashBoardFragment extends Fragment {
         super.onDestroy();
     }
 
-//    private void startService(){
-//        Intent serviceIntent = new Intent(getActivity(), BluetoothService.class);
-//        getActivity().startService(serviceIntent);
-//        bindService();
-//    }
+    private void startService(){
+        Intent serviceIntent = new Intent(getActivity(), BluetoothService.class);
+        getActivity().startService(serviceIntent);
+        bindService();
+    }
 
     private void bindService() {
         Intent serviceIntent = new Intent(getActivity(), BluetoothService.class);
@@ -183,9 +196,6 @@ public class DashBoardFragment extends Fragment {
         public void onChanged(DataPacket dataPacket) {
             Log.d("debug","-----------------------------");
             Log.d("debug", "Data Packet Size: "+ dataPacket.getData().size()+"");
-            for (DataPoint dataPoint : dataPacket.getData()) {
-                Log.d("debug", dataPoint.getValue()+", "+dataPoint.getTime());
-            }
             Log.d("debug","-----------------------------");
         }
     };

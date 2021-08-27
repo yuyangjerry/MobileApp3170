@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.FIT3170.HealthMonitor.bluetooth.BluetoothService;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -67,4 +68,5 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
     }
+
 }
