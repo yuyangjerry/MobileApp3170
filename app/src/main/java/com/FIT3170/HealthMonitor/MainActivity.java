@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         switch(item.getItemId()) {
 
             case R.id.Home:
-                Intent history = new Intent(MainActivity.this, UserProfile.class);
+                Intent history = new Intent(MainActivity.this, UserProfileActivity.class);
                 startActivity(history);
                 break;
 
@@ -121,6 +121,10 @@ public class MainActivity extends AppCompatActivity {
                 loadFragment(new UserProfileFragment());
                 break;
 
+            case R.id.notifications:
+                loadFragment(new NotificationHistory());
+                break;
+
             case R.id.signOut:
                 mAuth.signOut();
                 drawerLayout.closeDrawer(GravityCompat.START);
@@ -133,10 +137,9 @@ public class MainActivity extends AppCompatActivity {
 //                nav_drawer.closeDrawer(GravityCompat.START);
 //                break;
 //
-//            case R.id.notifications:
-//                fragment = new NotificationsActivity();
-//                replaceFragments(fragment);
-//                nav_drawer.closeDrawer(GravityCompat.START);
+            case R.id.registration:
+                loadFragment(new RegistrationFragment());
+
 //
 //                break;
         }
