@@ -197,6 +197,12 @@ public class DashBoardFragment extends Fragment {
             Log.d("debug","-----------------------------");
             Log.d("debug", "Data Packet Size: "+ dataPacket.getData().size()+"");
             Log.d("debug","-----------------------------");
+            Integer sum = 0;
+            for (DataPoint dp : dataPacket.getData()) {
+                sum += dp.getValue();
+            }
+            Integer avg = sum / dataPacket.getData().size();
+            heartRateTextView.setText(avg.toString()+" mV");
         }
     };
 
