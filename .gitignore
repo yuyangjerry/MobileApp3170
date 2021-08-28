@@ -87,3 +87,7 @@ lint/tmp/
 # Android Profiling
 *.hprof
 detection/.idea/workspace.xml
+.idea/.name
+.idea/compiler.xml
+.idea/jarRepositories.xml
+.idea/misc.xml
