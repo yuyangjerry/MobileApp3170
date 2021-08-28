@@ -137,10 +137,9 @@ public class MainActivity extends AppCompatActivity {
 //                nav_drawer.closeDrawer(GravityCompat.START);
 //                break;
 //
-//            case R.id.notifications:
-//                fragment = new NotificationsActivity();
-//                replaceFragments(fragment);
-//                nav_drawer.closeDrawer(GravityCompat.START);
+            case R.id.registration:
+                loadFragment(new RegistrationFragment());
+
 //
 //                break;
         }

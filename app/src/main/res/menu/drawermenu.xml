@@ -29,6 +29,10 @@
             android:icon="@drawable/ic_notifications_black_24dp"
             android:title="Notification History" />
 
+        <item
+            android:id="@+id/registration"
+            android:title="Registration WIP" />
+
     </group>
 
     <item android:title="">
