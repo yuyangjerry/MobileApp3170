@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.dashboard:
-                loadFragment(new DashBoardFragment());
+                loadFragment(new DashBoardFragment(this));
                 break;
 
             case R.id.doctors:

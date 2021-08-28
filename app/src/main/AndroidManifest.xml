@@ -25,12 +25,16 @@
         <activity
             android:name="com.FIT3170.HealthMonitor.QRScanner"
             android:label="@string/title_activity_q_r_scanner"
-            android:theme="@style/Theme.Project6.NoActionBar"/>
-        <activity android:name="com.FIT3170.HealthMonitor.MainActivity"
+            android:theme="@style/Theme.Project6.NoActionBar" />
+        <activity
+            android:name="com.FIT3170.HealthMonitor.MainActivity"
             android:windowSoftInputMode="adjustResize"
 
-            >
-        </activity>
+            ></activity>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>
