@@ -27,7 +27,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import java.util.ArrayList;
+
 import java.util.Random;
 
 public class DashBoardFragment extends Fragment {
@@ -36,7 +36,7 @@ public class DashBoardFragment extends Fragment {
     private TextView heartRateTextView;
     private LineData lineData;
     // Thread for line chart
-    private Thread thread;
+//    private Thread thread;
     private Activity mActivity;
     private int displayCount = 10; //number of data  points to display
     private int dataCount = 0;
@@ -109,7 +109,7 @@ public class DashBoardFragment extends Fragment {
 
         bPMLineChart.setExtraOffsets(10f, 7f, 0f, 16f);
         setLineChartDummyData();
-        beginChartThread();
+//        beginChartThread();
 
     }
 
@@ -135,62 +135,92 @@ public class DashBoardFragment extends Fragment {
         return newSet;
     }
 
-    private void addEntry() {
+//    private void addEntry() {
+//        if (lineData != null) {
+//            int random = new Random().nextInt(10) + 60;
+//            ILineDataSet dataSet = lineData.getDataSetByIndex(0);
+//            Entry newEntry = new Entry(dataCount++, random);
+//            lineData.addEntry(newEntry, 0);
+//            lineData.notifyDataChanged();
+//
+//            bPMLineChart.notifyDataSetChanged();
+//            bPMLineChart.setVisibleXRangeMaximum(displayCount);
+//
+//            bPMLineChart.moveViewToX(lineData.getEntryCount());
+//
+//
+//            if (dataSet.getEntryCount() >= ENTRY_COUNT_MAX) {
+//                dataSet.removeFirst();
+//                for (int i = 0; i < dataSet.getEntryCount(); i++) {
+//                    Entry entryToChange = dataSet.getEntryForIndex(i);
+//                    entryToChange.setX(entryToChange.getX() - 1);
+//                }
+//            }
+//
+//            Log.i("Dashboard", "added entry");
+//        }
+//    }
+
+    private void graphPacket(DataPacket dataPacket) {
         if (lineData != null) {
-            int random = new Random().nextInt(10) + 60;
             ILineDataSet dataSet = lineData.getDataSetByIndex(0);
-            Entry newEntry = new Entry(dataCount++, random);
-            lineData.addEntry(newEntry, 0);
+            dataSet.clear();
+            Integer dataPointCount = 0;
+            for (DataPoint dataPoint: dataPacket.getData()) {
+                Entry newEntry = new Entry(dataPointCount, dataPoint.getValue());
+                lineData.addEntry(newEntry, 0);
+                dataPointCount += 1;
+            }
             lineData.notifyDataChanged();
-
             bPMLineChart.notifyDataSetChanged();
-            bPMLineChart.setVisibleXRangeMaximum(displayCount);
+            bPMLineChart.setVisibleXRangeMaximum(dataPointCount);
 
-            bPMLineChart.moveViewToX(lineData.getEntryCount());
+            bPMLineChart.moveViewToX(dataPointCount);
 
 
-            if (dataSet.getEntryCount() >= ENTRY_COUNT_MAX) {
-                dataSet.removeFirst();
-                for (int i = 0; i < dataSet.getEntryCount(); i++) {
-                    Entry entryToChange = dataSet.getEntryForIndex(i);
-                    entryToChange.setX(entryToChange.getX() - 1);
-                }
-            }
 
-            Log.i("Dashboard", "added entry");
+//            if (dataSet.getEntryCount() >= ENTRY_COUNT_MAX) {
+//                dataSet.removeFirst();
+//                for (int i = 0; i < dataSet.getEntryCount(); i++) {
+//                    Entry entryToChange = dataSet.getEntryForIndex(i);
+//                    entryToChange.setX(entryToChange.getX() - 1);
+//                }
+//            }
+
+            Log.i("Dashboard", "");
         }
     }
 
-    private void beginChartThread() {
-        if (thread != null) {
-            thread.interrupt();
-        }
-        thread = new Thread() {
-            private boolean running = true;
-
-            public void run() {
-                while (running) {
-                    try {
-                        mActivity.runOnUiThread(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                addEntry();
-                            }
-                        });
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        running = false;
-                        return;
-                    }
-                }
-            }
-
-        };
-        thread.start();
-
-    }
+//    private void beginChartThread() {
+//        if (thread != null) {
+//            thread.interrupt();
+//        }
+//        thread = new Thread() {
+//            private boolean running = true;
+//
+//            public void run() {
+//                while (running) {
+//                    try {
+//                        mActivity.runOnUiThread(new Runnable() {
+//
+//                            @Override
+//                            public void run() {
+//                                addEntry();
+//                            }
+//                        });
+//                        Thread.sleep(1000);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                        running = false;
+//                        return;
+//                    }
+//                }
+//            }
+//
+//        };
+//        thread.start();
+//
+//    }
 
     private void setObservers() {
         model.getBinder().observe(getActivity(), new Observer<BluetoothService.BluetoothBinder>() {
@@ -230,24 +260,24 @@ public class DashBoardFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        if (thread != null) {
-            thread.interrupt();
-        }
+//        if (thread != null) {
+//            thread.interrupt();
+//        }
     }
 
     @Override
     public void onDetach() {
-        if (thread != null) {
-            thread.interrupt();
-        }
+//        if (thread != null) {
+//            thread.interrupt();
+//        }
         super.onDetach();
     }
 
     @Override
     public void onResume() {
-        if (thread == null) {
-            beginChartThread();
-        }
+//        if (thread == null) {
+//            beginChartThread();
+//        }
         super.onResume();
         startService();
     }
@@ -283,8 +313,12 @@ public class DashBoardFragment extends Fragment {
             Log.d("debug", "Data Packet Size: "+ dataPacket.getData().size()+"");
             Log.d("debug","-----------------------------");
             float bpm = dataPacket.getPeakCount();
-            String outString = Float.toString(bpm);
-            heartRateTextView.setText(outString);
+//            String outString = Float.toString(bpm);
+            heartRateTextView.setText(String.format("%.1f", bpm));
+
+            // Dummy Code
+            // Sensor Is Spitting Millivolt Values that are
+            graphPacket(dataPacket);
         }
     };
 
