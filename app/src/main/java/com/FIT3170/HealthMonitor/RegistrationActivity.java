@@ -28,8 +28,13 @@ public class RegistrationActivity extends AppCompatActivity {
     private EditText pswrdConfirmInput;
     private EditText givenNameInput;
     private EditText surnnameInput;
-    private EditText addressInput;
+
     private Spinner genderSpinner;
+    private Spinner stateSpinner;
+
+    private EditText addressInput;
+    private EditText suburbInput;
+    private EditText postcodeInput;
 
     private Button regBtn;
     private Button backBtn;
@@ -73,7 +78,10 @@ public class RegistrationActivity extends AppCompatActivity {
         pswrdConfirmInput = findViewById(R.id.regPasswordConfirm);
         givenNameInput = findViewById(R.id.regGivenName);
         surnnameInput = findViewById(R.id.regSurname);
+
         addressInput = findViewById(R.id.regPostalAddress);
+        suburbInput = findViewById(R.id.regSuburb);
+        postcodeInput = findViewById(R.id.regPostCode);
 
         regBtn = findViewById(R.id.regButton);
         regBtn.setOnClickListener(view -> {
@@ -96,8 +104,17 @@ public class RegistrationActivity extends AppCompatActivity {
         String email = emailInput.getText().toString();
         String givenName = givenNameInput.getText().toString();
         String surnname = surnnameInput.getText().toString();
+        String gender = genderSpinner.getSelectedItem().toString();
+
+        String address = addressInput.getText().toString();
+        String suburb = suburbInput.getText().toString();
+        String postcode = postcodeInput.getText().toString();
+        String state = stateSpinner.getSelectedItem().toString();
+
         String pswrd = pswrdInput.getText().toString();
         String pswrdConfirm = pswrdConfirmInput.getText().toString();
+
+        
     }
 
     /**
@@ -107,12 +124,22 @@ public class RegistrationActivity extends AppCompatActivity {
         // Set up gender spinner
         genderSpinner = (Spinner) findViewById(R.id.regGender);
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+        ArrayAdapter<CharSequence> genAdapter = ArrayAdapter.createFromResource(this,
                 R.array.gender_options, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        genAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
-        genderSpinner.setAdapter(adapter);
+        genderSpinner.setAdapter(genAdapter);
+
+        // Set up state spinner
+        stateSpinner = (Spinner) findViewById(R.id.regState);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> stateAdapter = ArrayAdapter.createFromResource(this,
+                R.array.aus_states, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        stateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        stateSpinner.setAdapter(stateAdapter);
     }
 
     @Override
