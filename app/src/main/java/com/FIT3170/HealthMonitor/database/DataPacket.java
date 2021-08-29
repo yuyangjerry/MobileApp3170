@@ -45,11 +45,15 @@ public class DataPacket implements ECGAlgorithm{
     }
 
     // This is bad implementation maybe fix later
-    public int getPeakCount () {
-        int lastPeak = 0;
+    public float getPeakCount () {
+        // Variable declaration
         final int bound = 500;
+        final int freq = 50;
+        final int second = 60;
+        int lastPeak = 0;
         int peakCount = 0;
-        ArrayList<int[]> peakDistanceArray = new ArrayList<int[]>();
+        float averageBPM = 0;
+        ArrayList<Integer> peakDistanceArray = new ArrayList<Integer>();
 
 
         // Loop through data to find the peaks of
@@ -61,17 +65,20 @@ public class DataPacket implements ECGAlgorithm{
             if (difference > bound && lastPeak < i - 1){
                 Log.d("debug", "Peak values = " + currentData + " and " + dataArray.get(i - 2));
                 Log.d("debug", "At point = " + i + " and " + (i - 2));
-                int[] peak = {lastPeak, i};
-                peakDistanceArray.add(peak);
+                peakDistanceArray.add(i - lastPeak);
                 peakCount ++;
                 lastPeak = i;
             }
         }
         Log.d("debug", "Peak count = " + peakCount);
         for (int i = 0; i < peakDistanceArray.size(); i++){
-            Log.d("debug", "Last peak: " + peakDistanceArray.get(i)[0] + " " + "Current Peak:: " + peakDistanceArray.get(i)[1]);
+            float freqPeak = second * ((float)freq/(float)peakDistanceArray.get(i));
+            averageBPM = averageBPM + freqPeak;
+            Log.d("debug", "Last peak: " + peakDistanceArray.get(i));
+            Log.d("debug","Heart beat between peaks: " + freqPeak);
         }
-        return peakCount;
+        Log.d("debug","Sum of Heart beat over 5 second: " + averageBPM);
+        return averageBPM/peakCount;
     }
 
 }

@@ -197,8 +197,9 @@ public class DashBoardFragment extends Fragment {
             Log.d("debug","-----------------------------");
             Log.d("debug", "Data Packet Size: "+ dataPacket.getData().size()+"");
             Log.d("debug","-----------------------------");
-            int peakCount = dataPacket.getPeakCount();
-            heartRateTextView.setText(peakCount);
+            float bpm = dataPacket.getPeakCount();
+            String outString = Float.toString(bpm);
+            heartRateTextView.setText(outString);
         }
     };
 
@@ -208,8 +209,5 @@ public class DashBoardFragment extends Fragment {
             Log.d("debug", "Connection status: "+integer.toString());
         }
     };
-
-
-
-
+    
 }
