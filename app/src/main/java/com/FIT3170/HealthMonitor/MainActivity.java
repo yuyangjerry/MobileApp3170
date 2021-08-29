@@ -139,9 +139,11 @@ public class MainActivity extends AppCompatActivity {
 //
             case R.id.registration:
                 loadFragment(new RegistrationFragment());
-
-//
-//                break;
+                drawerLayout.closeDrawer(GravityCompat.START);
+                // need to start the Activity here?
+//                Intent registration = new Intent(MainActivity.this, RegistrationActivity.class);
+//                startActivity(registration);
+                break;
         }
         item.setChecked(true);
 

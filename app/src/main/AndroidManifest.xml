@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.FIT3170.HealthMonitor">
-
-    <!--    This is needed for scanning the QR code-->
+    <!-- This is needed for scanning the QR code -->
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
@@ -13,24 +12,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Project6">
         <activity
-            android:name="com.FIT3170.HealthMonitor.LoginActivity">
+            android:name=".RegistrationActivity"
+            android:exported="true"
+            android:label="@string/title_activity_registration"
+            android:theme="@style/Theme.Project6.NoActionBar" />
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-        <activity android:name="com.FIT3170.HealthMonitor.UserProfileActivity"></activity>
+        <activity android:name=".UserProfileActivity" />
         <activity
-            android:name="com.FIT3170.HealthMonitor.QRScanner"
+            android:name=".QRScanner"
             android:label="@string/title_activity_q_r_scanner"
-            android:theme="@style/Theme.Project6.NoActionBar"/>
-        <activity android:name="com.FIT3170.HealthMonitor.MainActivity"
-            android:windowSoftInputMode="adjustResize"
-
-            >
-        </activity>
+            android:theme="@style/Theme.Project6.NoActionBar" />
+        <activity
+            android:name=".MainActivity"
+            android:windowSoftInputMode="adjustResize"></activity>
     </application>
 
 </manifest>
