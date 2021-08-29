@@ -1,8 +1,11 @@
 package com.FIT3170.HealthMonitor;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import com.google.firebase.Timestamp;
 
+import com.FIT3170.HealthMonitor.database.UserSignUpData;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -19,8 +23,13 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.FIT3170.HealthMonitor.databinding.ActivityRegistrationBinding;
+import com.google.firebase.firestore.auth.User;
 
-public class RegistrationActivity extends AppCompatActivity {
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
+
+public class RegistrationActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
     // input fields
     private EditText emailInput;
@@ -28,6 +37,8 @@ public class RegistrationActivity extends AppCompatActivity {
     private EditText pswrdConfirmInput;
     private EditText givenNameInput;
     private EditText surnnameInput;
+    private EditText dobInput;
+
 
     private Spinner genderSpinner;
     private Spinner stateSpinner;
@@ -38,6 +49,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
     private Button regBtn;
     private Button backBtn;
+    private Timestamp dob;
 
 
     private AppBarConfiguration appBarConfiguration;
@@ -95,6 +107,14 @@ public class RegistrationActivity extends AppCompatActivity {
             startActivity(loginIntent);
             finish();
         });
+
+        dobInput = findViewById(R.id.regDob);
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this, this, 2021, 8, 30);
+        dobInput.setOnClickListener(view -> {
+                    datePickerDialog.show();
+        });
+
     }
 
     /**
@@ -114,7 +134,13 @@ public class RegistrationActivity extends AppCompatActivity {
         String pswrd = pswrdInput.getText().toString();
         String pswrdConfirm = pswrdConfirmInput.getText().toString();
 
-        
+        UserSignUpData newUser = new UserSignUpData();
+        newUser.setGivenName(givenName);
+        newUser.setFamilyName(surnname);
+        newUser.setDateOfBirth(dob);
+        newUser.setEmail(email);
+        newUser.setGender(gender);
+
     }
 
     /**
@@ -142,10 +168,37 @@ public class RegistrationActivity extends AppCompatActivity {
         stateSpinner.setAdapter(stateAdapter);
     }
 
+
+    private DatePickerDialog.OnDateSetListener myDateListener = new
+            DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker arg0,
+                                      int arg1, int arg2, int arg3) {
+                    // TODO Auto-generated method stub
+                    // arg1 = year
+                    // arg2 = month
+                    // arg3 = day
+                    showDate(arg1, arg2+1, arg3);
+                }
+            };
+
+    private void showDate(int year, int month, int day) {
+        dobInput.setText(new StringBuilder().append(day).append("/")
+                .append(month).append("/").append(year));
+        // TODO: Store values in timestamp object
+        Date date = new Date(year, month, day);
+        dob = new Timestamp(date);
+    }
+
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_registration);
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        showDate(year, month + 1, dayOfMonth);
     }
 }
