@@ -107,7 +107,7 @@ public class DashBoardFragment extends Fragment {
         bPMLineChart.getLegend().setEnabled(false);
         bPMLineChart.getDescription().setEnabled(false);
 
-        bPMLineChart.setExtraOffsets(10f, 7f, 0f, 16f);
+        bPMLineChart.setExtraOffsets(0f, 7f, 0f, 16f);
         setLineChartDummyData();
 //        beginChartThread();
 
