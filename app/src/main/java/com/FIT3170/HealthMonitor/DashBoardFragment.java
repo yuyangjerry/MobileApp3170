@@ -1,6 +1,8 @@
 package com.FIT3170.HealthMonitor;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,14 +14,20 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
+import com.FIT3170.HealthMonitor.bluetooth.BluetoothService;
+import com.FIT3170.HealthMonitor.bluetooth.BluetoothServiceViewModel;
+import com.FIT3170.HealthMonitor.database.DataPacket;
+import com.FIT3170.HealthMonitor.database.DataPoint;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-
+import java.util.ArrayList;
 import java.util.Random;
 
 public class DashBoardFragment extends Fragment {
@@ -34,9 +42,16 @@ public class DashBoardFragment extends Fragment {
     private int dataCount = 0;
     private final int ENTRY_COUNT_MAX = 15;
 
+    private BluetoothService mService;
+    private int mConnectionStatus;
+    private BluetoothServiceViewModel model;
+    private DataPacket mDataPacket;
+
     public DashBoardFragment(Activity mActivity) {
         this.mActivity = mActivity;
-
+    }
+    public DashBoardFragment() {
+        // Required empty public constructor
     }
 
 
@@ -51,11 +66,17 @@ public class DashBoardFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        // Set View Model
+        model = ViewModelProviders.of(this).get(BluetoothServiceViewModel.class);
+        setObservers();
+
         //get all needed views by id
+
         bPMLineChart = view.findViewById(R.id.line_chart);
         heartRateTextView = view.findViewById(R.id.heart_rate_text);
 
         SetUpLineChart();
+
     }
 
 
@@ -171,6 +192,41 @@ public class DashBoardFragment extends Fragment {
 
     }
 
+    private void setObservers() {
+        model.getBinder().observe(getActivity(), new Observer<BluetoothService.BluetoothBinder>() {
+            @Override
+            public void onChanged(BluetoothService.BluetoothBinder bluetoothBinder) {
+                if(bluetoothBinder == null){
+                    Log.d("debug", "onChanged: unbound to service.");
+                    mService = null;
+                }
+                else{
+                    Log.d("debug", "onChanged: bound to service.");
+                    mService = bluetoothBinder.getService();
+
+                    mConnectionStatus = mService.getConnectionStatus().getValue();
+                    mService.getConnectionStatus().observe(getActivity(), connectionStatusObserver);
+
+                    mDataPacket = mService.getDataPacket().getValue();
+                    mService.getDataPacket().observe(getActivity(), dataPacketObserver);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d("debug", "DashboardFragment: onStop");
+//        if (mDevice != null) {
+//            disconnectAllDevices();
+//        }
+        if(model.getBinder() != null){
+            removeObservers();
+            getActivity().unbindService(model.getServiceConnection());
+        }
+    }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -187,13 +243,57 @@ public class DashBoardFragment extends Fragment {
         super.onDetach();
     }
 
-
     @Override
     public void onResume() {
         if (thread == null) {
             beginChartThread();
         }
         super.onResume();
+        startService();
     }
+
+    // Important!
+    // Only remove observers if you do not want to persistently perform some action with the sensor packet
+    // data once it is received
+    public void removeObservers() {
+        Log.d("debug","Observers Removed");
+        if(mService != null){
+            // Remove Observers
+            mService.getDataPacket().removeObserver(dataPacketObserver);
+            mService.getConnectionStatus().removeObserver(connectionStatusObserver);
+        }
+    }
+
+    private void startService(){
+        Intent serviceIntent = new Intent(getActivity(), BluetoothService.class);
+        getActivity().startService(serviceIntent);
+        bindService();
+    }
+
+    private void bindService() {
+        Intent serviceIntent = new Intent(getActivity(), BluetoothService.class);
+        getActivity().bindService(serviceIntent, model.getServiceConnection(), Context.BIND_AUTO_CREATE);
+    }
+
+    // Work on this function here
+    Observer<DataPacket> dataPacketObserver = new Observer<DataPacket>() {
+        @Override
+        public void onChanged(DataPacket dataPacket) {
+            Log.d("debug","-----------------------------");
+            Log.d("debug", "Data Packet Size: "+ dataPacket.getData().size()+"");
+            Log.d("debug","-----------------------------");
+            float bpm = dataPacket.getPeakCount();
+            String outString = Float.toString(bpm);
+            heartRateTextView.setText(outString);
+        }
+    };
+
+    Observer<Integer> connectionStatusObserver = new Observer<Integer>() {
+        @Override
+        public void onChanged(Integer integer) {
+            Log.d("debug", "Connection status: "+integer.toString());
+        }
+    };
+
 
 }

@@ -9,6 +9,14 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string name="location_permissions_title">
+        We need permissions to your location services
+    </string>
+    <string name="location_permissions_text">
+        This app relies on Android\'s Bluetooth Low Energy (BLE) Scanning API.
+        A malicious developer can utilise this API and strategically place BLE beacons to
+        triangulate a users location. We purely use this API to collect data from our BLE-enabled Heartrate Sensors
+    </string>
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>

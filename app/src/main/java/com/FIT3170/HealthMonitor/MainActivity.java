@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Button;
 
+import com.FIT3170.HealthMonitor.bluetooth.BluetoothService;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -44,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         mAuth = FirebaseAuth.getInstance();
-
     }
 
     private void InitialiseFields() {
@@ -105,8 +105,9 @@ public class MainActivity extends AppCompatActivity {
         switch(item.getItemId()) {
 
             case R.id.Home:
-                Intent history = new Intent(MainActivity.this, UserProfileActivity.class);
-                startActivity(history);
+//                Intent history = new Intent(MainActivity.this, UserProfileActivity.class);
+//                startActivity(history);
+                loadFragment(new HomeFragment());
                 break;
 
             case R.id.dashboard:
@@ -152,4 +153,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return false;
     }
+
+
 }
