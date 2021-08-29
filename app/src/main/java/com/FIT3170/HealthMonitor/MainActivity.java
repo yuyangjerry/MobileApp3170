@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.dashboard:
-                loadFragment(new DashBoardFragment());
+                loadFragment(new DashBoardFragment(this));
                 break;
 
             case R.id.doctors:
@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         item.setChecked(true);
-
+        drawerLayout.closeDrawer(GravityCompat.START);
     }
     //load fragment used for bottom nav view.
     public boolean loadFragment(Fragment fragment) {

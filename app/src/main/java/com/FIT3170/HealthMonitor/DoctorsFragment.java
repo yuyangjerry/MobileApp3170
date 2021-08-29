@@ -19,17 +19,26 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.FIT3170.HealthMonitor.adapters.DoctorAdpter;
 import com.FIT3170.HealthMonitor.database.DoctorProfile;
 import com.FIT3170.HealthMonitor.database.UserProfile;
-import com.google.firebase.auth.FirebaseUser;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 
 public class DoctorsFragment extends Fragment {
 
     public final static int QR_CODE_REQUEST_CODE = 1;
     public final static int CAMERA_PERMISSION_REQUEST_CODE = 2;
+
+    //========
+    private ArrayList<Doctor> doctorList;
+    private RecyclerView recyclerView;
+    private DoctorAdpter.RecyclerViewClickListener listener;
+    //========
 
     private Button linkDoctorButton;
 
@@ -42,6 +51,14 @@ public class DoctorsFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        //=======
+        recyclerView = view.findViewById(R.id.doctorList);
+        doctorList = new ArrayList<>();
+
+        setDoctorInfo();
+        setAdapter();
+        //=======
 
         // 1. get all doctor ids
         String doctorIds[] = UserProfile.getLinkedDoctorIds();
@@ -125,6 +142,50 @@ public class DoctorsFragment extends Fragment {
                 Toast.makeText(context, "You need to provide permission to use your camera in order to scan QRcode.", Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    private void setAdapter(){
+        setOnClickListener();
+        DoctorAdpter adapter = new DoctorAdpter(doctorList, listener);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(adapter);
+    }
+
+    private void setOnClickListener() {
+        listener = new DoctorAdpter.RecyclerViewClickListener() {
+            @Override
+            public void onClick(View v, int position) {
+                Context context = getContext();
+                Intent intent = new Intent(context, QRScanner.class);
+                intent.putExtra("doctorid", doctorList.get(position).getDoctorid());
+                startActivity(intent);
+            }
+        };
+    }
+
+    private void setDoctorInfo(){
+        doctorList.add(new Doctor("papa"));
+        doctorList.add(new Doctor("dada"));
+        doctorList.add(new Doctor("yaya"));
+        doctorList.add(new Doctor("yaya"));
+        doctorList.add(new Doctor("yaya"));
+        doctorList.add(new Doctor("yaya"));
+        doctorList.add(new Doctor("yaya"));
+        doctorList.add(new Doctor("yaya"));
+        doctorList.add(new Doctor("yaya"));
+        doctorList.add(new Doctor("yaya"));
+        doctorList.add(new Doctor("yaya"));
+        doctorList.add(new Doctor("yaya"));
+        doctorList.add(new Doctor("yaya"));
+        doctorList.add(new Doctor("yaya"));
+        doctorList.add(new Doctor("yaya"));
+        doctorList.add(new Doctor("yaya"));
+        doctorList.add(new Doctor("yaya"));
+        doctorList.add(new Doctor("yaya"));
+        doctorList.add(new Doctor("yaya"));
+        doctorList.add(new Doctor("tata"));
     }
 
     /**
