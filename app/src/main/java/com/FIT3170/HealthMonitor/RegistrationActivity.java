@@ -1,5 +1,6 @@
 package com.FIT3170.HealthMonitor;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -31,6 +32,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private Spinner genderSpinner;
 
     private Button regBtn;
+    private Button backBtn;
 
 
     private AppBarConfiguration appBarConfiguration;
@@ -76,6 +78,14 @@ public class RegistrationActivity extends AppCompatActivity {
         regBtn = findViewById(R.id.regButton);
         regBtn.setOnClickListener(view -> {
             register();
+        });
+
+        backBtn = findViewById(R.id.regBackButton);
+        backBtn.setOnClickListener(view -> {
+            Intent loginIntent = new Intent(this, LoginActivity.class);
+            loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(loginIntent);
+            finish();
         });
     }
 
