@@ -1,9 +1,18 @@
 package com.FIT3170.HealthMonitor;
 
 public class Doctor {
-    private String doctorid;
+    private String doctorid, doctorname;
 
-    public Doctor(String doctorid) {
+    public String getDoctorname() {
+        return doctorname;
+    }
+
+    public void setDoctorname(String doctorname) {
+        this.doctorname = doctorname;
+    }
+
+    public Doctor(String doctorid, String doctorname) {
+        this.doctorname = doctorname;
         this.doctorid = doctorid;
     }
 

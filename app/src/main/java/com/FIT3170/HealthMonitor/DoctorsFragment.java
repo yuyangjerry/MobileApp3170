@@ -84,7 +84,8 @@ public class DoctorsFragment extends Fragment {
                         DoctorProfile doc = doctors[index];
                         Log.i("DOCTORS", "Got doctor profile!" + doc.getUid());
                         //TODO: put doc into a vew in the doctor list
-                        doctorList.add(new Doctor(doc.getUid()));
+                        doctorList.add(new Doctor(doc.getUid(), doc.getGivenName()));
+//                        doctorList.add(new Doctor(doc.getGivenName()));
                         adapter.notifyDataSetChanged();
                         //TODO: when the user clicks on "view doctor profile button"
                         // for this user, put doctorIds[index] into an intent and send it to the doctor
@@ -168,26 +169,11 @@ public class DoctorsFragment extends Fragment {
     }
 
     private void setDoctorInfo(){
-        doctorList.add(new Doctor("papa"));
-        doctorList.add(new Doctor("dada"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("tata"));
+        doctorList.add(new Doctor("papa", "sa"));
+        doctorList.add(new Doctor("dada","as"));
+        doctorList.add(new Doctor("dada","as"));
+        doctorList.add(new Doctor("dada","as"));
+        doctorList.add(new Doctor("dada","as"));
     }
 
     /**
@@ -205,6 +191,7 @@ public class DoctorsFragment extends Fragment {
                         UserProfile.linkDoctor(
                                 validator.getInviteId(),
                                 validator.getDoctorId(),
+
                                 (v, error) -> {
                                     dialog.dismiss();
 
@@ -221,7 +208,8 @@ public class DoctorsFragment extends Fragment {
                                                 .show();
 
                                         //TODO: Updated the UI after linking a new doctor
-                                        doctorList.add(new Doctor(validator.getDoctorId()));
+                                        doctorList.add(new Doctor(validator.getDoctorId(), validator.getInviteId()));
+//                                        doctorList.add(new Doctor(validator.getDoctorname()));
                                         adapter.notifyDataSetChanged();
 
                                     }

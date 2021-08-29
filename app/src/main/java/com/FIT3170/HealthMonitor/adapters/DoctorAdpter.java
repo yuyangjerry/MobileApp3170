@@ -25,11 +25,12 @@ public class DoctorAdpter extends RecyclerView.Adapter<DoctorAdpter.MyViewHolder
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        private TextView nameTxt;
+        private TextView doctorId, doctorName;
 
         public MyViewHolder(final View view){
             super(view);
-            nameTxt = view.findViewById(R.id.textView4);
+            doctorId = view.findViewById(R.id.textView4);
+            doctorName = view.findViewById(R.id.textView8);
             view.setOnClickListener(this);
         }
 
@@ -48,8 +49,10 @@ public class DoctorAdpter extends RecyclerView.Adapter<DoctorAdpter.MyViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        String name = doctorList.get(position).getDoctorid();
-        holder.nameTxt.setText(name);
+        String docId = doctorList.get(position).getDoctorid();
+        holder.doctorId.setText(docId);
+        String docName = doctorList.get(position).getDoctorname();
+        holder.doctorName.setText(docName);
     }
 
     @Override
