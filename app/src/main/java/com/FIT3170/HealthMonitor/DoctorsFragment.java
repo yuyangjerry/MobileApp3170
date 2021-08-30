@@ -38,6 +38,7 @@ public class DoctorsFragment extends Fragment {
     private ArrayList<Doctor> doctorList;
     private RecyclerView recyclerView;
     private DoctorAdpter.RecyclerViewClickListener listener;
+    private DoctorAdpter adapter;
     //========
 
     private Button linkDoctorButton;
@@ -56,16 +57,14 @@ public class DoctorsFragment extends Fragment {
         recyclerView = view.findViewById(R.id.doctorList);
         doctorList = new ArrayList<>();
 
-        setDoctorInfo();
+        //setDoctorInfo();
         setAdapter();
         //=======
 
         // 1. get all doctor ids
         String doctorIds[] = UserProfile.getLinkedDoctorIds();
-
         if(doctorIds == null || doctorIds.length == 0){
             //Well, seems like there are no linkded doctors
-            Log.i("DOCTORS", "No linked doctors");
             //TODO: display that there are no linked doctors
         }else{
             DoctorProfile doctors[] = new DoctorProfile[doctorIds.length];
@@ -73,17 +72,21 @@ public class DoctorsFragment extends Fragment {
             // 2. get all doctors profiles
             for (int i = 0; i < doctors.length; i++) {
                 Log.i("DOCTORS", doctorIds[i]);
-
                 //Re-declaring i as as final so that we can safely access it inside the callback
                 final int index = i;
                 doctors[index] = new DoctorProfile(doctorIds[index], (succes, error) -> {
+
                     if (error != null) {
+                        Log.i("DOCTORS", "Couldn't get doctor profile :(");
                         //oops, something went wrong, probably a network error
                     } else {
                         //Success!, we can use doctors[imdex] now
                         DoctorProfile doc = doctors[index];
+                        Log.i("DOCTORS", "Got doctor profile!" + doc.getUid());
                         //TODO: put doc into a vew in the doctor list
-
+                        doctorList.add(new Doctor(doc.getUid(), doc.getGivenName()));
+//                        doctorList.add(new Doctor(doc.getGivenName()));
+                        adapter.notifyDataSetChanged();
                         //TODO: when the user clicks on "view doctor profile button"
                         // for this user, put doctorIds[index] into an intent and send it to the doctor
                         // profile fragment/activity
@@ -146,7 +149,7 @@ public class DoctorsFragment extends Fragment {
 
     private void setAdapter(){
         setOnClickListener();
-        DoctorAdpter adapter = new DoctorAdpter(doctorList, listener);
+        adapter = new DoctorAdpter(doctorList, listener);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -166,26 +169,11 @@ public class DoctorsFragment extends Fragment {
     }
 
     private void setDoctorInfo(){
-        doctorList.add(new Doctor("papa"));
-        doctorList.add(new Doctor("dada"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("yaya"));
-        doctorList.add(new Doctor("tata"));
+        doctorList.add(new Doctor("papa", "sa"));
+        doctorList.add(new Doctor("dada","as"));
+        doctorList.add(new Doctor("dada","as"));
+        doctorList.add(new Doctor("dada","as"));
+        doctorList.add(new Doctor("dada","as"));
     }
 
     /**
@@ -203,6 +191,7 @@ public class DoctorsFragment extends Fragment {
                         UserProfile.linkDoctor(
                                 validator.getInviteId(),
                                 validator.getDoctorId(),
+
                                 (v, error) -> {
                                     dialog.dismiss();
 
@@ -217,6 +206,12 @@ public class DoctorsFragment extends Fragment {
                                                 .setTitle("Linked successfully!")
                                                 .setPositiveButton("Ok", null)
                                                 .show();
+
+                                        //TODO: Updated the UI after linking a new doctor
+                                        doctorList.add(new Doctor(validator.getDoctorId(), validator.getInviteId()));
+//                                        doctorList.add(new Doctor(validator.getDoctorname()));
+                                        adapter.notifyDataSetChanged();
+
                                     }
                                 }
                         );
