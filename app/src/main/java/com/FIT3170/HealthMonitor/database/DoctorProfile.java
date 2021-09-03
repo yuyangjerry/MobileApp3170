@@ -1,5 +1,6 @@
 package com.FIT3170.HealthMonitor.database;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Map;
@@ -50,7 +51,12 @@ public class DoctorProfile {
         return (String)doctor.get("familyName");
     }
 
-    public String getPhoneNumber(){
-        return (String)doctor.get("phone");
+    public Timestamp getDateOfBirth(){
+        Object o = doctor.get("dob");
+        return o == null ? null : (Timestamp)o;
     }
+
+    //public String getPhoneNumber(){ return (String)doctor.get("phone"); }
+
+    //public String getPlaceOfPractice() { return (String)doctor.get("placeOfPractice"); }
 }

@@ -160,8 +160,9 @@ public class DoctorsFragment extends Fragment {
         listener = new DoctorAdpter.RecyclerViewClickListener() {
             @Override
             public void onClick(View v, int position) {
+                // Create an intent to go to the doctor profile.
                 Context context = getContext();
-                Intent intent = new Intent(context, QRScanner.class);
+                Intent intent = new Intent(context, DoctorProfileActivity.class);
                 intent.putExtra("doctorid", doctorList.get(position).getDoctorid());
                 startActivity(intent);
             }

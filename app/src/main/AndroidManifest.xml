@@ -26,6 +26,7 @@
         </activity>
         <activity android:name="com.FIT3170.HealthMonitor.RegistrationActivity" />
         <activity android:name="com.FIT3170.HealthMonitor.UserProfileActivity"></activity>
+        <activity android:name="com.FIT3170.HealthMonitor.DoctorProfileActivity"></activity>
         <activity
             android:name="com.FIT3170.HealthMonitor.QRScanner"
             android:label="@string/title_activity_q_r_scanner"

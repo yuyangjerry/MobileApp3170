@@ -192,7 +192,7 @@ public class UserProfile {
         List<String> doctorIds;
         if(temp == null){
             doctorIds = new ArrayList<String>();
-        }else{
+        }else {
             doctorIds = (List<String>)temp;
         }
 
