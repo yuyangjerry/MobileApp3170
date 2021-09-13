@@ -24,8 +24,19 @@ public class DoctorProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Get the intent from DoctorsFragment, and get the string of the doctorid.
-        Intent intent = getIntent();
-        String doctorId = intent.getStringExtra("doctorid");
+//        Intent intent = getIntent();
+//        String doctorId = intent.getStringExtra("doctorid");
+
+        // get the details from the selected doctor, currently only doctor name and doctor id
+        String doctorId = "Not found!";
+        String doctorname = "Not found!";
+        Bundle extras = getIntent().getExtras();
+        if(extras != null) {
+            doctorId = extras.getString("doctorid");
+            doctorname = extras.getString("doctorname");
+        }
+//        doctorProfileTV.setText(username);
+        // -----------------------
 
         // Currently the retrieved doctorProfile returns null when the attributes are called upon.
         DoctorProfile doctorProfile = new DoctorProfile(doctorId, (success, error) -> {
@@ -61,7 +72,7 @@ public class DoctorProfileActivity extends AppCompatActivity {
         ProfileGVAdapter adapter = new ProfileGVAdapter(this, profileModelArrayList);
         doctorProfileGV.setAdapter(adapter);
         //String doctorName = doctorProfile.getGivenName() + " " + doctorProfile.getFamilyName();
-        doctorProfileTV.setText("Dr Doctor Doctor");
+        doctorProfileTV.setText(doctorname);
 
     }
 }

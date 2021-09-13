@@ -29,7 +29,7 @@ public class DoctorAdpter extends RecyclerView.Adapter<DoctorAdpter.MyViewHolder
 
         public MyViewHolder(final View view){
             super(view);
-            doctorId = view.findViewById(R.id.textView4);
+            doctorId = view.findViewById(R.id.textView9);
             doctorName = view.findViewById(R.id.textView8);
             view.setOnClickListener(this);
         }

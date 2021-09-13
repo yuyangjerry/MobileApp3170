@@ -164,18 +164,19 @@ public class DoctorsFragment extends Fragment {
                 Context context = getContext();
                 Intent intent = new Intent(context, DoctorProfileActivity.class);
                 intent.putExtra("doctorid", doctorList.get(position).getDoctorid());
+                intent.putExtra("doctorname", doctorList.get(position).getDoctorname());
                 startActivity(intent);
             }
         };
     }
 
-    private void setDoctorInfo(){
-        doctorList.add(new Doctor("papa", "sa"));
-        doctorList.add(new Doctor("dada","as"));
-        doctorList.add(new Doctor("dada","as"));
-        doctorList.add(new Doctor("dada","as"));
-        doctorList.add(new Doctor("dada","as"));
-    }
+//    private void setDoctorInfo(){
+//        doctorList.add(new Doctor("papa", "sa"));
+//        doctorList.add(new Doctor("dada","as"));
+//        doctorList.add(new Doctor("dada","as"));
+//        doctorList.add(new Doctor("dada","as"));
+//        doctorList.add(new Doctor("dada","as"));
+//    }
 
     /**
      * Perform the actual linking after scanning the qr code
@@ -192,6 +193,7 @@ public class DoctorsFragment extends Fragment {
                         UserProfile.linkDoctor(
                                 validator.getInviteId(),
                                 validator.getDoctorId(),
+
 
                                 (v, error) -> {
                                     dialog.dismiss();
