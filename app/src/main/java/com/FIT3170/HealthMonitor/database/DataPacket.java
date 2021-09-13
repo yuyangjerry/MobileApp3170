@@ -9,7 +9,7 @@ import java.util.List;
  * This class is used to communicate between the sensor service and the uploader.
  * This is the structure that is expected to add data to the uploader.  It should contain 5 seconds of data.
  */
-public class DataPacket implements ECGAlgorithm{
+public class DataPacket implements ECGAlgorithmInt {
 
     private List<DataPoint> dataArray;
 
@@ -81,4 +81,7 @@ public class DataPacket implements ECGAlgorithm{
         return averageBPM/peakCount;
     }
 
+    public List<DataPoint> getDataArray(){
+        return this.dataArray;
+    }
 }

@@ -1,5 +1,6 @@
 package com.FIT3170.HealthMonitor;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -20,26 +21,36 @@ import com.FIT3170.HealthMonitor.bluetooth.BluetoothService;
 import com.FIT3170.HealthMonitor.bluetooth.BluetoothServiceViewModel;
 import com.FIT3170.HealthMonitor.database.DataPacket;
 import com.FIT3170.HealthMonitor.database.DataPoint;
+import com.FIT3170.HealthMonitor.database.ECGAlgorithm;
+import com.FIT3170.HealthMonitor.database.PeakToPeakAlgorithm;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-
-import java.util.ArrayList;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 public class DashBoardFragment extends Fragment {
 
     private LineChart bPMLineChart;
     private TextView heartRateTextView;
+    private LineData lineData;
+    // Thread for line chart
+//    private Thread thread;
+    private Activity mActivity;
+    private int displayCount = 10; //number of data  points to display
+    private int dataCount = 0;
+    private final int ENTRY_COUNT_MAX = 15;
 
     private BluetoothService mService;
     private int mConnectionStatus;
     private BluetoothServiceViewModel model;
-
     private DataPacket mDataPacket;
+    private ECGAlgorithm algorithm;
 
-
+    public DashBoardFragment(Activity mActivity) {
+        this.mActivity = mActivity;
+    }
     public DashBoardFragment() {
         // Required empty public constructor
     }
@@ -53,6 +64,7 @@ public class DashBoardFragment extends Fragment {
     }
 
 
+
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         // Set View Model
@@ -60,8 +72,12 @@ public class DashBoardFragment extends Fragment {
         setObservers();
 
         //get all needed views by id
+
         bPMLineChart = view.findViewById(R.id.line_chart);
         heartRateTextView = view.findViewById(R.id.heart_rate_text);
+
+        // Create algorithm class
+        algorithm = new ECGAlgorithm(new PeakToPeakAlgorithm());
 
         SetUpLineChart();
 
@@ -71,12 +87,16 @@ public class DashBoardFragment extends Fragment {
     private void SetUpLineChart() {
         //style
         bPMLineChart.setBackgroundColor(Color.WHITE);
+        bPMLineChart.setScaleEnabled(true);
 
         //X Axis
-        bPMLineChart.getXAxis().setDrawGridLines(false);
-        bPMLineChart.getXAxis().setDrawLabels(true);
-        bPMLineChart.getXAxis().setDrawAxisLine(true);
-        bPMLineChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        XAxis xAxis = bPMLineChart.getXAxis();
+        xAxis.setDrawGridLines(false);
+        xAxis.setDrawLabels(true);
+        xAxis.setDrawAxisLine(true);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setAvoidFirstLastClipping(true);
+        xAxis.setLabelCount(6, true);
 
         //Right Axis
         bPMLineChart.getAxisRight().setDrawLabels(false);
@@ -84,41 +104,127 @@ public class DashBoardFragment extends Fragment {
         bPMLineChart.getAxisRight().setDrawGridLines(false);
 
         //Left Axis
-        bPMLineChart.getAxisLeft().setDrawGridLines(false);
+        bPMLineChart.getAxisLeft().setDrawGridLines(true);
         bPMLineChart.getAxisLeft().setDrawAxisLine(false);
+        bPMLineChart.getAxisLeft().setLabelCount(6, true);
 
-        bPMLineChart.getXAxis().setLabelCount(5, true);
         bPMLineChart.getLegend().setEnabled(false);
         bPMLineChart.getDescription().setEnabled(false);
-        ;
-        bPMLineChart.setExtraOffsets(10f, 7f, 0f, 16f);
-        SetLineChartDummyData();
 
+        bPMLineChart.setExtraOffsets(0f, 7f, 0f, 16f);
+        setLineChartDummyData();
+//        beginChartThread();
 
     }
 
 
-    private void SetLineChartDummyData() {
-        int count = 12;
-        float[] bpmDummyData = {61f, 65f, 64f, 72f, 74f, 79f, 65f, 63f, 65f, 67f, 64f, 66f, 67f, 66f};
-        ArrayList<Entry> values = new ArrayList<Entry>();
-        for (int i = 0; i < count; i++) {
-            values.add(new Entry(i, bpmDummyData[i]));
-        }
-
+    private void setLineChartDummyData() {
         // documentation for LineDataSet class
         //https://javadoc.jitpack.io/com/github/PhilJay/MPAndroidChart/v3.1.0/javadoc/
-        LineDataSet dummySet = new LineDataSet(values, "BPM");
-        dummySet.setLineWidth(1.7f);
-        dummySet.setDrawCircles(false);
-        dummySet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER); //curved shape
-        dummySet.setColor(ContextCompat.getColor(getContext(), R.color.primaryRed));
-        dummySet.setDrawValues(false);
+
+        LineDataSet dummySet = createDataSet();
+        lineData = new LineData(dummySet);
 
 
-        LineData data = new LineData(dummySet);
-        bPMLineChart.setData(data);
+        bPMLineChart.setData(lineData);
     }
+
+    private LineDataSet createDataSet() {
+        LineDataSet newSet = new LineDataSet(null, "BPM");
+        newSet.setLineWidth(2f);
+        newSet.setDrawCircles(false);
+        newSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER); //curved shape
+        newSet.setColor(ContextCompat.getColor(getContext(), R.color.primaryRed));
+        newSet.setDrawValues(false);
+        return newSet;
+    }
+
+//    private void addEntry() {
+//        if (lineData != null) {
+//            int random = new Random().nextInt(10) + 60;
+//            ILineDataSet dataSet = lineData.getDataSetByIndex(0);
+//            Entry newEntry = new Entry(dataCount++, random);
+//            lineData.addEntry(newEntry, 0);
+//            lineData.notifyDataChanged();
+//
+//            bPMLineChart.notifyDataSetChanged();
+//            bPMLineChart.setVisibleXRangeMaximum(displayCount);
+//
+//            bPMLineChart.moveViewToX(lineData.getEntryCount());
+//
+//
+//            if (dataSet.getEntryCount() >= ENTRY_COUNT_MAX) {
+//                dataSet.removeFirst();
+//                for (int i = 0; i < dataSet.getEntryCount(); i++) {
+//                    Entry entryToChange = dataSet.getEntryForIndex(i);
+//                    entryToChange.setX(entryToChange.getX() - 1);
+//                }
+//            }
+//
+//            Log.i("Dashboard", "added entry");
+//        }
+//    }
+
+    private void graphPacket(DataPacket dataPacket) {
+        if (lineData != null) {
+            ILineDataSet dataSet = lineData.getDataSetByIndex(0);
+            dataSet.clear();
+            Integer dataPointCount = 0;
+            for (DataPoint dataPoint: dataPacket.getData()) {
+                Entry newEntry = new Entry(dataPointCount, dataPoint.getValue());
+                lineData.addEntry(newEntry, 0);
+                dataPointCount += 1;
+            }
+            lineData.notifyDataChanged();
+            bPMLineChart.notifyDataSetChanged();
+            bPMLineChart.setVisibleXRangeMaximum(dataPointCount);
+
+            bPMLineChart.moveViewToX(dataPointCount);
+
+
+
+//            if (dataSet.getEntryCount() >= ENTRY_COUNT_MAX) {
+//                dataSet.removeFirst();
+//                for (int i = 0; i < dataSet.getEntryCount(); i++) {
+//                    Entry entryToChange = dataSet.getEntryForIndex(i);
+//                    entryToChange.setX(entryToChange.getX() - 1);
+//                }
+//            }
+
+            Log.i("Dashboard", "");
+        }
+    }
+
+//    private void beginChartThread() {
+//        if (thread != null) {
+//            thread.interrupt();
+//        }
+//        thread = new Thread() {
+//            private boolean running = true;
+//
+//            public void run() {
+//                while (running) {
+//                    try {
+//                        mActivity.runOnUiThread(new Runnable() {
+//
+//                            @Override
+//                            public void run() {
+//                                addEntry();
+//                            }
+//                        });
+//                        Thread.sleep(1000);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                        running = false;
+//                        return;
+//                    }
+//                }
+//            }
+//
+//        };
+//        thread.start();
+//
+//    }
 
     private void setObservers() {
         model.getBinder().observe(getActivity(), new Observer<BluetoothService.BluetoothBinder>() {
@@ -143,13 +249,6 @@ public class DashBoardFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        Log.d("debug", "DashboardFragment: onResume");
-        startService();
-    }
-
-    @Override
     public void onStop() {
         super.onStop();
         Log.d("debug", "DashboardFragment: onStop");
@@ -162,6 +261,31 @@ public class DashBoardFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+//        if (thread != null) {
+//            thread.interrupt();
+//        }
+    }
+
+    @Override
+    public void onDetach() {
+//        if (thread != null) {
+//            thread.interrupt();
+//        }
+        super.onDetach();
+    }
+
+    @Override
+    public void onResume() {
+//        if (thread == null) {
+//            beginChartThread();
+//        }
+        super.onResume();
+        startService();
+    }
+
     // Important!
     // Only remove observers if you do not want to persistently perform some action with the sensor packet
     // data once it is received
@@ -172,11 +296,6 @@ public class DashBoardFragment extends Fragment {
             mService.getDataPacket().removeObserver(dataPacketObserver);
             mService.getConnectionStatus().removeObserver(connectionStatusObserver);
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 
     private void startService(){
@@ -197,9 +316,18 @@ public class DashBoardFragment extends Fragment {
             Log.d("debug","-----------------------------");
             Log.d("debug", "Data Packet Size: "+ dataPacket.getData().size()+"");
             Log.d("debug","-----------------------------");
-            float bpm = dataPacket.getPeakCount();
-            String outString = Float.toString(bpm);
-            heartRateTextView.setText(outString);
+            // change implementation
+            // store algorithm class as local
+            // algorithm.getPeakCount(dataPacket)
+            // inside algorithm store last peak value + distance to end of data packet
+            //float bpm = dataPacket.getPeakCount();
+            double bpm = algorithm.calculate(dataPacket);
+//            String outString = Float.toString(bpm);
+            heartRateTextView.setText(String.format("%.1f", bpm));
+
+            // Dummy Code
+            // Sensor Is Spitting Millivolt Values that are
+            graphPacket(dataPacket);
         }
     };
 
@@ -209,5 +337,6 @@ public class DashBoardFragment extends Fragment {
             Log.d("debug", "Connection status: "+integer.toString());
         }
     };
-    
+
+
 }
