@@ -315,7 +315,11 @@ public class BluetoothService extends Service {
         public void run() {
             List<DataPoint> tempRef = buffer;
 //            Log.d("debug", "Sink: "+tempRef.size()+" packets");
-            mDataPointSink.postValue(new DataPacket(tempRef));
+            DataPacket testPacket = new DataPacket(tempRef);
+            for (int i = 0; i < testPacket.getDataArray().size(); i++){
+                Log.d("debug","Time recieve data: " + testPacket.getDataArray().get(i).toString());
+            }
+            mDataPointSink.postValue(testPacket);
             // Don't use buffer.clear(). This will destroy the data before it is sent to fragments
             buffer = new ArrayList<DataPoint>();
             mHandler.postDelayed(this,SINK_DURATION);
