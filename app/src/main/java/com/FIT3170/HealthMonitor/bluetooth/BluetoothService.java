@@ -34,7 +34,7 @@ import java.util.UUID;
 public class BluetoothService extends Service {
     private final IBinder binder = new BluetoothBinder();
     private MutableLiveData<Boolean> mIsScanning = new MutableLiveData<>(false);
-    private MutableLiveData<BleDevice> mBleDevice = new MutableLiveData<>();
+    private MutableLiveData<BleDevice> mBleDevice = new MutableLiveData<>(); //Connect to the device
     private MutableLiveData<BleDevice> mScanResult = new MutableLiveData<>();
     private MutableLiveData<DataPacket> mDataPointSink = new MutableLiveData<>();
     // Connection States
