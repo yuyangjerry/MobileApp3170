@@ -8,7 +8,7 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class BluetoothServiceViewModel extends ViewModel {
+public class BluetoothServiceViewModel  {
     MutableLiveData<BluetoothService.BluetoothBinder> binder = new MutableLiveData<>();
 
     // Keeping this in here because it doesn't require a context

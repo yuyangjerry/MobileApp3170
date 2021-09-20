@@ -43,7 +43,11 @@ public class MainActivity extends AppCompatActivity {
         loadFragment(new HomeFragment());
     }
 
-
+    /**
+     * Starts all the services required for the app
+     * Bluetooth service must be created before the notification service as it is a dependent
+     * TODO: Look to see if bluetooth service should instantiate all its dependent services
+     */
     private void startServices(){
         // Start the bluetooth service
         Intent bluetoothServiceIntent = new Intent(this, BluetoothService.class);

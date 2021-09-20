@@ -69,7 +69,7 @@ public class DashBoardFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         // Set View Model
-        model = ViewModelProviders.of(this).get(BluetoothServiceViewModel.class);
+        model = new BluetoothServiceViewModel();
         setObservers();
 
         //get all needed views by id

@@ -78,7 +78,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         uuid = view.findViewById(R.id.uuid);
 
         //get the currently signed in user
-        model = ViewModelProviders.of(this).get(BluetoothServiceViewModel.class);
+        model = new BluetoothServiceViewModel();
         //set the text of the views with user data
         email.setText(UserProfile.getEmail());
         uuid.setText(UserProfile.getUid());
