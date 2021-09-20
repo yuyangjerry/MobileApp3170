@@ -13,14 +13,14 @@ import androidx.lifecycle.Observer;
 
 import com.FIT3170.HealthMonitor.NotificationBuilder;
 import com.FIT3170.HealthMonitor.bluetooth.BluetoothService;
-import com.FIT3170.HealthMonitor.bluetooth.BluetoothServiceViewModel;
+import com.FIT3170.HealthMonitor.bluetooth.BluetoothServiceModel;
 import com.FIT3170.HealthMonitor.database.DataPacket;
 import com.FIT3170.HealthMonitor.database.ECGAlgorithm;
 import com.FIT3170.HealthMonitor.database.PeakToPeakAlgorithm;
 
 public class NotificationService extends LifecycleService {
 
-    private BluetoothServiceViewModel model;
+    private BluetoothServiceModel model;
     private BluetoothService mService;
     private int mConnectionStatus;
     private DataPacket mDataPacket;
@@ -37,8 +37,6 @@ public class NotificationService extends LifecycleService {
     // !!
     // !!
 
-    public NotificationService() {
-    }
 
     /**
      * First method called when the service is instantiated.
@@ -48,7 +46,7 @@ public class NotificationService extends LifecycleService {
     @Override
     public void onCreate() {
         super.onCreate();
-        model = new BluetoothServiceViewModel();
+        model = new BluetoothServiceModel();
         algorithm = new ECGAlgorithm(new PeakToPeakAlgorithm());
         bindToBluetoothService();
         setObservers();
@@ -61,6 +59,30 @@ public class NotificationService extends LifecycleService {
         // TODO: Return the communication channel to the service.
         super.onBind(intent);
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+
+    @Override
+    // Stops the service
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        stopSelf();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(model.getBinder() != null){
+            removeObservers();
+            this.unbindService(model.getServiceConnection());
+        }
+    }
+
+    private void removeObservers() {
+        if(mService != null){
+            // Remove Observers
+            mService.getDataPacket().removeObserver(dataPacketObserver);
+        }
     }
 
 

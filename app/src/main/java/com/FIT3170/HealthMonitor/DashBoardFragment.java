@@ -15,10 +15,9 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.FIT3170.HealthMonitor.bluetooth.BluetoothService;
-import com.FIT3170.HealthMonitor.bluetooth.BluetoothServiceViewModel;
+import com.FIT3170.HealthMonitor.bluetooth.BluetoothServiceModel;
 import com.FIT3170.HealthMonitor.database.DataPacket;
 import com.FIT3170.HealthMonitor.database.DataPoint;
 import com.FIT3170.HealthMonitor.database.ECGAlgorithm;
@@ -29,7 +28,6 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import java.util.Random;
 
 public class DashBoardFragment extends Fragment {
 
@@ -45,7 +43,7 @@ public class DashBoardFragment extends Fragment {
 
     private BluetoothService mService;
     private int mConnectionStatus;
-    private BluetoothServiceViewModel model;
+    private BluetoothServiceModel model;
     private DataPacket mDataPacket;
     private ECGAlgorithm algorithm;
 
@@ -69,7 +67,7 @@ public class DashBoardFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         // Set View Model
-        model = new BluetoothServiceViewModel();
+        model = new BluetoothServiceModel();
         setObservers();
 
         //get all needed views by id

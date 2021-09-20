@@ -14,7 +14,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,7 +25,7 @@ import android.widget.TextView;
 
 import com.FIT3170.HealthMonitor.adapters.ListAdapter_BleDevices;
 import com.FIT3170.HealthMonitor.bluetooth.BluetoothService;
-import com.FIT3170.HealthMonitor.bluetooth.BluetoothServiceViewModel;
+import com.FIT3170.HealthMonitor.bluetooth.BluetoothServiceModel;
 import com.FIT3170.HealthMonitor.database.DataPacket;
 import com.FIT3170.HealthMonitor.database.UserProfile;
 import com.clj.fastble.data.BleDevice;
@@ -43,7 +42,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private BluetoothService mService;
     private BleDevice mDevice;
     private Boolean mIsScanning;
-    private BluetoothServiceViewModel model;
+    private BluetoothServiceModel model;
     private DataPacket buffer;
     public static final int REQUEST_FINE_LOCATION = 2;
 
@@ -78,7 +77,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         uuid = view.findViewById(R.id.uuid);
 
         //get the currently signed in user
-        model = new BluetoothServiceViewModel();
+        model = new BluetoothServiceModel();
         //set the text of the views with user data
         email.setText(UserProfile.getEmail());
         uuid.setText(UserProfile.getUid());
