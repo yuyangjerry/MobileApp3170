@@ -154,7 +154,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onResume() {
         super.onResume();
         Log.d("debug", "HomeFragment: onResume");
-        startService();
+        bindService();
     }
 
     @Override
@@ -172,11 +172,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         super.onDestroy();
     }
 
-    private void startService() {
-        Intent serviceIntent = new Intent(getActivity(), BluetoothService.class);
-        getActivity().startService(serviceIntent);
-        bindService();
-    }
+//    private void startService() {
+//        Intent serviceIntent = new Intent(getActivity(), BluetoothService.class);
+//        getActivity().startService(serviceIntent);
+//        bindService();
+//    }
 
     private void bindService() {
         Intent serviceIntent = new Intent(getActivity(), BluetoothService.class);

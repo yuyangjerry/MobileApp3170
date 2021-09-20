@@ -37,9 +37,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_with_drawer);
         Context context = this; // the context is a reference to the activity itself
         InitialiseFields();
-        //load the home fragment
+        // Start the services of the app
+        startServices();
+        // load the home fragment
         loadFragment(new HomeFragment());
     }
+
+
+    private void startServices(){
+        // Start the bluetooth service
+        Intent bluetoothServiceIntent = new Intent(this, BluetoothService.class);
+        this.startService(bluetoothServiceIntent);
+
+        // Start the bluetooth service
+        Intent notificationServiceIntent = new Intent(this, NotificationService.class);
+        this.startService(notificationServiceIntent);
+
+    }
+
 
     @Override
     protected void onStart() {

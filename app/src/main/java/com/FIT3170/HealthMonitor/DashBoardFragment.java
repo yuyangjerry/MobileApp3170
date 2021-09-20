@@ -286,7 +286,7 @@ public class DashBoardFragment extends Fragment {
 //            beginChartThread();
 //        }
         super.onResume();
-        startService();
+        bindService();
     }
 
     // Important!
@@ -301,11 +301,11 @@ public class DashBoardFragment extends Fragment {
         }
     }
 
-    private void startService(){
-        Intent serviceIntent = new Intent(getActivity(), BluetoothService.class);
-        getActivity().startService(serviceIntent);
-        bindService();
-    }
+//    private void startService(){
+//        Intent serviceIntent = new Intent(getActivity(), BluetoothService.class);
+//        getActivity().startService(serviceIntent);
+//        bindService();
+//    }
 
     private void bindService() {
         Intent serviceIntent = new Intent(getActivity(), BluetoothService.class);
