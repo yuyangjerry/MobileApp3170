@@ -1,5 +1,8 @@
 package com.FIT3170.HealthMonitor.database;
+import android.os.Build;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -90,7 +93,7 @@ public class ReadingUploader {
             currentStartTime = new Date();
         }
 
-        currentData.addAll(dataPacket.getData());
+        currentData.addAll(dataPacket.getDataArray());
 
     }
 
@@ -132,6 +135,7 @@ public class ReadingUploader {
     // can be removed once integrated
     static class MockSensorService extends TimerTask {
 
+        @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         public void run() {
             ReadingUploader.getInstance().addData(new DataPacket());

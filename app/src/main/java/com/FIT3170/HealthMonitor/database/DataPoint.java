@@ -1,4 +1,8 @@
 package com.FIT3170.HealthMonitor.database;
+import android.os.Build;
+import androidx.annotation.RequiresApi;
+import java.time.Instant;
+
 
 /**
  * This is an individual data point
@@ -8,18 +12,23 @@ package com.FIT3170.HealthMonitor.database;
 public class DataPoint {
 
     private int value;
-    private long timeInMillis;
+    private Instant time;
 
-    public DataPoint(int value, long timeInMillis){
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public DataPoint(int value) {
         this.value = value;
-        this.timeInMillis = timeInMillis;
+        this.time = Instant.now();
     }
 
     public int getValue() {
         return value;
     }
 
-    public long getTime() {
-        return timeInMillis;
+    public Instant getTime() {
+        return time;
+    }
+
+    public String toString() {
+        return "{value:" + value + ",time:" + time.toString() + "}";
     }
 }

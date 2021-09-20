@@ -7,11 +7,13 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.lifecycle.MutableLiveData;
 
 import com.FIT3170.HealthMonitor.R;
@@ -297,12 +299,13 @@ public class BluetoothService extends Service {
                         mHandler.removeCallbacks(transferBufferToSink);
                     }
 
+                    @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
                     public void onCharacteristicChanged(byte[] data) {
 //                        Integer heartBeat = data[0] | data[1] << 8;
                         Integer heartBeatInt = Integer.parseInt(decodeResult(data));
 //                        Log.d("debug",heartBeat.toString());
-                        buffer.add(new DataPoint(heartBeatInt,System.currentTimeMillis()));
+                        buffer.add(new DataPoint(heartBeatInt));
                     }
                 });
     }

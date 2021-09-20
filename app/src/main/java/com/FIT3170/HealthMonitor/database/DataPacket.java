@@ -1,7 +1,11 @@
 package com.FIT3170.HealthMonitor.database;
 
+import android.os.Build;
 import android.util.Log;
 
+import androidx.annotation.RequiresApi;
+
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +16,7 @@ import java.util.List;
 public class DataPacket implements ECGAlgorithmInt {
 
     private List<DataPoint> dataArray;
+    private Instant initTime;
 
     /**
      * This is the constructor that should be used when created by Sensor Service
@@ -21,12 +26,14 @@ public class DataPacket implements ECGAlgorithmInt {
      */
     public DataPacket(List<DataPoint> dataPoints){
         dataArray = dataPoints;
+        initTime = dataArray.get(0).getTime();
     }
 
     /**
      * This is the constructor used during testing - it created some sample data points
      * 250 points to replicate 5 seconds of data
      */
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public DataPacket(){
         // create sample data with values starting at 1 and increasing
         dataArray = new ArrayList();
@@ -34,15 +41,32 @@ public class DataPacket implements ECGAlgorithmInt {
         int dataValue = 1;
         for (int i = 0; i < 250; i++){
 
-            dataArray.add(new DataPoint(dataValue, System.currentTimeMillis()));
+            dataArray.add(new DataPoint(dataValue));
 
             dataValue += 1;
         }
     }
 
-    public List<DataPoint> getData(){
-        return dataArray;
+    // get DataArray
+    public List<DataPoint> getDataArray(){
+        return this.dataArray;
     }
+
+    // Get initTime
+    public Instant getinitTime() {
+        return initTime;
+    }
+
+    // Convert DataPacket into Json Format
+    public String toJson() {
+        String outString = "{initatedTime:" + initTime.toString() + ",data:[";
+        for (int i = 0; i < dataArray.size() - 1; i++) {
+            outString = outString + dataArray.get(i).toString() + ",";
+        }
+        outString = outString + dataArray.get(dataArray.size() - 1).toString() + "]";
+        return outString;
+    }
+
 
     // This is bad implementation maybe fix later
     public float getPeakCount () {
@@ -81,7 +105,4 @@ public class DataPacket implements ECGAlgorithmInt {
         return averageBPM/peakCount;
     }
 
-    public List<DataPoint> getDataArray(){
-        return this.dataArray;
-    }
 }

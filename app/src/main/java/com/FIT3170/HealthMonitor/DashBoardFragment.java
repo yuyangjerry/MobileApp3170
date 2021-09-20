@@ -173,7 +173,7 @@ public class DashBoardFragment extends Fragment {
             ILineDataSet dataSet = lineData.getDataSetByIndex(0);
             dataSet.clear();
             Integer dataPointCount = 0;
-            for (DataPoint dataPoint: dataPacket.getData()) {
+            for (DataPoint dataPoint: dataPacket.getDataArray()) {
                 Entry newEntry = new Entry(dataPointCount, dataPoint.getValue());
                 lineData.addEntry(newEntry, 0);
                 dataPointCount += 1;
@@ -317,7 +317,7 @@ public class DashBoardFragment extends Fragment {
         @Override
         public void onChanged(DataPacket dataPacket) {
             Log.d("debug","-----------------------------");
-            Log.d("debug", "Data Packet Size: "+ dataPacket.getData().size()+"");
+            Log.d("debug", "Data Packet Size: "+ dataPacket.getDataArray().size()+"");
             Log.d("debug","-----------------------------");
             // change implementation
             // store algorithm class as local
