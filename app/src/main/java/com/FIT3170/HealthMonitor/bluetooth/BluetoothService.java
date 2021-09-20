@@ -5,7 +5,6 @@ import android.app.Service;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Handler;
@@ -14,10 +13,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModelProviders;
 
-import com.FIT3170.HealthMonitor.NotificationService;
-import com.FIT3170.HealthMonitor.R;
 import com.FIT3170.HealthMonitor.database.DataPacket;
 import com.FIT3170.HealthMonitor.database.DataPoint;
 import com.clj.fastble.BleManager;
@@ -27,10 +23,8 @@ import com.clj.fastble.callback.BleScanCallback;
 import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.exception.BleException;
 import com.clj.fastble.scan.BleScanRuleConfig;
-import com.clj.fastble.utils.HexUtil;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 

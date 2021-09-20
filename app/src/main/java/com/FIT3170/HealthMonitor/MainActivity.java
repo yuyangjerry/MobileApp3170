@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 
 import com.FIT3170.HealthMonitor.bluetooth.BluetoothService;
+import com.FIT3170.HealthMonitor.services.NotificationService;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 

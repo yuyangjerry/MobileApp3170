@@ -1,25 +1,22 @@
-package com.FIT3170.HealthMonitor;
+package com.FIT3170.HealthMonitor.services;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleService;
 import androidx.lifecycle.Observer;
 
+import com.FIT3170.HealthMonitor.NotificationBuilder;
 import com.FIT3170.HealthMonitor.bluetooth.BluetoothService;
 import com.FIT3170.HealthMonitor.bluetooth.BluetoothServiceViewModel;
 import com.FIT3170.HealthMonitor.database.DataPacket;
 import com.FIT3170.HealthMonitor.database.ECGAlgorithm;
-import com.FIT3170.HealthMonitor.database.ReadingUploader;
+import com.FIT3170.HealthMonitor.database.PeakToPeakAlgorithm;
 
 public class NotificationService extends LifecycleService {
 
@@ -30,6 +27,15 @@ public class NotificationService extends LifecycleService {
     private ECGAlgorithm algorithm;
 
     public static final int ABNORMAL_HEART_RATE = 120;
+
+    // FOR DEBUG PURPOSES ONLY
+    // !!
+    // !!
+    // !!
+    private Boolean hasNotificationBeenServed = false;
+    // !!
+    // !!
+    // !!
 
     public NotificationService() {
     }
@@ -43,10 +49,10 @@ public class NotificationService extends LifecycleService {
     public void onCreate() {
         super.onCreate();
         model = new BluetoothServiceViewModel();
+        algorithm = new ECGAlgorithm(new PeakToPeakAlgorithm());
         bindToBluetoothService();
         setObservers();
         createNotificationChannel();
-
     }
 
 
@@ -57,11 +63,6 @@ public class NotificationService extends LifecycleService {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    @NonNull
-    @Override
-    public Lifecycle getLifecycle() {
-        return null;
-    }
 
     /**
      * Binds to the bluetooth service.
@@ -77,7 +78,6 @@ public class NotificationService extends LifecycleService {
      *
      */
     private void setObservers() {
-        LifecycleOwner currentLifecycle = this;
         model.getBinder().observe(this, new Observer<BluetoothService.BluetoothBinder>() {
             @Override
             public void onChanged(BluetoothService.BluetoothBinder bluetoothBinder) {
@@ -93,7 +93,7 @@ public class NotificationService extends LifecycleService {
 //                    mService.getConnectionStatus().observe(currentLifecycle, connectionStatusObserver);
 
                     // mDataPacket = mService.getDataPacket().getValue();
-                    mService.getDataPacket().observe(currentLifecycle, dataPacketObserver);
+                    mService.getDataPacket().observe(NotificationService.this, dataPacketObserver);
                 }
             }
         });
@@ -113,8 +113,8 @@ public class NotificationService extends LifecycleService {
             // change implementation
             // store algorithm class as local
             double bpm = algorithm.calculate(dataPacket);
+            Log.d("notification service", bpm + "");
             checkAbnormalHeartRate(bpm);
-//
         }
     };
 
@@ -130,9 +130,11 @@ public class NotificationService extends LifecycleService {
      * @param bpm Most recent bpm value
      */
     private void checkAbnormalHeartRate(double bpm) {
-        if(bpm > ABNORMAL_HEART_RATE) {
+        if(bpm > ABNORMAL_HEART_RATE && !hasNotificationBeenServed) {
             sendNotification();
             storeNotification();
+            // Please Remove This Line Of Code after we fix the abnormal heart rate algorithm
+            hasNotificationBeenServed = true;
         }
     }
 
