@@ -47,7 +47,7 @@ public class DataPacket implements ECGAlgorithmInt {
     // This is bad implementation maybe fix later
     public float getPeakCount () {
         // Variable declaration
-        final int bound = 500;
+        final int bound = 650;
         final int freq = 50;
         final int second = 60;
         int lastPeak = 0;
@@ -57,14 +57,14 @@ public class DataPacket implements ECGAlgorithmInt {
 
 
         // Loop through data to find the peaks of
-        for (int i = 2; i <dataArray.size(); i++){
+        for (int i = 3; i <dataArray.size(); i++){
             int currentData = dataArray.get(i).getValue();
             // Find the difference between current value and value from 2 data points before
-            int difference = currentData - dataArray.get(i - 2).getValue();
+            int difference = currentData - dataArray.get(i - 3).getValue();
             // If the difference between 3 data points is greater than the bound
-            if (difference > bound && lastPeak < i - 1){
-                Log.d("debug", "Peak values = " + currentData + " and " + dataArray.get(i - 2));
-                Log.d("debug", "At point = " + i + " and " + (i - 2));
+            if (difference > bound && lastPeak < i - 2){
+                Log.d("debug", "Peak values = " + currentData + " and " + dataArray.get(i - 3));
+                Log.d("debug", "At point = " + i + " and " + (i - 3));
                 peakDistanceArray.add(i - lastPeak);
                 peakCount ++;
                 lastPeak = i;

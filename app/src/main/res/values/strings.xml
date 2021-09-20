@@ -26,4 +26,23 @@
        of the navigation drawer-->
     <string name="nav_open">Open</string>
     <string name="nav_close">Close</string>
+    <string name="title_activity_registration">RegistrationActivity</string>
+
+    <string-array name="gender_options">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="aus_states">
+        <item>VIC</item>
+        <item>NSW</item>
+        <item>QLD</item>
+        <item>WA</item>
+        <item>SA</item>
+        <item>TAS</item>
+        <item>ACT</item>
+        <item>NT</item>
+    </string-array>
+
 </resources>

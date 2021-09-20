@@ -33,8 +33,10 @@ public class NotificationHistory extends Fragment {
 
     // Using ArrayList to store images data
 
-    ArrayList courseName = new ArrayList<>(Arrays.asList("Data Structure", "C++", "C#", "JavaScript", "Java",
-            "C-Language", "HTML 5", "CSS"));
+    ArrayList courseName = new ArrayList<>(Arrays.asList("Software Update Available",
+            "Abnormal Heart Rate Detected: Contact GP", "Heartsense at Full Charge",
+            "Heartsense Disconnected", "Heartsense at 15% Charge", "New Doctor Successfully linked"
+            , "Software Update Successful"));
 
 
     // TODO: Rename and change types of parameters

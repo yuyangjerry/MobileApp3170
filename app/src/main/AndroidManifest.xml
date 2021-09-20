@@ -4,12 +4,10 @@
 
     <!--    This is needed for scanning the QR code-->
     <uses-permission android:name="android.permission.CAMERA" />
-    <!--    This is needed for scanning the BLE Devices-->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -26,7 +24,9 @@
             </intent-filter>
 
         </activity>
+        <activity android:name="com.FIT3170.HealthMonitor.RegistrationActivity" />
         <activity android:name="com.FIT3170.HealthMonitor.UserProfileActivity"></activity>
+        <activity android:name="com.FIT3170.HealthMonitor.DoctorProfileActivity"></activity>
         <activity
             android:name="com.FIT3170.HealthMonitor.QRScanner"
             android:label="@string/title_activity_q_r_scanner"
@@ -34,8 +34,10 @@
         <activity android:name="com.FIT3170.HealthMonitor.MainActivity"
             android:windowSoftInputMode="adjustResize"
 
-            >
-        </activity>
+            ></activity>
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
         <service android:name=".bluetooth.BluetoothService">
 
         </service>
