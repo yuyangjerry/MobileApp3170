@@ -18,25 +18,14 @@ import com.FIT3170.HealthMonitor.database.DataPacket;
 import com.FIT3170.HealthMonitor.database.ECGAlgorithm;
 import com.FIT3170.HealthMonitor.database.PeakToPeakAlgorithm;
 
-public class NotificationService extends LifecycleService {
+public class UploadingService extends LifecycleService {
 
     private BluetoothServiceModel model;
     private BluetoothService mService;
     private int mConnectionStatus;
     private DataPacket mDataPacket;
-    private ECGAlgorithm algorithm;
 
     public static final int ABNORMAL_HEART_RATE = 120;
-
-    // FOR DEBUG PURPOSES ONLY
-    // !!
-    // !!
-    // !!
-    private Boolean hasNotificationBeenServed = false;
-    // !!
-    // !!
-    // !!
-
 
     /**
      * First method called when the service is instantiated.
@@ -47,10 +36,8 @@ public class NotificationService extends LifecycleService {
     public void onCreate() {
         super.onCreate();
         model = new BluetoothServiceModel();
-        algorithm = new ECGAlgorithm(new PeakToPeakAlgorithm());
         bindToBluetoothService();
         setObservers();
-        createNotificationChannel();
     }
 
 
@@ -110,7 +97,7 @@ public class NotificationService extends LifecycleService {
                 else {
                     Log.d("debug", "onChanged: bound to service.");
                     mService = bluetoothBinder.getService();
-                    mService.getDataPacket().observe(NotificationService.this, dataPacketObserver);
+                    mService.getDataPacket().observe(UploadingService.this, dataPacketObserver);
                 }
             }
         });
@@ -129,9 +116,7 @@ public class NotificationService extends LifecycleService {
             Log.d("debug","-----------------------------");
             // change implementation
             // store algorithm class as local
-            double bpm = algorithm.calculate(dataPacket);
-            Log.d("notification service", bpm + "");
-            checkAbnormalHeartRate(bpm);
+            Log.d("d","uploading packet");
         }
     };
 
@@ -142,58 +127,6 @@ public class NotificationService extends LifecycleService {
 //        }
 //    };
 
-    /**
-     * Checks to see if the heart rate is abnormal, triggers notification if so
-     * @param bpm Most recent bpm value
-     */
-    private void checkAbnormalHeartRate(double bpm) {
-        if(bpm > ABNORMAL_HEART_RATE && !hasNotificationBeenServed) {
-            sendNotification();
-            storeNotification();
-            // Please Remove This Line Of Code after we fix the abnormal heart rate algorithm
-            hasNotificationBeenServed = true;
-        }
-    }
 
-    /**
-     * Need to investigate its purpose.
-     * Allows for notifications to be sent
-     */
-    private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Test";//getString(R.string.channel_name);
-            String description = "Description"; //getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel("com.FIT3170.HealthMonitor",
-                    name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-
-        }
-    }
-
-    /**
-     * Sends the notification to the phone
-     */
-    private void sendNotification() {
-        NotificationBuilder builder = new NotificationBuilder();
-
-        builder.createNotification(this, "Abnormal Heart Rate",
-                "An abnormal heart rate was detected. We recommend you get proper medical "
-                        + "assistance.");
-
-    }
-
-    /**
-     * TODO: Implement functionality to store a sent notification in firebase
-     */
-    private void storeNotification() {
-
-    }
 
 }

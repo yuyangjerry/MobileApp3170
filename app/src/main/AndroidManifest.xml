@@ -20,6 +20,10 @@
             android:name=".services.NotificationService"
             android:enabled="true"
             android:exported="true"></service>
+        <service
+            android:name=".services.UploadingService"
+            android:enabled="true"
+            android:exported="true"></service>
 
         <activity android:name=".LoginActivity">
             <intent-filter>

@@ -16,6 +16,7 @@ import android.widget.Button;
 
 import com.FIT3170.HealthMonitor.bluetooth.BluetoothService;
 import com.FIT3170.HealthMonitor.services.NotificationService;
+import com.FIT3170.HealthMonitor.services.UploadingService;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -58,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
         Intent notificationServiceIntent = new Intent(this, NotificationService.class);
         this.startService(notificationServiceIntent);
 
+        // Start the uploading service
+        Intent uploadingServiceIntent = new Intent(this, UploadingService.class);
+        this.startService(uploadingServiceIntent);
     }
 
 
