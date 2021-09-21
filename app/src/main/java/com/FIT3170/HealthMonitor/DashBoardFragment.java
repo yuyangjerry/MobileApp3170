@@ -238,12 +238,8 @@ public class DashBoardFragment extends Fragment {
                 else{
                     Log.d("debug", "onChanged: bound to service.");
                     mService = bluetoothBinder.getService();
-
-                    mConnectionStatus = mService.getConnectionStatus().getValue();
                     mService.getConnectionStatus().observe(getActivity(), connectionStatusObserver);
-
-                    mDataPacket = mService.getDataPacket().getValue();
-                    mService.getDataPacket().observe(getActivity(), dataPacketObserver);
+                    mService.getDataPacketShortDuration().observe(getActivity(), dataPacketObserver);
                 }
             }
         });
@@ -294,7 +290,7 @@ public class DashBoardFragment extends Fragment {
         Log.d("debug","Observers Removed");
         if(mService != null){
             // Remove Observers
-            mService.getDataPacket().removeObserver(dataPacketObserver);
+            mService.getDataPacketShortDuration().removeObserver(dataPacketObserver);
             mService.getConnectionStatus().removeObserver(connectionStatusObserver);
         }
     }
