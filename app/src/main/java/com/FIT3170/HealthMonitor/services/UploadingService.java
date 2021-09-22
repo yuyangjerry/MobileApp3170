@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer;
 import com.FIT3170.HealthMonitor.bluetooth.BluetoothService;
 import com.FIT3170.HealthMonitor.bluetooth.BluetoothServiceModel;
 import com.FIT3170.HealthMonitor.database.DataPacket;
+import com.FIT3170.HealthMonitor.database.ReadingUploader;
 
 public class UploadingService extends LifecycleService {
 
@@ -96,7 +97,9 @@ public class UploadingService extends LifecycleService {
 
     // Do some uploading here
     private void handlePacket(DataPacket dataPacket) {
+
         Log.d("d","uploading packet");
+        ReadingUploader.getInstance().addData(dataPacket);
     }
 
     /**
