@@ -52,7 +52,7 @@ public class BluetoothService extends Service {
     // Handler
     Handler mHandler = new Handler();
     private static final int SINK_SHORT_DURATION = 1000; // 1 sec
-    private static final int SINK_LONG_DURATION = 60000; // 1 minute
+    private static final int SINK_LONG_DURATION = 10000; // 1 minute
 
     @Nullable
     @Override

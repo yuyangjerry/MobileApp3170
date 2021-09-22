@@ -99,7 +99,7 @@ public class UploadingService extends LifecycleService {
     private void handlePacket(DataPacket dataPacket) {
 
         Log.d("d","uploading packet");
-        ReadingUploader.getInstance().addData(dataPacket);
+        ReadingUploader.getInstance().uploadPacket(dataPacket);
     }
 
     /**
