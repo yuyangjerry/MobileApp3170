@@ -17,6 +17,12 @@ import com.FIT3170.HealthMonitor.bluetooth.BluetoothServiceModel;
 import com.FIT3170.HealthMonitor.database.DataPacket;
 import com.FIT3170.HealthMonitor.database.ECGAlgorithm;
 import com.FIT3170.HealthMonitor.database.PeakToPeakAlgorithm;
+import com.FIT3170.HealthMonitor.database.UserProfile;
+
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 public class NotificationService extends LifecycleService {
 
@@ -25,6 +31,7 @@ public class NotificationService extends LifecycleService {
     private int mConnectionStatus;
     private DataPacket mDataPacket;
     private ECGAlgorithm algorithm;
+    private Timestamp lastNotification;
 
     public static final int ABNORMAL_HEART_RATE = 120;
 
@@ -152,11 +159,15 @@ public class NotificationService extends LifecycleService {
      * @param bpm Most recent bpm value
      */
     private void checkAbnormalHeartRate(double bpm) {
-        if(bpm > ABNORMAL_HEART_RATE && !hasNotificationBeenServed) {
-            sendNotification();
-            storeNotification();
+        int minuteCool = 5;
+        double lastMili = lastNotification.getTime();
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        // heart rate trigger and notification off cooldown
+        if(bpm > ABNORMAL_HEART_RATE && now.getTime() > lastMili + minuteCool * 60000) {
+
             // Please Remove This Line Of Code after we fix the abnormal heart rate algorithm
-            hasNotificationBeenServed = true;
+            lastNotification = new Timestamp(System.currentTimeMillis());
+            sendNotification(bpm, lastNotification);
         }
     }
 
@@ -183,21 +194,31 @@ public class NotificationService extends LifecycleService {
     }
 
     /**
-     * Sends the notification to the phone
+     * Sends the abnormal heart rate notification to the phone
      */
-    private void sendNotification() {
+    private void sendNotification(double bpm, Timestamp time) {
+        // ----- TESTING HARDCODING
+//        time = new Timestamp(System.currentTimeMillis());
+//        bpm = 160.2;
+        // -------
+
         NotificationBuilder builder = new NotificationBuilder();
+        String title = "Abnormal Heart Rate";
+        String description = "An abnormal heart rate of " + String.valueOf(bpm) + " was detected. We recommend you get proper medical "
+                + "assistance.";
 
-        builder.createNotification(this, "Abnormal Heart Rate",
-                "An abnormal heart rate was detected. We recommend you get proper medical "
-                        + "assistance.");
-
+        builder.createNotification(this, title, description);
+        storeNotification(title, description, time);
     }
 
     /**
      * TODO: Implement functionality to store a sent notification in firebase
+     * TODO: Clarify which Timestamp is best (com.google.firebase; java.sql)
      */
-    private void storeNotification() {
+    private void storeNotification(String title, String description, Timestamp time) {
+        Date timeDate = new Date(time.getTime());
+
+        UserProfile.uploadNotification(title, description, timeDate);
 
     }
 
