@@ -1,26 +1,47 @@
 package com.FIT3170.HealthMonitor;
 
 public class Doctor {
-    private String doctorid, doctorname;
+    private String doctorID;
+    private String doctorGivenName;
+    private String doctorFamilyName;
+    private String doctorEmail;
 
-    public String getDoctorname() {
-        return doctorname;
+    public String getDoctorFamilyName() {
+        return doctorFamilyName;
     }
 
-    public void setDoctorname(String doctorname) {
-        this.doctorname = doctorname;
+    public void setDoctorFamilyName(String doctorFamilyName) {
+        this.doctorFamilyName = doctorFamilyName;
     }
 
-    public Doctor(String doctorid, String doctorname) {
-        this.doctorname = doctorname;
-        this.doctorid = doctorid;
+
+    public void setDoctorEmail(String doctorEmail) {
+        this.doctorEmail = doctorEmail;
     }
 
-    public String getDoctorid() {
-        return doctorid;
+    public String getDoctorEmail() {
+        return doctorEmail;
     }
 
-    public void setDoctorid(String doctorid) {
-        this.doctorid = doctorid;
+    public String getDoctorGivenName() {
+        return doctorGivenName;
+    }
+
+    public void setDoctorGivenName(String doctorGivenName) {
+        this.doctorGivenName = doctorGivenName;
+    }
+
+    public Doctor(String doctorID, String doctorGivenName, String doctorFamilyName, String doctorEmail) {
+        this.doctorGivenName = doctorGivenName;
+        this.doctorID = doctorID;
+        this.doctorEmail = doctorEmail;
+    }
+
+    public String getDoctorID() {
+        return doctorID;
+    }
+
+    public void setDoctorID(String doctorID) {
+        this.doctorID = doctorID;
     }
 }

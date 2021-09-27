@@ -21,21 +21,27 @@ import java.util.Date;
 
 public class DoctorProfileActivity extends AppCompatActivity {
 
+    GridView doctorProfileGV;
+    TextView doctorProfileTV;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Get the intent from DoctorsFragment, and get the string of the doctorid.
 //        Intent intent = getIntent();
 //        String doctorId = intent.getStringExtra("doctorid");
 
-        // get the details from the selected doctor, currently only doctor name and doctor id
+        // get the details from the selected doctor
         String doctorId = "Not found!";
-        String doctorname = "Not found!";
+        String doctorGivenName = "Not found!";
+        String email = "Not found!";
+        String doctorFamilyName = "Not found!";
         Bundle extras = getIntent().getExtras();
         if(extras != null) {
             doctorId = extras.getString("doctorid");
-            doctorname = extras.getString("doctorname");
+            doctorGivenName = extras.getString("doctorgivenname");
+            email = extras.getString("email");
+            doctorFamilyName = extras.getString("doctorfamilyname");
         }
-//        doctorProfileTV.setText(username);
         // -----------------------
 
         // Currently the retrieved doctorProfile returns null when the attributes are called upon.
@@ -52,8 +58,8 @@ public class DoctorProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Get the required views from the activity_doctor_profile.xml
-        GridView doctorProfileGV = findViewById(R.id.doctorProfileGV);
-        TextView doctorProfileTV = findViewById(R.id.doctorName);
+        doctorProfileGV = findViewById(R.id.doctorProfileGV);
+        doctorProfileTV = findViewById(R.id.doctorName);
         //Date dob = doctorProfile.getDateOfBirth().toDate();
 
         Format formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -63,16 +69,19 @@ public class DoctorProfileActivity extends AppCompatActivity {
         // Create an arraylist of ProfileAttributeModel so we can populate the gridview using an adapter
         // Need to sort out the firebase so that the doctor information is consistent.
 
+        String doctorName = doctorGivenName + " " + doctorFamilyName;
+
         ArrayList<ProfileAttributeModel> profileModelArrayList = new ArrayList<ProfileAttributeModel>();
         //profileModelArrayList.add(new ProfileAttributeModel("Date of Birth", dobString));
-        profileModelArrayList.add(new ProfileAttributeModel("Email", "Testing"));
+        //profileModelArrayList.add(new ProfileAttributeModel("Full Name", doctorName));
+        profileModelArrayList.add(new ProfileAttributeModel("Email", email));
         //profileModelArrayList.add(new ProfileAttributeModel("Place of Practice", doctorProfile.getPlaceOfPractice()));
         //profileModelArrayList.add(new ProfileAttributeModel("Phone", doctorProfile.getPhoneNumber()));
 
         ProfileGVAdapter adapter = new ProfileGVAdapter(this, profileModelArrayList);
         doctorProfileGV.setAdapter(adapter);
-        //String doctorName = doctorProfile.getGivenName() + " " + doctorProfile.getFamilyName();
-        doctorProfileTV.setText(doctorname);
+
+        doctorProfileTV.setText(doctorName);
 
     }
 }

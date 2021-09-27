@@ -84,7 +84,7 @@ public class DoctorsFragment extends Fragment {
                         DoctorProfile doc = doctors[index];
                         Log.i("DOCTORS", "Got doctor profile!" + doc.getUid());
                         //TODO: put doc into a vew in the doctor list
-                        doctorList.add(new Doctor(doc.getUid(), doc.getGivenName()));
+                        doctorList.add(new Doctor(doc.getUid(), doc.getGivenName(), doc.getFamilyName(), doc.getEmail()));
 //                        doctorList.add(new Doctor(doc.getGivenName()));
                         adapter.notifyDataSetChanged();
                         //TODO: when the user clicks on "view doctor profile button"
@@ -163,8 +163,10 @@ public class DoctorsFragment extends Fragment {
                 // Create an intent to go to the doctor profile.
                 Context context = getContext();
                 Intent intent = new Intent(context, DoctorProfileActivity.class);
-                intent.putExtra("doctorid", doctorList.get(position).getDoctorid());
-                intent.putExtra("doctorname", doctorList.get(position).getDoctorname());
+                intent.putExtra("doctorid", doctorList.get(position).getDoctorID());
+                intent.putExtra("doctorgivenname", doctorList.get(position).getDoctorGivenName());
+                intent.putExtra("doctorfamilyname", doctorList.get(position).getDoctorFamilyName());
+                intent.putExtra("email", doctorList.get(position).getDoctorEmail());
                 startActivity(intent);
             }
         };
@@ -211,7 +213,7 @@ public class DoctorsFragment extends Fragment {
                                                 .show();
 
                                         //TODO: Updated the UI after linking a new doctor
-                                        doctorList.add(new Doctor(validator.getDoctorId(), validator.getInviteId()));
+                                        doctorList.add(new Doctor(validator.getDoctorId(), validator.getInviteId(), validator.getInviteId(), validator.getInviteId()));
 //                                        doctorList.add(new Doctor(validator.getDoctorname()));
                                         adapter.notifyDataSetChanged();
 
