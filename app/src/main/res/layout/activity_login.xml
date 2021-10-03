@@ -89,10 +89,10 @@
         app:layout_constraintRight_toRightOf="parent" />
 
     <TextView
-        android:id="@+id/trouble_link"
+        android:id="@+id/register_link"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TROUBLE LOGGING IN?"
+        android:text="REGISTER ACCOUNT"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

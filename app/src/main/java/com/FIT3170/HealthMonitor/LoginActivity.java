@@ -31,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
         emailLayout = findViewById(R.id.email_input);
         pswdLayout = findViewById(R.id.password_edit_text);
         signInBtn = findViewById(R.id.sign_in_button);
-        registrationLink = findViewById(R.id.trouble_link);
+        registrationLink = findViewById(R.id.register_link);
 
         //make login easier
         emailLayout.getEditText().setText("examplepatient@project6.com");
@@ -49,7 +49,6 @@ public class LoginActivity extends AppCompatActivity {
 
         });
     }
-
 
     private void login(String email, String password){
         Context context = this;
