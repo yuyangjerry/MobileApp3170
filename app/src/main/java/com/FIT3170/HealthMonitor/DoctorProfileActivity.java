@@ -1,12 +1,20 @@
 package com.FIT3170.HealthMonitor;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
 
@@ -21,8 +29,10 @@ import java.util.Date;
 
 public class DoctorProfileActivity extends AppCompatActivity {
 
-    GridView doctorProfileGV;
-    TextView doctorProfileTV;
+    private GridView doctorProfileGV;
+    private TextView doctorProfileTV;
+    private Button UnlinkDoctorButton;
+    private String doctorId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +41,7 @@ public class DoctorProfileActivity extends AppCompatActivity {
 //        String doctorId = intent.getStringExtra("doctorid");
 
         // get the details from the selected doctor
-        String doctorId = "Not found!";
+        doctorId = "Not found!";
         String doctorGivenName = "Not found!";
         String email = "Not found!";
         String doctorFamilyName = "Not found!";
@@ -73,7 +83,6 @@ public class DoctorProfileActivity extends AppCompatActivity {
 
         ArrayList<ProfileAttributeModel> profileModelArrayList = new ArrayList<ProfileAttributeModel>();
         //profileModelArrayList.add(new ProfileAttributeModel("Date of Birth", dobString));
-        //profileModelArrayList.add(new ProfileAttributeModel("Full Name", doctorName));
         profileModelArrayList.add(new ProfileAttributeModel("Email", email));
         //profileModelArrayList.add(new ProfileAttributeModel("Place of Practice", doctorProfile.getPlaceOfPractice()));
         //profileModelArrayList.add(new ProfileAttributeModel("Phone", doctorProfile.getPhoneNumber()));
@@ -83,5 +92,49 @@ public class DoctorProfileActivity extends AppCompatActivity {
 
         doctorProfileTV.setText(doctorName);
 
+        // Create the button
+        UnlinkDoctorButton = findViewById(R.id.unlink_doctor_button);
+
+        UnlinkDoctorButton.setOnClickListener(l -> {
+           // Run the unlinkDoctor method
+            unlinkDoctor();
+        });
     }
+
+    /**
+     * Unlink the doctor and the patient.
+     */
+
+    private void unlinkDoctor(){
+
+        new AlertDialog.Builder(this)
+                .setTitle("Are you sure?")
+                .setMessage("The doctor will be unlinked and removed from your profile")
+                .setPositiveButton("Unlink", (dialog, which) -> {
+                    UserProfile.unlink_doctor(
+                            doctorId,
+                            (v, error) -> {
+                                dialog.dismiss();
+
+                                if(error != null){
+                                    new AlertDialog.Builder(this)
+                                            .setTitle("Unable to unlink doctor")
+                                            .setMessage(error.getMessage())
+                                            .setPositiveButton("Ok", null)
+                                            .show();
+                                }else{
+                                    new AlertDialog.Builder(this)
+                                            .setTitle("Unlinked successfully!")
+                                            .setPositiveButton("Ok", null)
+                                            .show();
+                                    // Go back to the doctors list
+                                    onBackPressed();
+                                }
+                            }
+                    );
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
 }

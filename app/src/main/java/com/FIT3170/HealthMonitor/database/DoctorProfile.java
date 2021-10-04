@@ -59,4 +59,7 @@ public class DoctorProfile {
     //public String getPhoneNumber(){ return (String)doctor.get("phone"); }
 
     //public String getPlaceOfPractice() { return (String)doctor.get("placeOfPractice"); }
+
+
+
 }

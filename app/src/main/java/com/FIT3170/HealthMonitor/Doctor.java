@@ -35,6 +35,7 @@ public class Doctor {
         this.doctorGivenName = doctorGivenName;
         this.doctorID = doctorID;
         this.doctorEmail = doctorEmail;
+        this.doctorFamilyName = doctorFamilyName;
     }
 
     public String getDoctorID() {
