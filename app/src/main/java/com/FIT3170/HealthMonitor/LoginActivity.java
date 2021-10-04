@@ -80,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
         if (fragment != null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragment_container, fragment).addToBackStack("null")
+                    .replace(R.id.fragment_container, fragment).addToBackStack("null") // TODO: I suspect this line is what breaks registration page
                     .commit();
             return true;
         }
