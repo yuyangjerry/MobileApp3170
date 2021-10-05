@@ -50,7 +50,6 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         registrationLink.setOnClickListener(view -> {
-            loadFragment(new RegistrationFragment());
             Intent registration = new Intent(this, RegistrationActivity.class);
             startActivity(registration);
         });
