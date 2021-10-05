@@ -87,12 +87,9 @@ public class UserProfile {
      *               the use profile
      */
     static public void fetch(Callback<Boolean, Exception> onFetch){
-        if(!isFetched()){
-            instance = new UserProfile();
-            instance.downloadProfile(onFetch);
-        }else{
-            onFetch.onCall(null, new Exception("Profile already fetched"));
-        }
+        instance = new UserProfile();
+        instance.downloadProfile(onFetch);
+
     }
 
     /**
@@ -101,39 +98,35 @@ public class UserProfile {
      * @param onCreate a callback
      */
     static public void create(UserSignUpData data, Callback<Boolean, Exception> onCreate){
-        if(!isFetched()){
-            instance = new UserProfile();
-            instance.backupProfile = new HashMap<String, Object>();
+        instance = new UserProfile();
+        instance.backupProfile = new HashMap<String, Object>();
 
-            MapFiller filler = new MapFiller(instance.backupProfile);
+        MapFiller filler = new MapFiller(instance.backupProfile);
 
-            filler.putIfNotNull(GIVEN_NAME_KEY, data.getGivenName());
-            filler.putIfNotNull(FAMILY_NAME_KEY, data.getFamilyName());
-            filler.putIfNotNull(BLOOD_TYPE_KEY, data.getBloodType());
-            filler.putIfNotNull(WEIGHT_KEY, data.getWeight());
-            filler.putIfNotNull(HEIGHT_KEY, data.getHeight());
-            filler.putIfNotNull(DATE_OF_BIRTH_KEY, data.getDateOfBirth());
-            filler.putIfNotNull(EMAIL_KEY, data.getEmail());
-            filler.putIfNotNull(GENDER_KEY, data.getGender());
-            filler.putIfNotNull(MARITAL_STATUS_KEY, data.getMaritalStatus());
-            filler.putIfNotNull(PHONE_KEY, data.getPhone());
+        filler.putIfNotNull(GIVEN_NAME_KEY, data.getGivenName());
+        filler.putIfNotNull(FAMILY_NAME_KEY, data.getFamilyName());
+        filler.putIfNotNull(BLOOD_TYPE_KEY, data.getBloodType());
+        filler.putIfNotNull(WEIGHT_KEY, data.getWeight());
+        filler.putIfNotNull(HEIGHT_KEY, data.getHeight());
+        filler.putIfNotNull(DATE_OF_BIRTH_KEY, data.getDateOfBirth());
+        filler.putIfNotNull(EMAIL_KEY, data.getEmail());
+        filler.putIfNotNull(GENDER_KEY, data.getGender());
+        filler.putIfNotNull(MARITAL_STATUS_KEY, data.getMaritalStatus());
+        filler.putIfNotNull(PHONE_KEY, data.getPhone());
 
-            instance.db
-                    .collection("patients")
-                    .document(instance.uid)
-                    .set(instance.backupProfile)
-                    .addOnFailureListener(l -> {
-                        instance.backupProfile = null;
-                        instance = null;
-                        onCreate.onCall(null, l);
-                    })
-                    .addOnSuccessListener(l -> {
-                        instance.modifiableProfile = MapDeepCopier.deepCopy(instance.backupProfile);
-                        onCreate.onCall(true, null);
-                    });
-        }else{
-            onCreate.onCall(null, new Exception("Profile already fetched"));
-        }
+        instance.db
+                .collection("patients")
+                .document(instance.uid)
+                .set(instance.backupProfile)
+                .addOnFailureListener(l -> {
+                    instance.backupProfile = null;
+                    instance = null;
+                    onCreate.onCall(null, l);
+                })
+                .addOnSuccessListener(l -> {
+                    instance.modifiableProfile = MapDeepCopier.deepCopy(instance.backupProfile);
+                    onCreate.onCall(true, null);
+                });
     }
 
     static public void logOut(){

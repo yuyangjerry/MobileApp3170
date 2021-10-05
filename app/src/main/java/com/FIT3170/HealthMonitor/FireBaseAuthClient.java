@@ -1,5 +1,7 @@
 package com.FIT3170.HealthMonitor;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.FIT3170.HealthMonitor.database.UserProfile;

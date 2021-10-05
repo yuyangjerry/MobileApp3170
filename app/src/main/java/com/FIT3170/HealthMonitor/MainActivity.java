@@ -152,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.signOut:
                 mAuth.signOut();
+                FireBaseAuthClient.signOut();
                 drawerLayout.closeDrawer(GravityCompat.START);
                 SendUserToLogin();
                 break;
