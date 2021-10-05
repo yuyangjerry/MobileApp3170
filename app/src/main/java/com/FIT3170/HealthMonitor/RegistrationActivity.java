@@ -1,6 +1,7 @@
 package com.FIT3170.HealthMonitor;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import com.google.firebase.Timestamp;
@@ -16,6 +17,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -23,6 +25,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.FIT3170.HealthMonitor.databinding.ActivityRegistrationBinding;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.auth.User;
 
 import java.time.LocalDate;
@@ -47,8 +50,6 @@ public class RegistrationActivity extends AppCompatActivity implements DatePicke
     private EditText suburbInput;
     private EditText postcodeInput;
 
-    private Button regBtn;
-    private Button backBtn;
     private Timestamp dob;
 
 
@@ -95,12 +96,12 @@ public class RegistrationActivity extends AppCompatActivity implements DatePicke
         suburbInput = findViewById(R.id.regSuburb);
         postcodeInput = findViewById(R.id.regPostCode);
 
-        regBtn = findViewById(R.id.regButton);
+        Button regBtn = findViewById(R.id.regButton);
         regBtn.setOnClickListener(view -> {
             register();
         });
 
-        backBtn = findViewById(R.id.regBackButton);
+        Button backBtn = findViewById(R.id.regBackButton);
         backBtn.setOnClickListener(view -> {
             Intent loginIntent = new Intent(this, LoginActivity.class);
             loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -114,7 +115,6 @@ public class RegistrationActivity extends AppCompatActivity implements DatePicke
         dobInput.setOnClickListener(view -> {
                     datePickerDialog.show();
         });
-
     }
 
     /**
@@ -141,6 +141,23 @@ public class RegistrationActivity extends AppCompatActivity implements DatePicke
         newUser.setEmail(email);
         newUser.setGender(gender);
 
+        Context context = this;
+        if (pswrd.equals(pswrdConfirm)){
+            FireBaseAuthClient.signUp(newUser, pswrd, new SignUpConsumer() {
+                @Override
+                public void onSignupSuccess(FirebaseUser user) {
+                    Toast.makeText(context,  "Success!", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onSignupFailure() {
+                    Toast.makeText(context,  "Registration failed", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        else {
+            Toast.makeText(context,  "Passwords do not match", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
@@ -167,7 +184,6 @@ public class RegistrationActivity extends AppCompatActivity implements DatePicke
         // Apply the adapter to the spinner
         stateSpinner.setAdapter(stateAdapter);
     }
-
 
     private DatePickerDialog.OnDateSetListener myDateListener = new
             DatePickerDialog.OnDateSetListener() {

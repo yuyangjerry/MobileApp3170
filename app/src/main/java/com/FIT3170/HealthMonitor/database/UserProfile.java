@@ -292,6 +292,80 @@ public class UserProfile {
 
     }
 
+    static public void unlink_doctor(String doctorId, Callback<Boolean, Exception> onLink) {
+        /**
+         * Unlinking a doctor from a patient
+         * Get the patient id from the user logged in, then remove the doctor from their doctor list
+         * then go to the doctor and remove the patient from their linkedpatients collection.
+         * @param doctorId the doctor id to which to link
+         * @param onLink a callback. in case of error, the error message is user friendly
+         */
+
+        // Grab the doctors and we will check whether or not the doctor has been unlinked already
+        Object temp = instance.modifiableProfile.get(DOCTORS_KEY);
+
+        List<String> doctorIds;
+        if(temp == null){
+            doctorIds = new ArrayList<String>();
+        }else {
+            doctorIds = (List<String>)temp;
+        }
+
+        //Check that the doctor isn't already unlinked
+        if(!doctorIds.contains(doctorId)) {
+            onLink.onCall(null, new Exception("You have already been unlinked from this doctor."));
+            return;
+        }
+
+        String errorMessage = "The doctor could not be unlinked.";
+
+        // Get all the references from the db
+        // Get a ref to the patient profile
+        DocumentReference profileRef = instance.db
+                .collection("patients")
+                .document(getUid());
+
+        // Get a ref to /doctors/:doctorId/linkedPatients/:patientid
+        DocumentReference doctorPatientRef = instance.db
+                .collection("doctors")
+                .document(doctorId)
+                .collection("linkedPatients")
+                .document(getUid());
+
+        //Start the transaction
+        instance.db.runTransaction(t -> {
+
+            // Update the doctor field with the doctor id removed using arrayRemove.
+            t.update(profileRef, DOCTORS_KEY, FieldValue.arrayRemove(doctorId));
+
+            // Remove the patient id (document) from the doctor's linkedpatients.
+            t.delete(doctorPatientRef);
+
+            return null;
+
+        }).addOnSuccessListener(l -> {
+            // The transaction ran successfully!,
+            // We simply need to update our local copy of the data
+            doctorIds.remove(doctorId);
+            instance.modifiableProfile.put(DOCTORS_KEY, doctorIds);
+            instance.backupProfile.put(DOCTORS_KEY, doctorIds);
+
+            onLink.onCall(true, null);
+
+        }).addOnFailureListener(l -> {
+            //Something went wrong
+            //If something went wrong
+            if(l.getMessage() == errorMessage){
+                onLink.onCall(null, new Exception(errorMessage));
+            }
+            //Otherwise we report it as an unknown error
+            else{
+                onLink.onCall(null, new Exception("Unable to unlink doctor, try again later."));
+            }
+        });
+
+    }
+
     static public String getUid() {
         return instance.uid;
     }
