@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.FIT3170.HealthMonitor">
-
     <!-- This is needed for scanning the QR code -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
@@ -16,14 +15,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Project6">
+        <activity
+            android:name=".PasswordResetConfirmationActivity"
+            android:exported="true" />
+        <activity
+            android:name=".PasswordResetActivity"
+            android:exported="true" />
+
         <service
             android:name=".services.NotificationService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
         <service
             android:name=".services.UploadingService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
 
         <activity android:name=".LoginActivity">
             <intent-filter>
@@ -47,7 +53,7 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <service android:name=".bluetooth.BluetoothService"></service>
+        <service android:name=".bluetooth.BluetoothService" />
     </application>
 
 </manifest>

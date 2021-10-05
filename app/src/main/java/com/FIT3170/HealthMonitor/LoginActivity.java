@@ -19,6 +19,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputLayout pswdLayout;
     private Button signInBtn;
     private TextView registrationLink;
+    private TextView resetPasswordLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,10 +33,21 @@ public class LoginActivity extends AppCompatActivity {
         pswdLayout = findViewById(R.id.password_edit_text);
         signInBtn = findViewById(R.id.sign_in_button);
         registrationLink = findViewById(R.id.register_link);
+        resetPasswordLink = findViewById(R.id.reset_password_link);
 
-        //make login easier
-        emailLayout.getEditText().setText("examplepatient@project6.com");
-        pswdLayout.getEditText().setText("examplepatient@project6.com");
+        Intent i = getIntent();
+        //This might be set by PasswordResetConfirmationActivity activity
+        String email = i.getStringExtra("email");
+
+        if(email == null){
+            //make login easier
+            emailLayout.getEditText().setText("examplepatient@project6.com");
+            pswdLayout.getEditText().setText("examplepatient@project6.com");
+
+        }else{
+            emailLayout.getEditText().setText(email);
+            pswdLayout.getEditText().setText("");
+        }
 
         registrationLink.setOnClickListener(view -> {
             loadFragment(new RegistrationFragment());
@@ -47,6 +59,11 @@ public class LoginActivity extends AppCompatActivity {
 
             login(emailLayout.getEditText().getText().toString(), pswdLayout.getEditText().getText().toString());
 
+        });
+
+        resetPasswordLink.setOnClickListener(view -> {
+            Intent passwordReset = new Intent(this, PasswordResetActivity.class);
+            startActivity(passwordReset);
         });
     }
 
