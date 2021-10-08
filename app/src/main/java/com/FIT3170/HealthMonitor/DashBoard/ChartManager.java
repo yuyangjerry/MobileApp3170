@@ -111,6 +111,9 @@ public class ChartManager {
 
     public void UpdateMAChart(double bpm) {
 
+        if (Double.isNaN(bpm)) {
+            bpm = 0;
+        }
         ILineDataSet dataSet = maData.getDataSetByIndex(0);
 
         if (dataSet != null) {

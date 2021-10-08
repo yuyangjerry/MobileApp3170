@@ -86,23 +86,7 @@ public class DashBoardFragment extends Fragment {
         ecgChartBtn = view.findViewById(R.id.ecg_chart_btn);
         ecgChartBtn.setOnClickListener(v -> chartManager.switchGraph(ChartManager.ChartType.DefaultECG));
 
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                while (true) {
-
-                    chartManager.UpdateCharts(null, ThreadLocalRandom.current().nextInt(65, 75));
-                    try {
-                        sleep(100);
-                    } catch (InterruptedException e) {
-                        Log.d("error", e.toString());
-                    }
-
-                }
-            }
-        };
-        thread.start();
-
+        chartManager.switchGraph(ChartManager.ChartType.DefaultECG);
     }
 
 
