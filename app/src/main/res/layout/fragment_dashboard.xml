@@ -67,6 +67,29 @@
             android:textColor="@color/primaryTextColor"
             android:textSize="14sp" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/ecg_chart_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ECG"
+                android:textSize="10dp" />
+
+            <Button
+                android:id="@+id/ma_chart_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:text="MA"
+                android:textSize="10dp" />
+
+
+        </LinearLayout>
+
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/line_chart"
             android:layout_width="match_parent"

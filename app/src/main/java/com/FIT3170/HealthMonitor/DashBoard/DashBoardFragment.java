@@ -1,41 +1,36 @@
-package com.FIT3170.HealthMonitor;
+package com.FIT3170.HealthMonitor.DashBoard;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 
+import com.FIT3170.HealthMonitor.R;
 import com.FIT3170.HealthMonitor.bluetooth.BluetoothService;
 import com.FIT3170.HealthMonitor.bluetooth.BluetoothServiceModel;
 import com.FIT3170.HealthMonitor.database.DataPacket;
-import com.FIT3170.HealthMonitor.database.DataPoint;
 import com.FIT3170.HealthMonitor.database.ECGAlgorithm;
 import com.FIT3170.HealthMonitor.database.PeakToPeakAlgorithm;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 public class DashBoardFragment extends Fragment {
 
     private LineChart bPMLineChart;
     private TextView heartRateTextView;
-    private LineData lineData;
-    // Thread for line chart
-//    private Thread thread;
+
     private Activity mActivity;
     private int displayCount = 10; //number of data  points to display
     private int dataCount = 0;
@@ -47,13 +42,18 @@ public class DashBoardFragment extends Fragment {
     private DataPacket mDataPacket;
     private ECGAlgorithm algorithm;
 
+    private Button maChartBtn, ecgChartBtn;
+
+
     public DashBoardFragment(Activity mActivity) {
         this.mActivity = mActivity;
     }
+
+    // Required empty public constructor
     public DashBoardFragment() {
-        // Required empty public constructor
     }
 
+    private ChartManager chartManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -61,7 +61,6 @@ public class DashBoardFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_dashboard, container, false);
     }
-
 
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
@@ -77,161 +76,41 @@ public class DashBoardFragment extends Fragment {
 
         // Create algorithm class
         algorithm = new ECGAlgorithm(new PeakToPeakAlgorithm());
-
-        SetUpLineChart();
-
-    }
+        chartManager = new ChartManager(getContext(), bPMLineChart);
 
 
-    private void SetUpLineChart() {
-        //style
-        bPMLineChart.setBackgroundColor(Color.WHITE);
-        bPMLineChart.setScaleEnabled(true);
-
-        //X Axis
-        XAxis xAxis = bPMLineChart.getXAxis();
-        xAxis.setDrawGridLines(false);
-        xAxis.setDrawLabels(true);
-        xAxis.setDrawAxisLine(true);
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setAvoidFirstLastClipping(true);
-        xAxis.setLabelCount(6, true);
-
-        //Right Axis
-        bPMLineChart.getAxisRight().setDrawLabels(false);
-        bPMLineChart.getAxisRight().setDrawAxisLine(false);
-        bPMLineChart.getAxisRight().setDrawGridLines(false);
-
-        //Left Axis
-        bPMLineChart.getAxisLeft().setDrawGridLines(true);
-        bPMLineChart.getAxisLeft().setDrawAxisLine(false);
-        bPMLineChart.getAxisLeft().setLabelCount(6, true);
-
-        bPMLineChart.getLegend().setEnabled(false);
-        bPMLineChart.getDescription().setEnabled(false);
-
-        bPMLineChart.setExtraOffsets(0f, 7f, 0f, 16f);
-        setLineChartDummyData();
-//        beginChartThread();
-
-    }
+        maChartBtn = view.findViewById(R.id.ma_chart_btn);
+        maChartBtn.setOnClickListener(v -> chartManager.switchGraph(ChartManager.ChartType.MovingAverage));
 
 
-    private void setLineChartDummyData() {
-        // documentation for LineDataSet class
-        //https://javadoc.jitpack.io/com/github/PhilJay/MPAndroidChart/v3.1.0/javadoc/
+        ecgChartBtn = view.findViewById(R.id.ecg_chart_btn);
+        ecgChartBtn.setOnClickListener(v -> chartManager.switchGraph(ChartManager.ChartType.DefaultECG));
 
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                while (true) {
 
+                    chartManager.UpdateCharts(null, ThreadLocalRandom.current().nextInt(65, 75));
+                    try {
+                        sleep(100);
+                    } catch (InterruptedException e) {
+                        Log.d("error", e.toString());
+                    }
 
-        LineDataSet dummySet = createDataSet();
-        lineData = new LineData(dummySet);
-
-
-        bPMLineChart.setData(lineData);
-    }
-
-    private LineDataSet createDataSet() {
-        LineDataSet newSet = new LineDataSet(null, "BPM");
-        newSet.setLineWidth(2f);
-        newSet.setDrawCircles(false);
-        newSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER); //curved shape
-        newSet.setColor(ContextCompat.getColor(getContext(), R.color.primaryRed));
-        newSet.setDrawValues(false);
-        return newSet;
-    }
-
-//    private void addEntry() {
-//        if (lineData != null) {
-//            int random = new Random().nextInt(10) + 60;
-//            ILineDataSet dataSet = lineData.getDataSetByIndex(0);
-//            Entry newEntry = new Entry(dataCount++, random);
-//            lineData.addEntry(newEntry, 0);
-//            lineData.notifyDataChanged();
-//
-//            bPMLineChart.notifyDataSetChanged();
-//            bPMLineChart.setVisibleXRangeMaximum(displayCount);
-//
-//            bPMLineChart.moveViewToX(lineData.getEntryCount());
-//
-//
-//            if (dataSet.getEntryCount() >= ENTRY_COUNT_MAX) {
-//                dataSet.removeFirst();
-//                for (int i = 0; i < dataSet.getEntryCount(); i++) {
-//                    Entry entryToChange = dataSet.getEntryForIndex(i);
-//                    entryToChange.setX(entryToChange.getX() - 1);
-//                }
-//            }
-//
-//            Log.i("Dashboard", "added entry");
-//        }
-//    }
-
-    private void graphPacket(DataPacket dataPacket) {
-        if (lineData != null) {
-            ILineDataSet dataSet = lineData.getDataSetByIndex(0);
-            dataSet.clear();
-            Integer dataPointCount = 0;
-            for (DataPoint dataPoint: dataPacket.getData()) {
-                Entry newEntry = new Entry(dataPointCount, dataPoint.getValue());
-                lineData.addEntry(newEntry, 0);
-                dataPointCount += 1;
+                }
             }
-            lineData.notifyDataChanged();
-            bPMLineChart.notifyDataSetChanged();
-            bPMLineChart.setVisibleXRangeMaximum(dataPointCount);
+        };
+        thread.start();
 
-            bPMLineChart.moveViewToX(dataPointCount);
-
-
-
-//            if (dataSet.getEntryCount() >= ENTRY_COUNT_MAX) {
-//                dataSet.removeFirst();
-//                for (int i = 0; i < dataSet.getEntryCount(); i++) {
-//                    Entry entryToChange = dataSet.getEntryForIndex(i);
-//                    entryToChange.setX(entryToChange.getX() - 1);
-//                }
-//            }
-
-            Log.i("Dashboard", "");
-        }
     }
 
-//    private void beginChartThread() {
-//        if (thread != null) {
-//            thread.interrupt();
-//        }
-//        thread = new Thread() {
-//            private boolean running = true;
-//
-//            public void run() {
-//                while (running) {
-//                    try {
-//                        mActivity.runOnUiThread(new Runnable() {
-//
-//                            @Override
-//                            public void run() {
-//                                addEntry();
-//                            }
-//                        });
-//                        Thread.sleep(1000);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                        running = false;
-//                        return;
-//                    }
-//                }
-//            }
-//
-//        };
-//        thread.start();
-//
-//    }
 
     private void setObservers() {
         model.getBinder().observe(getActivity(), new Observer<BluetoothService.BluetoothBinder>() {
             @Override
             public void onChanged(BluetoothService.BluetoothBinder bluetoothBinder) {
-                if(bluetoothBinder == null){
+                if (bluetoothBinder == null) {
                     Log.d("debug", "onChanged: unbound to service.");
                     mService = null;
                 }
@@ -265,24 +144,15 @@ public class DashBoardFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-//        if (thread != null) {
-//            thread.interrupt();
-//        }
     }
 
     @Override
     public void onDetach() {
-//        if (thread != null) {
-//            thread.interrupt();
-//        }
         super.onDetach();
     }
 
     @Override
     public void onResume() {
-//        if (thread == null) {
-//            beginChartThread();
-//        }
         super.onResume();
         bindService();
     }
@@ -310,6 +180,7 @@ public class DashBoardFragment extends Fragment {
         getActivity().bindService(serviceIntent, model.getServiceConnection(), Context.BIND_AUTO_CREATE);
     }
 
+
     // Work on this function here
     Observer<DataPacket> dataPacketObserver = new Observer<DataPacket>() {
         @Override
@@ -328,7 +199,8 @@ public class DashBoardFragment extends Fragment {
 
             // Dummy Code
             // Sensor Is Spitting Millivolt Values that are
-            graphPacket(dataPacket);
+            chartManager.UpdateCharts(dataPacket, bpm);
+
         }
     };
 
