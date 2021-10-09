@@ -9,7 +9,7 @@ import java.util.Set;
  * This class is used to communicate between the sensor service and the uploader.
  * This is the structure that is expected to add data to the uploader.  It should contain 5 seconds of data.
  */
-public class DataPacket implements ECGAlgorithmInt {
+public class DataPacket{
 
     private List<DataPoint> dataArray;
 
@@ -24,6 +24,15 @@ public class DataPacket implements ECGAlgorithmInt {
         dataArray = toDataArray(noDupeMap);
     }
 
+    public List<DataPoint> getData(){
+        return dataArray;
+    }
+    public List<DataPoint> getDataArray(){
+        return this.dataArray;
+    }
+
+
+    // Converts a LinkedHashMap into a ArrayList for the dataArray
     private List<DataPoint> toDataArray(LinkedHashMap<Long, List<Integer>> hashMap){
         List<DataPoint> data = new ArrayList<DataPoint>();
         Set<Long> keys = hashMap.keySet();
@@ -33,6 +42,7 @@ public class DataPacket implements ECGAlgorithmInt {
         return data;
     }
 
+    // Method to change the input list into a LinkedHashMap without duplicates
     private LinkedHashMap<Long, List<Integer>> removeDuplicate(List<DataPoint> dataPoints){
         // Process dataArray and remove duplicates with hashMap
         LinkedHashMap<Long, List<Integer>> hashMap = new LinkedHashMap<Long, List<Integer>>();
@@ -63,14 +73,5 @@ public class DataPacket implements ECGAlgorithmInt {
         }
         sum = sum/valueList.size();
         return (int) Math.round(sum);
-    }
-
-
-
-    public List<DataPoint> getData(){
-        return dataArray;
-    }
-    public List<DataPoint> getDataArray(){
-        return this.dataArray;
     }
 }
