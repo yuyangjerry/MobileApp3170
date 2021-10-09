@@ -2,13 +2,20 @@ package com.FIT3170.HealthMonitor.database;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.FIT3170.HealthMonitor.FireBaseAuthClient;
+import com.FIT3170.HealthMonitor.Notification;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 import java.sql.Time;

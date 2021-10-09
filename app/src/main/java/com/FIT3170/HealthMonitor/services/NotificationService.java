@@ -19,9 +19,7 @@ import com.FIT3170.HealthMonitor.database.ECGAlgorithm;
 import com.FIT3170.HealthMonitor.database.PeakToPeakAlgorithm;
 import com.FIT3170.HealthMonitor.database.UserProfile;
 
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 public class NotificationService extends LifecycleService {
@@ -33,7 +31,8 @@ public class NotificationService extends LifecycleService {
     private ECGAlgorithm algorithm;
     private Timestamp lastNotification;
 
-    public static final int ABNORMAL_HEART_RATE = 120;
+    public static final int ABNORMAL_HIGH_HEART_RATE = 120;
+    public static final int ABNORMAL_LOW_HEART_RATE = 50;
 
     // FOR DEBUG PURPOSES ONLY
     // !!
@@ -144,6 +143,7 @@ public class NotificationService extends LifecycleService {
             // change implementation
             // store algorithm class as local
             double bpm = algorithm.calculate(dataPacket);
+
             Log.d("notification service", bpm + "");
             checkAbnormalHeartRate(bpm);
         }
@@ -165,11 +165,22 @@ public class NotificationService extends LifecycleService {
         long lastMili = lastNotification.getTime();
         Timestamp now = new Timestamp(System.currentTimeMillis());
         // heart rate trigger and notification off cooldown
-        if(bpm > ABNORMAL_HEART_RATE && now.getTime() > lastMili + minuteCool * 60000) {
+        if(bpm > ABNORMAL_HIGH_HEART_RATE && now.getTime() > lastMili + minuteCool * 60000) {
 
             // Please Remove This Line Of Code after we fix the abnormal heart rate algorithm
             lastNotification = new Timestamp(System.currentTimeMillis());
-            sendNotification(bpm, lastNotification);
+            String title = "Abnormally High Heart Rate";
+            String description = "An abnormal high heart rate of " + java.lang.Math.round(bpm) + " was detected. We recommend you get proper medical "
+                    + "assistance.";
+            sendNotification(bpm, lastNotification, title, description);
+        }
+        else if (bpm < ABNORMAL_LOW_HEART_RATE && now.getTime() > lastMili + minuteCool * 60000){
+            String title = "Abnormally Low Heart Rate";
+            String description = "An abnormal low heart rate of " + java.lang.Math.round(bpm) + " was detected. We recommend you get proper medical "
+                    + "assistance.";
+
+            lastNotification = new Timestamp(System.currentTimeMillis());
+            sendNotification(bpm, lastNotification, title, description);
         }
     }
 
@@ -198,23 +209,20 @@ public class NotificationService extends LifecycleService {
     /**
      * Sends the abnormal heart rate notification to the phone
      */
-    private void sendNotification(double bpm, Timestamp time) {
+    private void sendNotification(double bpm, Timestamp time, String title, String description) {
         // ----- TESTING HARDCODING
 //        time = new Timestamp(System.currentTimeMillis());
 //        bpm = 160.2;
         // -------
 
         NotificationBuilder builder = new NotificationBuilder();
-        String title = "Abnormal Heart Rate";
-        String description = "An abnormal heart rate of " + String.valueOf(bpm) + " was detected. We recommend you get proper medical "
-                + "assistance.";
 
         builder.createNotification(this, title, description);
         storeNotification(title, description, time);
     }
 
     /**
-     * TODO: Implement functionality to store a sent notification in firebase
+     *
      * TODO: Clarify which Timestamp is best (com.google.firebase; java.sql)
      */
     private void storeNotification(String title, String description, Timestamp time) {

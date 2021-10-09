@@ -3,12 +3,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.FIT3170.HealthMonitor.Notification;
 import com.FIT3170.HealthMonitor.R;
 
 import java.util.ArrayList;
@@ -16,13 +16,13 @@ import java.util.ArrayList;
 // Extends the Adapter class to RecyclerView.Adapter
 // and implement the unimplemented methods
 public class NotificationHistoryAdapter extends RecyclerView.Adapter<NotificationHistoryAdapter.ViewHolder> {
-    ArrayList courseName;
+    ArrayList<Notification> notifications;
     Context context;
 
     // Constructor for initialization
-    public NotificationHistoryAdapter(Context context, ArrayList courseName) {
+    public NotificationHistoryAdapter(Context context, ArrayList<Notification> notifications) {
         this.context = context;
-        this.courseName = courseName;
+        this.notifications = notifications;
     }
 
     @NonNull
@@ -41,23 +41,31 @@ public class NotificationHistoryAdapter extends RecyclerView.Adapter<Notificatio
     @Override
     public void onBindViewHolder(@NonNull NotificationHistoryAdapter.ViewHolder holder, int position) {
         // TypeCast Object to int type
-        holder.text.setText((String) courseName.get(position));
+        holder.title.setText((String) notifications.get(position).getTitle());
+        holder.time.setText(notifications.get(position).formatTime());
+        holder.description.setText(notifications.get(position).getDescription());
     }
 
     @Override
     public int getItemCount() {
         // Returns number of items
         // currently available in Adapter
-        return courseName.size();
+        return notifications.size();
     }
 
     // Initializing the Views
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView text;
+        TextView title;
+        TextView time;
+        TextView description;
 
         public ViewHolder(View view) {
             super(view);
-            text = (TextView) view.findViewById(R.id.courseName);
+            title = (TextView) view.findViewById(R.id.courseName);
+            time = view.findViewById(R.id.time);
+            description = view.findViewById(R.id.description);
+
         }
     }
+
 }
