@@ -32,7 +32,6 @@ public class ListAdapter_BleDevices extends BaseAdapter {
     public static final int BTN_DISCONNECTED = 2;
 
 
-
     public ListAdapter_BleDevices(Context context) {
         this.context = context;
         devices = new ArrayList<BleDevice>();
