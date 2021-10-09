@@ -4,6 +4,8 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.Timestamp;
 
 import com.FIT3170.HealthMonitor.database.UserSignUpData;
@@ -17,6 +19,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.navigation.NavController;
@@ -26,29 +29,25 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.FIT3170.HealthMonitor.databinding.ActivityRegistrationBinding;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.auth.User;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 public class RegistrationActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
     // input fields
-    private EditText emailInput;
-    private EditText pswrdInput;
-    private EditText pswrdConfirmInput;
-    private EditText givenNameInput;
-    private EditText surnnameInput;
-    private EditText dobInput;
+    private TextInputLayout emailInput;
+    private TextInputLayout pswrdInput;
+    private TextInputLayout pswrdConfirmInput;
+    private TextInputLayout givenNameInput;
+    private TextInputLayout surnameInput;
+    private TextView dobInput;
 
 
     private Spinner genderSpinner;
     private Spinner stateSpinner;
 
-    private EditText addressInput;
-    private EditText suburbInput;
-    private EditText postcodeInput;
+    private TextInputLayout addressInput;
+    private TextInputLayout postcodeInput;
 
     private Timestamp dob;
 
@@ -90,10 +89,9 @@ public class RegistrationActivity extends AppCompatActivity implements DatePicke
         pswrdInput = findViewById(R.id.regPassword);
         pswrdConfirmInput = findViewById(R.id.regPasswordConfirm);
         givenNameInput = findViewById(R.id.regGivenName);
-        surnnameInput = findViewById(R.id.regSurname);
+        surnameInput = findViewById(R.id.regSurname);
 
         addressInput = findViewById(R.id.regPostalAddress);
-        suburbInput = findViewById(R.id.regSuburb);
         postcodeInput = findViewById(R.id.regPostCode);
 
         Button regBtn = findViewById(R.id.regButton);
@@ -121,22 +119,21 @@ public class RegistrationActivity extends AppCompatActivity implements DatePicke
      * Called on registration button press
      */
     private void register(){
-        String email = emailInput.getText().toString();
-        String givenName = givenNameInput.getText().toString();
-        String surnname = surnnameInput.getText().toString();
+        String email = emailInput.getEditText().getText().toString();
+        String givenName = givenNameInput.getEditText().getText().toString();
+        String surname = surnameInput.getEditText().getText().toString();
         String gender = genderSpinner.getSelectedItem().toString();
 
-        String address = addressInput.getText().toString();
-        String suburb = suburbInput.getText().toString();
-        String postcode = postcodeInput.getText().toString();
+        String address = addressInput.getEditText().getText().toString();
         String state = stateSpinner.getSelectedItem().toString();
+        String postcode = postcodeInput.getEditText().getText().toString();
 
-        String pswrd = pswrdInput.getText().toString();
-        String pswrdConfirm = pswrdConfirmInput.getText().toString();
+        String pswrd = pswrdInput.getEditText().getText().toString();
+        String pswrdConfirm = pswrdConfirmInput.getEditText().getText().toString();
 
         UserSignUpData newUser = new UserSignUpData();
         newUser.setGivenName(givenName);
-        newUser.setFamilyName(surnname);
+        newUser.setFamilyName(surname);
         newUser.setDateOfBirth(dob);
         newUser.setEmail(email);
         newUser.setGender(gender);
