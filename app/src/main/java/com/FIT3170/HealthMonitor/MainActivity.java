@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.FIT3170.HealthMonitor.DashBoard.DashBoardFragment;
 import com.FIT3170.HealthMonitor.bluetooth.BluetoothService;
 import com.FIT3170.HealthMonitor.database.UserProfile;
 import com.FIT3170.HealthMonitor.services.NotificationService;
