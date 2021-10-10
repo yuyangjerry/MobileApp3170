@@ -127,7 +127,7 @@ public class ListAdapter_BleDevices extends BaseAdapter {
                 break;
             case BTN_DISCONNECTED:
                 holder.btn_action.setText("CONNECT");
-                holder.btn_action.setBackgroundColor(context.getResources().getColor(R.color.teal_700));
+                holder.btn_action.setBackgroundColor(context.getResources().getColor(R.color.purple_500));
                 break;
         }
     }
