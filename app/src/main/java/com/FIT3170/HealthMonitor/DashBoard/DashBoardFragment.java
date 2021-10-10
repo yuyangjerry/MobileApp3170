@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -86,7 +87,13 @@ public class DashBoardFragment extends Fragment {
         ecgChartBtn = view.findViewById(R.id.ecg_chart_btn);
         ecgChartBtn.setOnClickListener(v -> chartManager.switchGraph(ChartManager.ChartType.DefaultECG));
 
+        //show toast to notify user no device is connected.
         chartManager.switchGraph(ChartManager.ChartType.DefaultECG);
+        if (mService == null) {
+            Toast.makeText(getContext(), "No device connected", Toast.LENGTH_LONG).show();
+        }
+
+
     }
 
 
@@ -107,6 +114,7 @@ public class DashBoardFragment extends Fragment {
 
                     mDataPacket = mService.getDataPacket().getValue();
                     mService.getDataPacket().observe(getActivity(), dataPacketObserver);
+
                 }
             }
         });
