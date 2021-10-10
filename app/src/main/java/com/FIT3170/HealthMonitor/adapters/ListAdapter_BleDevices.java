@@ -32,7 +32,6 @@ public class ListAdapter_BleDevices extends BaseAdapter {
     public static final int BTN_DISCONNECTED = 2;
 
 
-
     public ListAdapter_BleDevices(Context context) {
         this.context = context;
         devices = new ArrayList<BleDevice>();
@@ -128,7 +127,7 @@ public class ListAdapter_BleDevices extends BaseAdapter {
                 break;
             case BTN_DISCONNECTED:
                 holder.btn_action.setText("CONNECT");
-                holder.btn_action.setBackgroundColor(context.getResources().getColor(R.color.teal_700));
+                holder.btn_action.setBackgroundColor(context.getResources().getColor(R.color.purple_500));
                 break;
         }
     }

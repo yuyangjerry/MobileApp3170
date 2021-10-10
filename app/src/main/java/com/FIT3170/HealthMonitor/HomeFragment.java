@@ -29,14 +29,14 @@ import com.FIT3170.HealthMonitor.bluetooth.BluetoothServiceModel;
 import com.FIT3170.HealthMonitor.database.DataPacket;
 import com.FIT3170.HealthMonitor.database.UserProfile;
 import com.clj.fastble.data.BleDevice;
+import com.google.firebase.firestore.auth.User;
 
 /**
  * A simple {@link Fragment} subclass.
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment implements View.OnClickListener {
-    private TextView email;
-    private TextView uuid;
+    private TextView welcomeText;
 
     // Bluetooth
     private BluetoothService mService;
@@ -71,16 +71,24 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
+    String makeWelcomeMessage() {
+        String name = UserProfile.getGivenName();
+        if(name == null){
+            return "Welcome";
+        }
+        return "Welcome " + name;
+    }
+
     private void initView(View view) {
         //get all needed views by id
-        email = view.findViewById(R.id.email);
-        uuid = view.findViewById(R.id.uuid);
+        welcomeText = view.findViewById(R.id.welcome_text);
+
 
         //get the currently signed in user
         model = new BluetoothServiceModel();
-        //set the text of the views with user data
-        email.setText(UserProfile.getEmail());
-        uuid.setText(UserProfile.getUid());
+
+        //set the welcome message
+        welcomeText.setText(makeWelcomeMessage());
 
         // Adapter
         adapter = new ListAdapter_BleDevices(getActivity());

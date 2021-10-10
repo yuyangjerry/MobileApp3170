@@ -13,12 +13,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.FIT3170.HealthMonitor.bluetooth.BluetoothService;
+import com.FIT3170.HealthMonitor.database.UserProfile;
 import com.FIT3170.HealthMonitor.services.NotificationService;
 import com.FIT3170.HealthMonitor.services.UploadingService;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.auth.User;
 
 /**
  * This is the main activity, i.e. the activity that appears when the app is launched.
@@ -31,8 +34,10 @@ public class MainActivity extends AppCompatActivity {
     private Button signInButton;    //Declare the signIn Button property
     private Toolbar toolbar ;
     private FirebaseAuth mAuth;
+    private TextView drawer_header_user;
     public DrawerLayout drawerLayout;
     public ActionBarDrawerToggle actionBarDrawerToggle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,6 +125,18 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     }
                 });
+
+        drawer_header_user = navigationView.getHeaderView(0).findViewById(R.id.nav_header_user);
+        if(drawer_header_user != null){
+            String familyName = UserProfile.getFamilyName();
+            String givenName = UserProfile.getGivenName();
+
+            if(givenName == null)
+                givenName = "";
+            if(familyName == null)
+                familyName = "";
+            drawer_header_user.setText(givenName + " " + familyName);
+        }
     }
 
 
