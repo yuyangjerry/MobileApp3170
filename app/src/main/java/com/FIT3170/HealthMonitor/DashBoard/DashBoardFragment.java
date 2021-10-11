@@ -44,6 +44,7 @@ public class DashBoardFragment extends Fragment {
     private ECGAlgorithm algorithm;
 
     private Button maChartBtn, ecgChartBtn;
+    private TextView mainTextView;
 
 
     public DashBoardFragment(Activity mActivity) {
@@ -74,6 +75,7 @@ public class DashBoardFragment extends Fragment {
 
         bPMLineChart = view.findViewById(R.id.line_chart);
         heartRateTextView = view.findViewById(R.id.heart_rate_text);
+        mainTextView = view.findViewById(R.id.dashboard_main_text);
 
         // Create algorithm class
         algorithm = new ECGAlgorithm(new PeakToPeakAlgorithm());
@@ -194,7 +196,14 @@ public class DashBoardFragment extends Fragment {
     Observer<Integer> connectionStatusObserver = new Observer<Integer>() {
         @Override
         public void onChanged(Integer integer) {
-            Log.d("debug", "Connection status: "+integer.toString());
+            if (mainTextView != null) {
+                if (integer != mService.CONNECTION_CONNECTED) {
+                    mainTextView.setText("ECG device not connected");
+                } else {
+                    mainTextView.setText("Battery: 50%");
+                }
+            }
+            Log.d("debug", "Connection status: " + integer.toString());
         }
     };
 

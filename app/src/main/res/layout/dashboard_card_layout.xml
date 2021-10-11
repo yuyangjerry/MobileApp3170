@@ -47,7 +47,7 @@
         android:layout_marginBottom="10dp"
 
         android:fontFamily="@font/roboto_medium"
-        android:text="95 BPM"
+        android:text="-- BPM"
         android:textColor="@color/black"
         android:textSize="25dp" />
 
