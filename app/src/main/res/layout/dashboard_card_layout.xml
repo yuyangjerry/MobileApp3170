@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="90dp"
     android:padding="12dp"
     android:orientation="vertical"
     android:background="@drawable/card_style_background"
@@ -13,8 +13,8 @@
         android:id="@+id/header_icon"
         android:layout_width="15dp"
         android:layout_height="15dp"
-        android:src="@drawable/heart"
-        android:layout_marginTop="5dp" />
+        android:layout_marginTop="5dp"
+        android:src="@drawable/heart" />
 
     <TextView
         android:id="@+id/textView"
@@ -29,12 +29,6 @@
         android:textColor="@color/primaryRed" />
 
 
-    <TextView
-        android:id="@+id/more"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:text="12:50 > " />
 
     <TextView
         android:id="@+id/heart_rate_text"
@@ -49,7 +43,7 @@
         android:fontFamily="@font/roboto_medium"
         android:text="-- BPM"
         android:textColor="@color/black"
-        android:textSize="25dp" />
+        android:textSize="23sp" />
 
 </RelativeLayout>
 
