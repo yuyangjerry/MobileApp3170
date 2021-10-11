@@ -41,16 +41,21 @@ public class DoctorProfileActivity extends AppCompatActivity {
 //        String doctorId = intent.getStringExtra("doctorid");
 
         // get the details from the selected doctor
-        doctorId = "Not found!";
+//        doctorId = "Not found!";
         String doctorGivenName = "Not found!";
         String email = "Not found!";
         String doctorFamilyName = "Not found!";
+        String phoneNumber = "Not found!";
+        String placeOfPractice = "Not found!";
+//        com.google.firebase.Timestamp dateOfBirth = null;
         Bundle extras = getIntent().getExtras();
         if(extras != null) {
             doctorId = extras.getString("doctorid");
             doctorGivenName = extras.getString("doctorgivenname");
             email = extras.getString("email");
             doctorFamilyName = extras.getString("doctorfamilyname");
+            phoneNumber = extras.getString("phonenumber");
+            placeOfPractice = extras.getString("placeofpractice");
         }
         // -----------------------
 
@@ -61,6 +66,7 @@ public class DoctorProfileActivity extends AppCompatActivity {
                 //oops, something went wrong, probably a network error
             } else {
                 Log.i("DoctorProfile", "Doctor Profile Retrieved");
+                
             }
         });
 
@@ -84,8 +90,8 @@ public class DoctorProfileActivity extends AppCompatActivity {
         ArrayList<ProfileAttributeModel> profileModelArrayList = new ArrayList<ProfileAttributeModel>();
         //profileModelArrayList.add(new ProfileAttributeModel("Date of Birth", dobString));
         profileModelArrayList.add(new ProfileAttributeModel("Email", email));
-        //profileModelArrayList.add(new ProfileAttributeModel("Place of Practice", doctorProfile.getPlaceOfPractice()));
-        //profileModelArrayList.add(new ProfileAttributeModel("Phone", doctorProfile.getPhoneNumber()));
+        profileModelArrayList.add(new ProfileAttributeModel("Phone Number", phoneNumber));
+        profileModelArrayList.add(new ProfileAttributeModel("Place of Practice", placeOfPractice));
 
         ProfileGVAdapter adapter = new ProfileGVAdapter(this, profileModelArrayList);
         doctorProfileGV.setAdapter(adapter);

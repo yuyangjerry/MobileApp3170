@@ -56,9 +56,9 @@ public class DoctorProfile {
         return o == null ? null : (Timestamp)o;
     }
 
-    //public String getPhoneNumber(){ return (String)doctor.get("phone"); }
+    public String getPhoneNumber(){ return (String)doctor.get("phone"); }
 
-    //public String getPlaceOfPractice() { return (String)doctor.get("placeOfPractice"); }
+    public String getPlaceOfPractice() { return (String)doctor.get("placeOfPractice"); }
 
 
 

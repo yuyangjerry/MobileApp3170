@@ -84,8 +84,7 @@ public class DoctorsFragment extends Fragment {
                         DoctorProfile doc = doctors[index];
                         Log.i("DOCTORS", "Got doctor profile!" + doc.getUid());
                         //TODO: put doc into a vew in the doctor list
-                        doctorList.add(new Doctor(doc.getUid(), doc.getGivenName(), doc.getFamilyName(), doc.getEmail()));
-//                        doctorList.add(new Doctor(doc.getGivenName()));
+                        doctorList.add(new Doctor(doc.getUid(), doc.getGivenName(), doc.getFamilyName(), doc.getEmail(), doc.getPhoneNumber(), doc.getPlaceOfPractice()));
                         adapter.notifyDataSetChanged();
                         //TODO: when the user clicks on "view doctor profile button"
                         // for this user, put doctorIds[index] into an intent and send it to the doctor
@@ -167,6 +166,8 @@ public class DoctorsFragment extends Fragment {
                 intent.putExtra("doctorgivenname", doctorList.get(position).getDoctorGivenName());
                 intent.putExtra("doctorfamilyname", doctorList.get(position).getDoctorFamilyName());
                 intent.putExtra("email", doctorList.get(position).getDoctorEmail());
+                intent.putExtra("phonenumber", doctorList.get(position).getPhoneNumber());
+                intent.putExtra("placeofpractice", doctorList.get(position).getPlaceOfPractice());
                 startActivity(intent);
             }
         };
@@ -185,6 +186,7 @@ public class DoctorsFragment extends Fragment {
      * @param qrCodeData
      */
     private void linkDoctor(String qrCodeData){
+
         QrCodeValidator validator = new QrCodeValidator(qrCodeData);
 
         if(validator.isValid()){
@@ -195,7 +197,6 @@ public class DoctorsFragment extends Fragment {
                         UserProfile.linkDoctor(
                                 validator.getInviteId(),
                                 validator.getDoctorId(),
-
 
                                 (v, error) -> {
                                     dialog.dismiss();
@@ -213,8 +214,13 @@ public class DoctorsFragment extends Fragment {
                                                 .show();
 
                                         //TODO: Updated the UI after linking a new doctor
-                                        doctorList.add(new Doctor(validator.getDoctorId(), validator.getInviteId(), validator.getInviteId(), validator.getInviteId()));
-//                                        doctorList.add(new Doctor(validator.getDoctorname()));
+
+//                                        getFragmentManager().beginTransaction()
+//                                                .detach(this)
+//                                                .attach(this)
+//                                                .commit();
+
+                                        doctorList.add(new Doctor(validator.getDoctorId(), validator.getInviteId(), validator.getInviteId(), validator.getInviteId(), validator.getInviteId(), validator.getInviteId()));
                                         adapter.notifyDataSetChanged();
 
                                     }
