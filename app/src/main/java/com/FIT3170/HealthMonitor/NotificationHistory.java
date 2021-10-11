@@ -19,6 +19,7 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Query.Direction;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -124,6 +125,7 @@ public class NotificationHistory extends Fragment {
         FirebaseFirestore.getInstance().collection("patients")
                 .document(UserProfile.getUid())
                 .collection("notificationHistory")
+                .orderBy("notificationTime", Direction.DESCENDING)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
