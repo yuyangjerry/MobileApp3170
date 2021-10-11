@@ -54,7 +54,6 @@ public class UserProfileActivity extends AppCompatActivity {
         notificationButton.setOnClickListener(l -> {
             builder.createNotification(this, "Abnormal Heart Rate", "An abnormal heart rate was detected. We recommend you get proper medical assistance.");
 
-            ReadingUploader.getInstance().start();
         });
     }
 

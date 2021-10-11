@@ -81,7 +81,7 @@ public class NotificationService extends LifecycleService {
     private void removeObservers() {
         if(mService != null){
             // Remove Observers
-            mService.getDataPacket().removeObserver(dataPacketObserver);
+            mService.getDataPacketShortDuration().removeObserver(dataPacketObserver);
         }
     }
 
@@ -110,7 +110,7 @@ public class NotificationService extends LifecycleService {
                 else {
                     Log.d("debug", "onChanged: bound to service.");
                     mService = bluetoothBinder.getService();
-                    mService.getDataPacket().observe(NotificationService.this, dataPacketObserver);
+                    mService.getDataPacketShortDuration().observe(NotificationService.this, dataPacketObserver);
                 }
             }
         });
