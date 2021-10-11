@@ -73,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onSigninSuccess(FirebaseUser user) {
-                UpdateUI();
+                updateUI();
                 Toast.makeText(context,  "Welcome", Toast.LENGTH_SHORT).show();
             }
 
@@ -84,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void UpdateUI(){
+    private void updateUI(){
 //        Intent intent = new Intent(this, UserProfile.class);
 //        startActivity(intent);
             Intent intent = new Intent(this, MainActivity.class);

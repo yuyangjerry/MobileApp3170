@@ -2,18 +2,27 @@ package com.FIT3170.HealthMonitor;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.FIT3170.HealthMonitor.adapters.NotificationHistoryAdapter;
 import com.FIT3170.HealthMonitor.database.UserProfile;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
 
 
 /**
@@ -29,11 +38,13 @@ public class NotificationHistory extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
 
+    private ArrayList<Notification> notificationArray;
     RecyclerView recyclerView;
+    private NotificationHistoryAdapter adapter;
 
     // Using ArrayList to store images data
 
-    ArrayList courseName = new ArrayList<>(Arrays.asList("Software Update Available",
+    ArrayList<String> courseName = new ArrayList<>(Arrays.asList("Software Update Available",
             "Abnormal Heart Rate Detected: Contact GP", "Heartsense at Full Charge",
             "Heartsense Disconnected", "Heartsense at 15% Charge", "New Doctor Successfully linked"
             , "Software Update Successful"));
@@ -67,6 +78,7 @@ public class NotificationHistory extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        notificationArray = new ArrayList<>();
         super.onCreate(savedInstanceState);
 //        if (getArguments() != null) {
 //            mParam1 = getArguments().getString(ARG_PARAM1);
@@ -97,9 +109,48 @@ public class NotificationHistory extends Fragment {
         recyclerView.setLayoutManager(linearLayoutManager);
 
         // Sending reference and data to Adapter
-        NotificationHistoryAdapter adapter = new NotificationHistoryAdapter(getActivity(), courseName);
+        adapter = new NotificationHistoryAdapter(getActivity(), notificationArray);
 
         // Setting Adapter to RecyclerView
         recyclerView.setAdapter(adapter);
+
     }
+
+    /**
+     * Call the database and refresh the notifications display with the new data
+     */
+    private void overwriteNotifications(){
+        // TODO: Refactor this into the User Profile class?
+        FirebaseFirestore.getInstance().collection("patients")
+                .document(UserProfile.getUid())
+                .collection("notificationHistory")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            notificationArray.clear();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d("d", document.getId() + " => " + document.getData());
+                                notificationArray.add(new Notification(
+                                        (String) document.getData().get("notificationTitle"),
+                                        (String) document.getData().get("notificationDescription"),
+                                        (Timestamp) document.getData().get("notificationTime")));
+
+                                adapter.notifyDataSetChanged();
+                            }
+                        } else {
+                            Log.d("d", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public void onResume() {
+        overwriteNotifications();
+        super.onResume();
+    }
+
+
 }
