@@ -14,6 +14,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -103,32 +107,53 @@ public class DoctorsFragment extends Fragment {
                 //ask for camera permission
                 Activity activity = getActivity();
                 ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
-            }else{
+            } else {
                 //If we already have permission, just launch the QRscanner activity which will take care of scanning
                 Intent intent = new Intent(context, QRScanner.class);
-                startActivityForResult(intent, QR_CODE_REQUEST_CODE);
+                //startActivityForResult(intent, QR_CODE_REQUEST_CODE);
+                launchQRActivity.launch(intent);
             }
         });
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(requestCode == QR_CODE_REQUEST_CODE) {
-            Context context = getContext();
-            //if the user scanned a qr code
-            if(resultCode == Activity.RESULT_OK){
-                //show the url
-                String qrCodeData = data.getStringExtra(QRScanner.RESPONSE_INTENT_QR_DATA_KEY);
-                linkDoctor(qrCodeData);
-            }else{
-                //otherwise show an error message
-                Toast.makeText(context, "Could not scan QRcode.", Toast.LENGTH_LONG).show();
-            }
-        }
-        else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
+    // Create lanucher variable inside onAttach or onCreate or global
+    ActivityResultLauncher<Intent> launchQRActivity = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    Context context = getContext();
+                    //if the user scanned a qr code
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        //show the url
+                        String qrCodeData = result.getData().getStringExtra(QRScanner.RESPONSE_INTENT_QR_DATA_KEY);
+                        linkDoctor(qrCodeData);
+                    } else {
+                        //otherwise show an error message
+                        Toast.makeText(context, "Could not scan QRcode.", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+
+//
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        if(requestCode == QR_CODE_REQUEST_CODE) {
+//            Context context = getContext();
+//            //if the user scanned a qr code
+//            if(resultCode == Activity.RESULT_OK){
+//                //show the url
+//                String qrCodeData = data.getStringExtra(QRScanner.RESPONSE_INTENT_QR_DATA_KEY);
+//                linkDoctor(qrCodeData);
+//            }else{
+//                //otherwise show an error message
+//                Toast.makeText(context, "Could not scan QRcode.", Toast.LENGTH_LONG).show();
+//            }
+//        }
+//        else {
+//            super.onActivityResult(requestCode, resultCode, data);
+//        }
+//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -139,7 +164,7 @@ public class DoctorsFragment extends Fragment {
             Context context = getContext();
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Intent intent = new Intent(context, QRScanner.class);
-                startActivityForResult(intent, QR_CODE_REQUEST_CODE);
+                launchQRActivity.launch(intent);
             } else {  //Otherwise show an error message
                 Toast.makeText(context, "You need to provide permission to use your camera in order to scan QRcode.", Toast.LENGTH_LONG).show();
             }

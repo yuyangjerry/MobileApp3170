@@ -150,7 +150,6 @@ public class MainActivity extends AppCompatActivity {
             drawerLayout.closeDrawer(GravityCompat.START);
             return;
         }
-
         if (id == R.id.home) {
             loadFragment(new HomeFragment());
         }
