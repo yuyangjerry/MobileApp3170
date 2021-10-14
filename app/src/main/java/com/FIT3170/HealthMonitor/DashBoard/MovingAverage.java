@@ -21,11 +21,11 @@ public class MovingAverage {
         window.add(num);
         if (window.size() > period) {
             sum -= window.remove();
-
         }
     }
 
     public void clear() {
+        sum = 0.0;
         window.clear();
     }
 

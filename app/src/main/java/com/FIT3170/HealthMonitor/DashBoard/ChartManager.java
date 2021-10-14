@@ -36,12 +36,12 @@ public class ChartManager {
     private LineData maData;
     private Context context;
     private final int ENTRY_COUNT_MAX = 15;
-    private int count = 0;
+
 
     public ChartManager(Context context, LineChart chart) {
         this.context = context;
         lineChart = chart;
-        movingAverage = new MovingAverage(10);
+        movingAverage = new MovingAverage(5);
         SetUpLineChart();
     }
 
@@ -90,7 +90,6 @@ public class ChartManager {
     }
 
     private void ClearChart() {
-        count = 0;
         maData.getDataSetByIndex(0).clear();
         eCGData.getDataSetByIndex(0).clear();
         movingAverage.clear();
@@ -121,19 +120,23 @@ public class ChartManager {
             movingAverage.add(bpm);
             if (dataSet.getEntryCount() > ENTRY_COUNT_MAX) {
                 dataSet.removeFirst();
+                for (int i = 0; i < dataSet.getEntryCount(); i++) {
+
+                    dataSet.getEntryForIndex(i).setX(dataSet.getEntryForIndex(i).getX() - 1);
+                }
             }
 
 
             float maAvg = (float) movingAverage.getAverage();
 
             if (maAvg > 0.0) {
-                Entry newEntry = new Entry(count, maAvg);
+                Entry newEntry = new Entry(dataSet.getEntryCount(), maAvg);
                 Log.d("chart", String.valueOf(maAvg));
                 dataSet.addEntry(newEntry);
-                count += 1;
+
             }
 
-            notifyChanged(ENTRY_COUNT_MAX, count);
+            notifyChanged(ENTRY_COUNT_MAX, dataSet.getEntryCount());
         }
 
 
@@ -142,10 +145,11 @@ public class ChartManager {
     private void notifyChanged(int xRangeMax, int moveToX) {
         eCGData.notifyDataChanged();
         maData.notifyDataChanged();
-
+        movingAverage.clear();
         lineChart.notifyDataSetChanged();
         lineChart.setVisibleXRangeMaximum(xRangeMax);
         lineChart.moveViewToX(moveToX);
+
     }
 
 
@@ -163,7 +167,6 @@ public class ChartManager {
             Log.i("Dashboard", "");
 
         }
-
     }
 
     //Sets up the main line chart
@@ -195,6 +198,7 @@ public class ChartManager {
         lineChart.getDescription().setEnabled(false);
 
         lineChart.setExtraOffsets(0f, 7f, 0f, 16f);
+        lineChart.setDragDecelerationEnabled(false);
         setLineChartData();
 
     }

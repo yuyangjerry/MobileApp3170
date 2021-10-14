@@ -1,5 +1,7 @@
 package com.FIT3170.HealthMonitor.DashBoard;
 
+import static java.lang.Thread.sleep;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +27,7 @@ import com.FIT3170.HealthMonitor.database.PeakToPeakAlgorithm;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.LineData;
 
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class DashBoardFragment extends Fragment {
@@ -89,12 +92,26 @@ public class DashBoardFragment extends Fragment {
         ecgChartBtn = view.findViewById(R.id.ecg_chart_btn);
         ecgChartBtn.setOnClickListener(v -> chartManager.switchGraph(ChartManager.ChartType.DefaultECG));
 
-        //show toast to notify user no device is connected.
-        chartManager.switchGraph(ChartManager.ChartType.DefaultECG);
-        if (mService == null) {
-            Toast.makeText(getContext(), "No device connected", Toast.LENGTH_LONG).show();
-        }
 
+        chartManager.switchGraph(ChartManager.ChartType.DefaultECG);
+
+        Runnable runnable = new Runnable() {
+            public void run() {
+                while (true) {
+                    int randomNum = ThreadLocalRandom.current().nextInt(65, 75);
+                    chartManager.UpdateCharts(null, randomNum);
+                    try {
+                        sleep(100);
+                    } catch (InterruptedException e) {
+
+                    }
+
+                }
+
+            }
+        };
+        Thread thread = new Thread(runnable);
+        thread.start();
 
     }
 
@@ -201,6 +218,7 @@ public class DashBoardFragment extends Fragment {
                     mainTextView.setText("ECG device not connected");
                 } else {
                     mainTextView.setText("Battery: 50%");
+                    Toast.makeText(getContext(), "Device unconnected", Toast.LENGTH_LONG);
                 }
             }
             Log.d("debug", "Connection status: " + integer.toString());

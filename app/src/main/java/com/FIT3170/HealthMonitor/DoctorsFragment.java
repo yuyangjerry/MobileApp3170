@@ -119,19 +119,16 @@ public class DoctorsFragment extends Fragment {
     // Create lanucher variable inside onAttach or onCreate or global
     ActivityResultLauncher<Intent> launchQRActivity = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    Context context = getContext();
-                    //if the user scanned a qr code
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        //show the url
-                        String qrCodeData = result.getData().getStringExtra(QRScanner.RESPONSE_INTENT_QR_DATA_KEY);
-                        linkDoctor(qrCodeData);
-                    } else {
-                        //otherwise show an error message
-                        Toast.makeText(context, "Could not scan QRcode.", Toast.LENGTH_LONG).show();
-                    }
+            result -> {
+                Context context = getContext();
+                //if the user scanned a qr code
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    //show the url
+                    String qrCodeData = result.getData().getStringExtra(QRScanner.RESPONSE_INTENT_QR_DATA_KEY);
+                    linkDoctor(qrCodeData);
+                } else {
+                    //otherwise show an error message
+                    Toast.makeText(context, "Could not scan QRcode.", Toast.LENGTH_LONG).show();
                 }
             });
 
