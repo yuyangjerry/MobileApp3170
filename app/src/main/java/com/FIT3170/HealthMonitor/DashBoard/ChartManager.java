@@ -13,6 +13,8 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public class ChartManager {
 
     public enum ChartType {
@@ -34,21 +36,21 @@ public class ChartManager {
         lineChart = chart;
         SetUpLineChart();
 
-//        Runnable runnable = () -> {
-//            while (true) {
-//
-//                try {
-//                    int randomNum = ThreadLocalRandom.current().nextInt(65, 75);
-//                    UpdateCharts(new DataResult(randomNum));
-//                    sleep(500);
-//                } catch (InterruptedException e) {
-//
-//                }
-//            }
-//
-//        };
-//        Thread thread = new Thread(runnable);
-//        thread.start();
+        Runnable runnable = () -> {
+            while (true) {
+
+                try {
+                    int randomNum = ThreadLocalRandom.current().nextInt(65, 75);
+                    UpdateCharts(new DataResult(randomNum));
+                    sleep(500);
+                } catch (InterruptedException e) {
+
+                }
+            }
+
+        };
+        Thread thread = new Thread(runnable);
+        thread.start();
 
     }
 
@@ -108,17 +110,17 @@ public class ChartManager {
 
     // set up line chart data sets
     private void setLineChartData() {
-        LineDataSet _ECGDataSet = createDataSet("ecg", ContextCompat.getColor(context, R.color.primaryRed));
+        LineDataSet _ECGDataSet = createDataSet("ecg", ContextCompat.getColor(context, R.color.colorPrimaryDark));
         ecgChartData = new ECGChartData(new LineData(_ECGDataSet));
 
-        LineDataSet _MADataSet = createDataSet("ma", ContextCompat.getColor(context, R.color.black));
+        LineDataSet _MADataSet = createDataSet("ma", ContextCompat.getColor(context, R.color.colorPrimaryDark));
         maChartData = new MAChartData(5, new LineData(_MADataSet));
     }
 
     //create a new Line data set.
     public LineDataSet createDataSet(String label, int color) {
         LineDataSet newSet = new LineDataSet(null, label);
-        newSet.setLineWidth(2f);
+        newSet.setLineWidth(1.5f);
         newSet.setDrawCircles(false);
         newSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER); //curved shape
         newSet.setColor(color);
