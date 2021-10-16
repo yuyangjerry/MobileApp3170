@@ -1,5 +1,7 @@
 package com.FIT3170.HealthMonitor.DashBoard;
 
+import static java.lang.Thread.sleep;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
@@ -15,11 +17,8 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.utils.EntryXComparator;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class ChartManager {
 
@@ -30,58 +29,83 @@ public class ChartManager {
 
     private ChartType currentType = ChartType.DefaultECG;
 
-    private MovingAverage movingAverage;
     private LineChart lineChart;
-    private LineData eCGData;
-    private LineData maData;
     private Context context;
     private final int ENTRY_COUNT_MAX = 15;
 
+    mChartData _ECGChart;
+    mChartData _MAChart;
 
     public ChartManager(Context context, LineChart chart) {
         this.context = context;
         lineChart = chart;
-        movingAverage = new MovingAverage(5);
         SetUpLineChart();
+
+//        Runnable runnable = () -> {
+//            while (true) {
+//
+//                try {
+//                    int randomNum = ThreadLocalRandom.current().nextInt(65, 75);
+//                    UpdateCharts(new DataResult(randomNum));
+//                    sleep(500);
+//                } catch (InterruptedException e) {
+//
+//                }
+//            }
+//
+//        };
+//        Thread thread = new Thread(runnable);
+//        thread.start();
+
     }
 
+    // set up line chart data sets
     private void setLineChartData() {
-        // documentation for LineDataSet class
-        //https://javadoc.jitpack.io/com/github/PhilJay/MPAndroidChart/v3.1.0/javadoc/
+        LineDataSet _ECGDataSet = createDataSet("ecg", ContextCompat.getColor(context, R.color.primaryRed));
+        _ECGChart = new ECGChartData(new LineData(_ECGDataSet));
 
-        LineDataSet eCGDataSet = createDataSet("ecg", ContextCompat.getColor(context, R.color.primaryRed));
-        eCGData = new LineData(eCGDataSet);
-
-        LineDataSet maDataSet = createDataSet("ma", ContextCompat.getColor(context, R.color.black));
-        maData = new LineData(maDataSet);
-
+        LineDataSet _MADataSet = createDataSet("ma", ContextCompat.getColor(context, R.color.black));
+        _MAChart = new MAChartData(5, new LineData(_MADataSet));
     }
 
-    public void UpdateCharts(DataPacket dataPacket, double bpm) {
+    //update chart data
+    public void UpdateCharts(DataResult result) {
+        if (lineChart.getData() == null) return;
+
         switch (currentType) {
             case DefaultECG: {
-                updateECGChart(dataPacket);
+                _ECGChart.updateChart(result);
+                notifyChanged(_ECGChart.getDataSet().getEntryCount(), _ECGChart.getDataSet().getEntryCount());
                 break;
             }
             case MovingAverage: {
-                Log.d("tag", String.valueOf(bpm));
-                UpdateMAChart(bpm);
+                _MAChart.updateChart(result);
+                notifyChanged(ENTRY_COUNT_MAX, _MAChart.getDataSet().getEntryCount());
                 break;
             }
         }
     }
 
+    // Call to update the visual line chart
+    private void notifyChanged(int xRangeMax, int moveToX) {
+        if (xRangeMax < 1 || moveToX < 1) {
+            return;
+        }
 
+        lineChart.notifyDataSetChanged();
+        lineChart.setVisibleXRangeMaximum(xRangeMax);
+        lineChart.moveViewToX(moveToX);
+    }
+
+
+    // switches graph type
     public void switchGraph(ChartType type) {
         switch (type) {
             case MovingAverage:
-                Log.d("sw", "ma");
-
-                lineChart.setData(maData);
+                lineChart.setData(_MAChart.getDataSet());
                 break;
             case DefaultECG:
-
-                lineChart.setData(eCGData);
+                lineChart.setData(_ECGChart.getDataSet());
 
                 break;
         }
@@ -89,15 +113,15 @@ public class ChartManager {
         ClearChart();
     }
 
+    //clears all the charts
     private void ClearChart() {
-        maData.getDataSetByIndex(0).clear();
-        eCGData.getDataSetByIndex(0).clear();
-        movingAverage.clear();
-        lineChart.invalidate();
+        _MAChart.clearChart();
+        _ECGChart.clearChart();
+        lineChart.postInvalidate();
     }
 
-
-    private LineDataSet createDataSet(String label, int color) {
+    //create a new Line data set.
+    public LineDataSet createDataSet(String label, int color) {
         LineDataSet newSet = new LineDataSet(null, label);
         newSet.setLineWidth(2f);
         newSet.setDrawCircles(false);
@@ -108,69 +132,9 @@ public class ChartManager {
     }
 
 
-    public void UpdateMAChart(double bpm) {
-
-        if (Double.isNaN(bpm)) {
-            bpm = 0;
-        }
-        ILineDataSet dataSet = maData.getDataSetByIndex(0);
-
-        if (dataSet != null) {
-
-            movingAverage.add(bpm);
-            if (dataSet.getEntryCount() > ENTRY_COUNT_MAX) {
-                dataSet.removeFirst();
-                for (int i = 0; i < dataSet.getEntryCount(); i++) {
-
-                    dataSet.getEntryForIndex(i).setX(dataSet.getEntryForIndex(i).getX() - 1);
-                }
-            }
-
-
-            float maAvg = (float) movingAverage.getAverage();
-
-            if (maAvg > 0.0) {
-                Entry newEntry = new Entry(dataSet.getEntryCount(), maAvg);
-                Log.d("chart", String.valueOf(maAvg));
-                dataSet.addEntry(newEntry);
-
-            }
-
-            notifyChanged(ENTRY_COUNT_MAX, dataSet.getEntryCount());
-        }
-
-
-    }
-
-    private void notifyChanged(int xRangeMax, int moveToX) {
-        eCGData.notifyDataChanged();
-        maData.notifyDataChanged();
-        movingAverage.clear();
-        lineChart.notifyDataSetChanged();
-        lineChart.setVisibleXRangeMaximum(xRangeMax);
-        lineChart.moveViewToX(moveToX);
-
-    }
-
-
-    public void updateECGChart(DataPacket dataPacket) {
-        if (eCGData != null && dataPacket != null) {
-            ILineDataSet dataSet = eCGData.getDataSetByIndex(0);
-            dataSet.clear();
-            Integer dataPointCount = 0;
-            for (DataPoint dataPoint : dataPacket.getData()) {
-                Entry newEntry = new Entry(dataPointCount, dataPoint.getValue());
-                eCGData.addEntry(newEntry, 0);
-                dataPointCount += 1;
-            }
-            notifyChanged(dataPointCount, dataPointCount);
-            Log.i("Dashboard", "");
-
-        }
-    }
-
-    //Sets up the main line chart
+    //Sets up the line chart
     private void SetUpLineChart() {
+        setLineChartData();
         //style
         lineChart.setBackgroundColor(Color.WHITE);
         lineChart.setScaleEnabled(true);
@@ -199,7 +163,7 @@ public class ChartManager {
 
         lineChart.setExtraOffsets(0f, 7f, 0f, 16f);
         lineChart.setDragDecelerationEnabled(false);
-        setLineChartData();
+
 
     }
 

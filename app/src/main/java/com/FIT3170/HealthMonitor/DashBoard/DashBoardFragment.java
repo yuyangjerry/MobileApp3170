@@ -95,23 +95,6 @@ public class DashBoardFragment extends Fragment {
 
         chartManager.switchGraph(ChartManager.ChartType.DefaultECG);
 
-//        Runnable runnable = new Runnable() {
-//            public void run() {
-//                while (true) {
-//                    int randomNum = ThreadLocalRandom.current().nextInt(65, 75);
-//                    chartManager.UpdateCharts(null, randomNum);
-//                    try {
-//                        sleep(100);
-//                    } catch (InterruptedException e) {
-//
-//                    }
-//
-//                }
-//
-//            }
-//        };
-//        Thread thread = new Thread(runnable);
-//        thread.start();
 
     }
 
@@ -205,7 +188,7 @@ public class DashBoardFragment extends Fragment {
 
             // Dummy Code
             // Sensor Is Spitting Millivolt Values that are
-            chartManager.UpdateCharts(dataPacket, bpm);
+            chartManager.UpdateCharts(new DataResult(bpm, dataPacket));
 
         }
     };
