@@ -25,10 +25,6 @@ import com.FIT3170.HealthMonitor.database.DataPacket;
 import com.FIT3170.HealthMonitor.database.ECGAlgorithm;
 import com.FIT3170.HealthMonitor.database.PeakToPeakAlgorithm;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.data.LineData;
-
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class DashBoardFragment extends Fragment {
 
@@ -86,14 +82,14 @@ public class DashBoardFragment extends Fragment {
 
 
         maChartBtn = view.findViewById(R.id.ma_chart_btn);
-        maChartBtn.setOnClickListener(v -> chartManager.switchGraph(ChartManager.ChartType.MovingAverage));
+        maChartBtn.setOnClickListener(v -> chartManager.switchChart(ChartManager.ChartType.MovingAverage));
 
 
         ecgChartBtn = view.findViewById(R.id.ecg_chart_btn);
-        ecgChartBtn.setOnClickListener(v -> chartManager.switchGraph(ChartManager.ChartType.DefaultECG));
+        ecgChartBtn.setOnClickListener(v -> chartManager.switchChart(ChartManager.ChartType.DefaultECG));
 
 
-        chartManager.switchGraph(ChartManager.ChartType.DefaultECG);
+        chartManager.switchChart(ChartManager.ChartType.DefaultECG);
 
 
     }

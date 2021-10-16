@@ -70,7 +70,7 @@ public class MAChartData implements mChartData {
     }
 
     @Override
-    public LineData getDataSet() {
+    public LineData getData() {
         return maData;
     }
 }

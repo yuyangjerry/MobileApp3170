@@ -4,21 +4,14 @@ import static java.lang.Thread.sleep;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
 import com.FIT3170.HealthMonitor.R;
-import com.FIT3170.HealthMonitor.database.DataPacket;
-import com.FIT3170.HealthMonitor.database.DataPoint;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-
-import java.util.concurrent.ThreadLocalRandom;
 
 public class ChartManager {
 
@@ -33,8 +26,8 @@ public class ChartManager {
     private Context context;
     private final int ENTRY_COUNT_MAX = 15;
 
-    mChartData _ECGChart;
-    mChartData _MAChart;
+    mChartData ecgChartData;
+    mChartData maChartData;
 
     public ChartManager(Context context, LineChart chart) {
         this.context = context;
@@ -59,14 +52,22 @@ public class ChartManager {
 
     }
 
-    // set up line chart data sets
-    private void setLineChartData() {
-        LineDataSet _ECGDataSet = createDataSet("ecg", ContextCompat.getColor(context, R.color.primaryRed));
-        _ECGChart = new ECGChartData(new LineData(_ECGDataSet));
+    // switches graph type
+    // Simply sets the lineChart to use another Data set
+    public void switchChart(ChartType type) {
+        switch (type) {
+            case MovingAverage:
+                lineChart.setData(maChartData.getData());
+                break;
+            case DefaultECG:
+                lineChart.setData(ecgChartData.getData());
 
-        LineDataSet _MADataSet = createDataSet("ma", ContextCompat.getColor(context, R.color.black));
-        _MAChart = new MAChartData(5, new LineData(_MADataSet));
+                break;
+        }
+        currentType = type;
+        ClearChart();
     }
+
 
     //update chart data
     public void UpdateCharts(DataResult result) {
@@ -74,13 +75,13 @@ public class ChartManager {
 
         switch (currentType) {
             case DefaultECG: {
-                _ECGChart.updateChart(result);
-                notifyChanged(_ECGChart.getDataSet().getEntryCount(), _ECGChart.getDataSet().getEntryCount());
+                ecgChartData.updateChart(result);
+                notifyChanged(ecgChartData.getData().getEntryCount(), ecgChartData.getData().getEntryCount());
                 break;
             }
             case MovingAverage: {
-                _MAChart.updateChart(result);
-                notifyChanged(ENTRY_COUNT_MAX, _MAChart.getDataSet().getEntryCount());
+                maChartData.updateChart(result);
+                notifyChanged(ENTRY_COUNT_MAX, maChartData.getData().getEntryCount());
                 break;
             }
         }
@@ -98,26 +99,20 @@ public class ChartManager {
     }
 
 
-    // switches graph type
-    public void switchGraph(ChartType type) {
-        switch (type) {
-            case MovingAverage:
-                lineChart.setData(_MAChart.getDataSet());
-                break;
-            case DefaultECG:
-                lineChart.setData(_ECGChart.getDataSet());
-
-                break;
-        }
-        currentType = type;
-        ClearChart();
+    //clears all the charts. Should delete all previous data when switching charts.
+    private void ClearChart() {
+        maChartData.clearChart();
+        ecgChartData.clearChart();
+        lineChart.postInvalidate();
     }
 
-    //clears all the charts
-    private void ClearChart() {
-        _MAChart.clearChart();
-        _ECGChart.clearChart();
-        lineChart.postInvalidate();
+    // set up line chart data sets
+    private void setLineChartData() {
+        LineDataSet _ECGDataSet = createDataSet("ecg", ContextCompat.getColor(context, R.color.primaryRed));
+        ecgChartData = new ECGChartData(new LineData(_ECGDataSet));
+
+        LineDataSet _MADataSet = createDataSet("ma", ContextCompat.getColor(context, R.color.black));
+        maChartData = new MAChartData(5, new LineData(_MADataSet));
     }
 
     //create a new Line data set.
@@ -134,10 +129,16 @@ public class ChartManager {
 
     //Sets up the line chart
     private void SetUpLineChart() {
+        //Data
         setLineChartData();
+
         //style
         lineChart.setBackgroundColor(Color.WHITE);
         lineChart.setScaleEnabled(true);
+        lineChart.getLegend().setEnabled(false);
+        lineChart.getDescription().setEnabled(false);
+        lineChart.setExtraOffsets(0f, 7f, 0f, 16f);
+        lineChart.setDragDecelerationEnabled(false);
 
         //X Axis
         XAxis xAxis = lineChart.getXAxis();
@@ -157,13 +158,6 @@ public class ChartManager {
         lineChart.getAxisLeft().setDrawGridLines(true);
         lineChart.getAxisLeft().setDrawAxisLine(false);
         lineChart.getAxisLeft().setLabelCount(6, true);
-
-        lineChart.getLegend().setEnabled(false);
-        lineChart.getDescription().setEnabled(false);
-
-        lineChart.setExtraOffsets(0f, 7f, 0f, 16f);
-        lineChart.setDragDecelerationEnabled(false);
-
 
     }
 

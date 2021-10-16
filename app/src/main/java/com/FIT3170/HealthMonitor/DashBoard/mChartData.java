@@ -12,6 +12,6 @@ public interface mChartData {
     void clearChart();
 
     //returns the data
-    LineData getDataSet();
+    LineData getData();
 
 }

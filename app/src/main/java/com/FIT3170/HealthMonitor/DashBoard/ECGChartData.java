@@ -40,7 +40,7 @@ public class ECGChartData implements mChartData {
     }
 
     @Override
-    public LineData getDataSet() {
+    public LineData getData() {
         return eCGData;
     }
 }
