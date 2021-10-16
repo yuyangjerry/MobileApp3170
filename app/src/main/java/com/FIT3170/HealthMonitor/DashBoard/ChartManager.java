@@ -36,21 +36,21 @@ public class ChartManager {
         lineChart = chart;
         SetUpLineChart();
 
-        Runnable runnable = () -> {
-            while (true) {
-
-                try {
-                    int randomNum = ThreadLocalRandom.current().nextInt(65, 75);
-                    UpdateCharts(new DataResult(randomNum));
-                    sleep(500);
-                } catch (InterruptedException e) {
-
-                }
-            }
-
-        };
-        Thread thread = new Thread(runnable);
-        thread.start();
+//        Runnable runnable = () -> {
+//            while (true) {
+//
+//                try {
+//                    int randomNum = ThreadLocalRandom.current().nextInt(65, 75);
+//                    UpdateCharts(new DataResult(randomNum));
+//                    sleep(500);
+//                } catch (InterruptedException e) {
+//
+//                }
+//            }
+//
+//        };
+//        Thread thread = new Thread(runnable);
+//        thread.start();
 
     }
 
