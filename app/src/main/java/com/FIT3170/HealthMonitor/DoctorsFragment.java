@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.FIT3170.HealthMonitor.adapters.DoctorAdpter;
 import com.FIT3170.HealthMonitor.database.DoctorProfile;
@@ -40,6 +41,7 @@ public class DoctorsFragment extends Fragment {
     private RecyclerView recyclerView;
     private DoctorAdpter.RecyclerViewClickListener listener;
     private DoctorAdpter adapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
     //========
 
     private Button linkDoctorButton;
@@ -63,15 +65,23 @@ public class DoctorsFragment extends Fragment {
         getDoctor();
         //=======
 
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            adapter.clear();
+            getDoctor();
+            swipeRefreshLayout.setRefreshing(false);
+        });
 
         linkDoctorButton = view.findViewById(R.id.link_new_doctor_button);
 
         linkDoctorButton.setOnClickListener(l -> {
             Context context = getContext();
             // if patient has not given camera permission yet
+            assert context != null;
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 //ask for camera permission
                 Activity activity = getActivity();
+                assert activity != null;
                 ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
             } else {
                 //If we already have permission, just launch the QRscanner activity which will take care of scanning
@@ -180,20 +190,17 @@ public class DoctorsFragment extends Fragment {
     }
 
     private void setOnClickListener() {
-        listener = new DoctorAdpter.RecyclerViewClickListener() {
-            @Override
-            public void onClick(View v, int position) {
-                // Create an intent to go to the doctor profile.
-                Context context = getContext();
-                Intent intent = new Intent(context, DoctorProfileActivity.class);
-                intent.putExtra("doctorid", doctorList.get(position).getDoctorID());
-                intent.putExtra("doctorgivenname", doctorList.get(position).getDoctorGivenName());
-                intent.putExtra("doctorfamilyname", doctorList.get(position).getDoctorFamilyName());
-                intent.putExtra("email", doctorList.get(position).getDoctorEmail());
-                intent.putExtra("phonenumber", doctorList.get(position).getPhoneNumber());
-                intent.putExtra("placeofpractice", doctorList.get(position).getPlaceOfPractice());
-                startActivity(intent);
-            }
+        listener = (v, position) -> {
+            // Create an intent to go to the doctor profile.
+            Context context = getContext();
+            Intent intent = new Intent(context, DoctorProfileActivity.class);
+            intent.putExtra("doctorid", doctorList.get(position).getDoctorID());
+            intent.putExtra("doctorgivenname", doctorList.get(position).getDoctorGivenName());
+            intent.putExtra("doctorfamilyname", doctorList.get(position).getDoctorFamilyName());
+            intent.putExtra("email", doctorList.get(position).getDoctorEmail());
+            intent.putExtra("phonenumber", doctorList.get(position).getPhoneNumber());
+            intent.putExtra("placeofpractice", doctorList.get(position).getPlaceOfPractice());
+            startActivity(intent);
         };
     }
 
