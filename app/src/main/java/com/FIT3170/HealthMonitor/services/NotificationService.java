@@ -30,6 +30,7 @@ public class NotificationService extends LifecycleService {
     private DataPacket mDataPacket;
     private ECGAlgorithm algorithm;
     private Timestamp lastNotification;
+    private final int minuteCool = 1;
 
     public static final int ABNORMAL_HIGH_HEART_RATE = 120;
     public static final int ABNORMAL_LOW_HEART_RATE = 50;
@@ -53,7 +54,7 @@ public class NotificationService extends LifecycleService {
     public void onCreate() {
         super.onCreate();
         // Magic number, change after algorithm is working properly
-        lastNotification = new Timestamp(System.currentTimeMillis()- (5 * 60000));
+        lastNotification = new Timestamp(System.currentTimeMillis()- (minuteCool * 60000));
         model = new BluetoothServiceModel();
         algorithm = new ECGAlgorithm(new PeakToPeakAlgorithm());
         bindToBluetoothService();
@@ -156,7 +157,6 @@ public class NotificationService extends LifecycleService {
      * @param bpm Most recent bpm value
      */
     private void checkAbnormalHeartRate(double bpm) {
-        int minuteCool = 5;
         long lastMili = lastNotification.getTime();
         Timestamp now = new Timestamp(System.currentTimeMillis());
         // heart rate trigger and notification off cooldown
