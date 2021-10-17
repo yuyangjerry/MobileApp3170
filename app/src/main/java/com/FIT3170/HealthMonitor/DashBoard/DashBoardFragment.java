@@ -25,10 +25,6 @@ import com.FIT3170.HealthMonitor.database.DataPacket;
 import com.FIT3170.HealthMonitor.database.ECGAlgorithm;
 import com.FIT3170.HealthMonitor.database.PeakToPeakAlgorithm;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.data.LineData;
-
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class DashBoardFragment extends Fragment {
 
@@ -86,32 +82,15 @@ public class DashBoardFragment extends Fragment {
 
 
         maChartBtn = view.findViewById(R.id.ma_chart_btn);
-        maChartBtn.setOnClickListener(v -> chartManager.switchGraph(ChartManager.ChartType.MovingAverage));
+        maChartBtn.setOnClickListener(v -> chartManager.switchChart(ChartManager.ChartType.MovingAverage));
 
 
         ecgChartBtn = view.findViewById(R.id.ecg_chart_btn);
-        ecgChartBtn.setOnClickListener(v -> chartManager.switchGraph(ChartManager.ChartType.DefaultECG));
+        ecgChartBtn.setOnClickListener(v -> chartManager.switchChart(ChartManager.ChartType.DefaultECG));
 
 
-        chartManager.switchGraph(ChartManager.ChartType.DefaultECG);
+        chartManager.switchChart(ChartManager.ChartType.DefaultECG);
 
-//        Runnable runnable = new Runnable() {
-//            public void run() {
-//                while (true) {
-//                    int randomNum = ThreadLocalRandom.current().nextInt(65, 75);
-//                    chartManager.UpdateCharts(null, randomNum);
-//                    try {
-//                        sleep(100);
-//                    } catch (InterruptedException e) {
-//
-//                    }
-//
-//                }
-//
-//            }
-//        };
-//        Thread thread = new Thread(runnable);
-//        thread.start();
 
     }
 
@@ -205,7 +184,7 @@ public class DashBoardFragment extends Fragment {
 
             // Dummy Code
             // Sensor Is Spitting Millivolt Values that are
-            chartManager.UpdateCharts(dataPacket, bpm);
+            chartManager.UpdateCharts(new DataResult(bpm, dataPacket));
 
         }
     };

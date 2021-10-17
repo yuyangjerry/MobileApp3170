@@ -5,8 +5,9 @@
     android:layout_height="90dp"
     android:padding="12dp"
     android:orientation="vertical"
+
     android:background="@drawable/card_style_background"
-    android:elevation="4dp">
+    android:elevation="3dp">
 
 
     <ImageView
@@ -20,14 +21,14 @@
         android:id="@+id/textView"
         android:layout_width="100dp"
         android:layout_height="25dp"
-        android:layout_marginLeft="10dp"
-        android:layout_toRightOf="@+id/header_icon"
-
-        android:fontFamily="@font/roboto_medium"
+        android:layout_marginStart="7dp"
+        android:layout_toEndOf="@+id/header_icon"
+        android:fontFamily="@font/open_sans"
         android:gravity="center_vertical"
         android:text="Heart Rate"
+        android:textStyle="bold"
+        android:textSize="14sp"
         android:textColor="@color/primaryRed" />
-
 
 
     <TextView
@@ -39,11 +40,11 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
-
-        android:fontFamily="@font/roboto_medium"
+        android:textStyle="bold"
+        android:fontFamily="@font/open_sans"
         android:text="-- BPM"
         android:textColor="@color/black"
-        android:textSize="23sp" />
+        android:textSize="19sp" />
 
 </RelativeLayout>
 
