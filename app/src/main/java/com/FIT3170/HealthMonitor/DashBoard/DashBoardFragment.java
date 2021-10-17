@@ -193,7 +193,7 @@ public class DashBoardFragment extends Fragment {
         @Override
         public void onChanged(Integer integer) {
             if (mainTextView != null) {
-                if (integer != mService.CONNECTION_CONNECTED) {
+                if (integer != mService.CONNECTION_SUBSCRIBED) {
                     mainTextView.setText("ECG device not connected");
                     Toast.makeText(getContext(), "Device unconnected", Toast.LENGTH_LONG);
                 } else {
