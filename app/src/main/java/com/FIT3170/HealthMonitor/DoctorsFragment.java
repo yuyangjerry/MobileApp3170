@@ -83,7 +83,7 @@ public class DoctorsFragment extends Fragment {
                     if (error != null) {
                         Log.i("DOCTORS", "Couldn't get doctor profile :(");
                         //oops, something went wrong, probably a network error
-                    } else {
+                    } else if (doctors[index] != null) {
                         //Success!, we can use doctors[imdex] now
                         DoctorProfile doc = doctors[index];
                         Log.i("DOCTORS", "Got doctor profile!" + doc.getUid());
