@@ -66,4 +66,10 @@ public class DoctorAdpter extends RecyclerView.Adapter<DoctorAdpter.MyViewHolder
     public interface RecyclerViewClickListener{
         void onClick(View v, int position);
     }
+
+    public void clear() {
+        int size = doctorList.size();
+        doctorList.clear();
+        notifyItemRangeRemoved(0, size);
+    }
 }

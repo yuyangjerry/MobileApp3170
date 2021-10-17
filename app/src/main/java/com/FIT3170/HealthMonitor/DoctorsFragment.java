@@ -14,12 +14,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -63,40 +60,9 @@ public class DoctorsFragment extends Fragment {
 
         //setDoctorInfo();
         setAdapter();
+        getDoctor();
         //=======
 
-        // 1. get all doctor ids
-        String doctorIds[] = UserProfile.getLinkedDoctorIds();
-        if(doctorIds == null || doctorIds.length == 0){
-            //Well, seems like there are no linkded doctors
-            //TODO: display that there are no linked doctors
-        }else{
-            DoctorProfile doctors[] = new DoctorProfile[doctorIds.length];
-
-            // 2. get all doctors profiles
-            for (int i = 0; i < doctors.length; i++) {
-                Log.i("DOCTORS", doctorIds[i]);
-                //Re-declaring i as as final so that we can safely access it inside the callback
-                final int index = i;
-                doctors[index] = new DoctorProfile(doctorIds[index], (succes, error) -> {
-
-                    if (error != null) {
-                        Log.i("DOCTORS", "Couldn't get doctor profile :(");
-                        //oops, something went wrong, probably a network error
-                    } else if (doctors[index] != null) {
-                        //Success!, we can use doctors[imdex] now
-                        DoctorProfile doc = doctors[index];
-                        Log.i("DOCTORS", "Got doctor profile!" + doc.getUid());
-                        //TODO: put doc into a vew in the doctor list
-                        doctorList.add(new Doctor(doc.getUid(), doc.getGivenName(), doc.getFamilyName(), doc.getEmail(), doc.getPhoneNumber(), doc.getPlaceOfPractice()));
-                        adapter.notifyDataSetChanged();
-                        //TODO: when the user clicks on "view doctor profile button"
-                        // for this user, put doctorIds[index] into an intent and send it to the doctor
-                        // profile fragment/activity
-                    }
-                });
-            }
-        }
 
         linkDoctorButton = view.findViewById(R.id.link_new_doctor_button);
 
@@ -164,6 +130,42 @@ public class DoctorsFragment extends Fragment {
                 launchQRActivity.launch(intent);
             } else {  //Otherwise show an error message
                 Toast.makeText(context, "You need to provide permission to use your camera in order to scan QRcode.", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void getDoctor(){
+        // 1. get all doctor ids
+        adapter.clear();
+        String doctorIds[] = UserProfile.getLinkedDoctorIds();
+        if(doctorIds == null || doctorIds.length == 0){
+            //Well, seems like there are no linkded doctors
+            //TODO: display that there are no linked doctors
+        }else{
+            DoctorProfile doctors[] = new DoctorProfile[doctorIds.length];
+
+            // 2. get all doctors profiles
+            for (int i = 0; i < doctors.length; i++) {
+                Log.i("DOCTORS", doctorIds[i]);
+                //Re-declaring i as as final so that we can safely access it inside the callback
+                final int index = i;
+                doctors[index] = new DoctorProfile(doctorIds[index], (succes, error) -> {
+
+                    if (error != null) {
+                        Log.i("DOCTORS", "Couldn't get doctor profile :(");
+                        //oops, something went wrong, probably a network error
+                    } else if (doctors[index] != null) {
+                        //Success!, we can use doctors[imdex] now
+                        DoctorProfile doc = doctors[index];
+                        Log.i("DOCTORS", "Got doctor profile!" + doc.getUid());
+                        //TODO: put doc into a vew in the doctor list
+                        doctorList.add(new Doctor(doc.getUid(), doc.getGivenName(), doc.getFamilyName(), doc.getEmail(), doc.getPhoneNumber(), doc.getPlaceOfPractice()));
+                        adapter.notifyDataSetChanged();
+                        //TODO: when the user clicks on "view doctor profile button"
+                        // for this user, put doctorIds[index] into an intent and send it to the doctor
+                        // profile fragment/activity
+                    }
+                });
             }
         }
     }
@@ -242,9 +244,9 @@ public class DoctorsFragment extends Fragment {
 //                                                .attach(this)
 //                                                .commit();
 
-                                        doctorList.add(new Doctor(validator.getDoctorId(), validator.getInviteId(), validator.getInviteId(), validator.getInviteId(), validator.getInviteId(), validator.getInviteId()));
-                                        adapter.notifyDataSetChanged();
-
+                                        //doctorList.add(new Doctor(validator.getDoctorId(), validator.getInviteId(), validator.getInviteId(), validator.getInviteId(), validator.getInviteId(), validator.getInviteId()));
+                                        //adapter.notifyDataSetChanged();
+                                        getDoctor();
                                     }
                                 }
                         );
