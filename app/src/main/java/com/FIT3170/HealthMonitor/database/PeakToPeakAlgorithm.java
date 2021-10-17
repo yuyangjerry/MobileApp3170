@@ -13,7 +13,7 @@ public class PeakToPeakAlgorithm implements Algorithm {
     // Unchanging variables
     private static final int SECOND = 60;
     private static final int FREQ = 50;
-    private static final int BOUND = 650;
+    private static final int BOUND = 1250;
 
     // Variable used for peak calculations
     // Last peak value in mV
