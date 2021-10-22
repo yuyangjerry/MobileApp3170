@@ -35,7 +35,7 @@ public class NotificationService extends LifecycleService {
     private DataPacket mDataPacket;
     private ECGAlgorithm algorithm;
     private Timestamp lastNotification;
-    private final int minuteCool = 1;
+    private final int minuteCool = 5;
 
     public static final int ABNORMAL_HIGH_HEART_RATE = 190 - UserProfile.getAge();
     public static final int ABNORMAL_LOW_HEART_RATE = 40;
