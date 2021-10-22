@@ -19,7 +19,13 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 import java.sql.Time;
+import java.text.DateFormat;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -434,6 +440,24 @@ public class UserProfile {
     static public void setDateOfBirth(Timestamp timestamp){
         instance.modifiableProfile.put(DATE_OF_BIRTH_KEY, timestamp);
     }
+
+    static public int getAge() {
+        Calendar dob = Calendar.getInstance();
+        dob.setTime(instance.getDateOfBirth().toDate());
+        Calendar today = Calendar.getInstance();
+
+
+        int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
+
+        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)){
+            age--;
+        }
+
+        Integer ageInt = new Integer(age);
+
+        return ageInt;
+    }
+
 
     static public String[] getLinkedDoctorIds(){
         Object o = instance.modifiableProfile.get(DOCTORS_KEY);

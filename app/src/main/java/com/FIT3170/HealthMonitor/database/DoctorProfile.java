@@ -1,5 +1,7 @@
 package com.FIT3170.HealthMonitor.database;
 
+import android.util.Log;
+
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -44,6 +46,7 @@ public class DoctorProfile {
     }
 
     public String getGivenName(){
+        Log.d("tag",(String)doctor.get("givenName"));
         return (String)doctor.get("givenName");
     }
 

@@ -18,6 +18,7 @@ import com.FIT3170.HealthMonitor.database.DataPacket;
 import com.FIT3170.HealthMonitor.database.ECGAlgorithm;
 import com.FIT3170.HealthMonitor.database.PeakToPeakAlgorithm;
 import com.FIT3170.HealthMonitor.database.UserProfile;
+import com.google.firebase.firestore.auth.User;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -32,8 +33,8 @@ public class NotificationService extends LifecycleService {
     private Timestamp lastNotification;
     private final int minuteCool = 1;
 
-    public static final int ABNORMAL_HIGH_HEART_RATE = 120;
-    public static final int ABNORMAL_LOW_HEART_RATE = 50;
+    public static final int ABNORMAL_HIGH_HEART_RATE = 190 - UserProfile.getAge();
+    public static final int ABNORMAL_LOW_HEART_RATE = 40;
 
     // FOR DEBUG PURPOSES ONLY
     // !!

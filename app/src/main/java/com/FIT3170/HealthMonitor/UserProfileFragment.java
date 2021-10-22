@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.FIT3170.HealthMonitor.adapters.ProfileGVAdapter;
 import com.FIT3170.HealthMonitor.database.UserProfile;
+import com.google.firebase.firestore.auth.User;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
