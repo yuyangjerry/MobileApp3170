@@ -27,54 +27,20 @@ import java.util.Arrays;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link NotificationHistory#newInstance} factory method to
- * create an instance of this fragment.
+ * Fragment to display a users notification history. Retrieves it from the database and dislpays
+ * in a list view
  */
 public class NotificationHistory extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
 
     private ArrayList<Notification> notificationArray;
     RecyclerView recyclerView;
     private NotificationHistoryAdapter adapter;
 
-    // Using ArrayList to store images data
 
-    ArrayList<String> courseName = new ArrayList<>(Arrays.asList("Software Update Available",
-            "Abnormal Heart Rate Detected: Contact GP", "Heartsense at Full Charge",
-            "Heartsense Disconnected", "Heartsense at 15% Charge", "New Doctor Successfully linked"
-            , "Software Update Successful"));
-
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     public NotificationHistory() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment NotificationHistory.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static NotificationHistory newInstance(String param1, String param2) {
-        NotificationHistory fragment = new NotificationHistory();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -96,6 +62,11 @@ public class NotificationHistory extends Fragment {
         return inflater.inflate(R.layout.fragment_notification_history, container, false);
     }
 
+    /**
+     * Create reference to the Notification history adapter
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -119,9 +90,10 @@ public class NotificationHistory extends Fragment {
 
     /**
      * Call the database and refresh the notifications display with the new data
+     * Once the new data has been pulled, notify the adapter the data has changed
      */
     private void overwriteNotifications(){
-        // TODO: Refactor this into the User Profile class?
+        // query firebase to get notification history
         FirebaseFirestore.getInstance().collection("patients")
                 .document(UserProfile.getUid())
                 .collection("notificationHistory")
@@ -131,6 +103,8 @@ public class NotificationHistory extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            // If the notifications are pulled, clear the array and add the
+                            // new notification objects
                             notificationArray.clear();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d("d", document.getId() + " => " + document.getData());
@@ -148,6 +122,10 @@ public class NotificationHistory extends Fragment {
                 });
     }
 
+    /**
+     * Called everytime the fragment is opened
+     * Fetches the notifications again
+     */
     @Override
     public void onResume() {
         overwriteNotifications();

@@ -1,5 +1,9 @@
 package com.FIT3170.HealthMonitor;
 
+/**
+ * Each attribute in the user profile menu has its own model, used to store the attribute name
+ * and its value
+ */
 public class ProfileAttributeModel {
     private String attribute_name;
     private String attribute_value;

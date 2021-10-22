@@ -21,55 +21,22 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link UserProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Fragment for the user profile
+ * Creates a grid view and displays the users information
  */
 public class UserProfileFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
     GridView profileGV;
     TextView profileTV;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     public UserProfileFragment() {
         // Required empty public constructor
-    }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment UserProfileFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static UserProfileFragment newInstance(String param1, String param2) {
-        UserProfileFragment fragment = new UserProfileFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (getArguments() != null) {
-//            mParam1 = getArguments().getString(ARG_PARAM1);
-//            mParam2 = getArguments().getString(ARG_PARAM2);
-//        }
-        //setContentView(R.layout.activity_main);
-
     }
 
     @Override
@@ -79,6 +46,13 @@ public class UserProfileFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_user_profile, container, false);
     }
 
+    /**
+     * Can add more information to the profile model array list and it will be displayed
+     * This can be any information from the user profile
+     * Used the UserProfile singleton class to obtain the data to be displayed
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -89,14 +63,17 @@ public class UserProfileFragment extends Fragment {
 
         profileTV.setText(patientName);
 
+
         Date dob = UserProfile.getDateOfBirth().toDate();
         String height = UserProfile.getHeight() + "cm";
         String weight = UserProfile.getWeight() + "kg";
-
+        //Format the dob
         Format formatter = new SimpleDateFormat("dd/MM/yyyy");
 
         String dobString = formatter.format(dob);
 
+        //Add the fields to the array
+        //Each field must be in a model
         ArrayList<ProfileAttributeModel> profileModelArrayList = new ArrayList<ProfileAttributeModel>();
         profileModelArrayList.add(new ProfileAttributeModel("Date of Birth", dobString));
         profileModelArrayList.add(new ProfileAttributeModel("Blood", UserProfile.getBloodType()));
@@ -105,6 +82,7 @@ public class UserProfileFragment extends Fragment {
         profileModelArrayList.add(new ProfileAttributeModel("Weight", weight));
         profileModelArrayList.add(new ProfileAttributeModel("Marital Status", UserProfile.getMaritalStatus()));
 
+        //Create the adapter with data nad set the adapter
         ProfileGVAdapter adapter = new ProfileGVAdapter(getActivity(), profileModelArrayList);
         profileGV.setAdapter(adapter);
     }
