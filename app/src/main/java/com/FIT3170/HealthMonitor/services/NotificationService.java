@@ -23,6 +23,10 @@ import com.google.firebase.firestore.auth.User;
 import java.sql.Timestamp;
 import java.util.Date;
 
+
+/**
+ * This services handles the observing and firing of bpm heart rate alerts
+ */
 public class NotificationService extends LifecycleService {
 
     private BluetoothServiceModel model;
@@ -36,20 +40,11 @@ public class NotificationService extends LifecycleService {
     public static final int ABNORMAL_HIGH_HEART_RATE = 190 - UserProfile.getAge();
     public static final int ABNORMAL_LOW_HEART_RATE = 40;
 
-    // FOR DEBUG PURPOSES ONLY
-    // !!
-    // !!
-    // !!
-    private Boolean hasNotificationBeenServed = false;
-    // !!
-    // !!
-    // !!
-
 
     /**
      * First method called when the service is instantiated.
      * Binds to the bluetooth service, then begins to observe it.
-     * Also creates the notifcation channel
+     * Also creates the notification channel
      */
     @Override
     public void onCreate() {
@@ -88,6 +83,9 @@ public class NotificationService extends LifecycleService {
         }
     }
 
+    /**
+     * Stop observing any other services
+     */
     private void removeObservers() {
         if(mService != null){
             // Remove Observers
@@ -129,7 +127,6 @@ public class NotificationService extends LifecycleService {
     /**
      * This is the observer object that represents this class.
      * The onChanged method is called everytime new data is sent to the phone via bluetooth
-     *
      */
     Observer<DataPacket> dataPacketObserver = new Observer<DataPacket>() {
         @Override
@@ -138,20 +135,13 @@ public class NotificationService extends LifecycleService {
             Log.d("debug", "Data Packet Size: "+ dataPacket.getData().size()+"");
             Log.d("debug","-----------------------------");
             // change implementation
-            // store algorithm class as local
+            // TODO: store algorithm class as local
             double bpm = algorithm.calculate(dataPacket);
 
             Log.d("notification service", bpm + "");
             checkAbnormalHeartRate(bpm);
         }
     };
-
-//    Observer<Integer> connectionStatusObserver = new Observer<Integer>() {
-//        @Override
-//        public void onChanged(Integer integer) {
-//            Log.d("debug", "Connection status: "+integer.toString());
-//        }
-//    };
 
     /**
      * Checks to see if the heart rate is abnormal, triggers notification if so
@@ -160,35 +150,33 @@ public class NotificationService extends LifecycleService {
     private void checkAbnormalHeartRate(double bpm) {
         long lastMili = lastNotification.getTime();
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        // heart rate trigger and notification off cooldown
+        // heart rate too high and notification off cool-down
         if(bpm > ABNORMAL_HIGH_HEART_RATE && now.getTime() > lastMili + minuteCool * 60000) {
-
-            // Please Remove This Line Of Code after we fix the abnormal heart rate algorithm
             lastNotification = new Timestamp(System.currentTimeMillis());
             String title = "Abnormally High Heart Rate";
             String description = "An abnormal high heart rate of " + java.lang.Math.round(bpm) + " was detected. We recommend you get proper medical "
                     + "assistance.";
-            sendNotification(bpm, lastNotification, title, description);
+            sendNotification(lastNotification, title, description);
         }
+        // or too low
         else if (bpm < ABNORMAL_LOW_HEART_RATE && now.getTime() > lastMili + minuteCool * 60000){
             String title = "Abnormally Low Heart Rate";
             String description = "An abnormal low heart rate of " + java.lang.Math.round(bpm) + " was detected. We recommend you get proper medical "
                     + "assistance.";
 
             lastNotification = new Timestamp(System.currentTimeMillis());
-            sendNotification(bpm, lastNotification, title, description);
+            sendNotification(lastNotification, title, description);
         }
     }
 
     /**
-     * Need to investigate its purpose.
-     * Allows for notifications to be sent
+     * Creates the settings for heart rate notifications to be sent through: id, name, importance
      */
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Test";//getString(R.string.channel_name);
+            CharSequence name = "Test"; // TODO: Set a meaningful name and description
             String description = "Description"; //getString(R.string.channel_description);
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel("com.FIT3170.HealthMonitor",
@@ -198,18 +186,13 @@ public class NotificationService extends LifecycleService {
             // or other notification behaviors after this
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
-
         }
     }
 
     /**
      * Sends the abnormal heart rate notification to the phone
      */
-    private void sendNotification(double bpm, Timestamp time, String title, String description) {
-        // ----- TESTING HARDCODING
-//        time = new Timestamp(System.currentTimeMillis());
-//        bpm = 160.2;
-        // -------
+    private void sendNotification(Timestamp time, String title, String description) {
 
         NotificationBuilder builder = new NotificationBuilder();
 
@@ -218,8 +201,7 @@ public class NotificationService extends LifecycleService {
     }
 
     /**
-     *
-     * TODO: Clarify which Timestamp is best (com.google.firebase; java.sql)
+     * Store the notification by making a database call
      */
     private void storeNotification(String title, String description, Timestamp time) {
         Date timeDate = new Date(time.getTime());
