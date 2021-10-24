@@ -13,6 +13,13 @@ import com.FIT3170.HealthMonitor.R;
 
 import java.util.ArrayList;
 
+
+/*
+this class will fill the doctor_item.xml with doctor ID and name then fill the recyclerview,
+doctor profile is store in an array
+ref: https://www.youtube.com/watch?v=__OMnFR-wZU
+ref: https://www.youtube.com/watch?v=vBxNDtyE_Co&t=0s
+ */
 public class DoctorAdpter extends RecyclerView.Adapter<DoctorAdpter.MyViewHolder> {
 
     private ArrayList<Doctor> doctorList;
@@ -29,6 +36,7 @@ public class DoctorAdpter extends RecyclerView.Adapter<DoctorAdpter.MyViewHolder
 
         public MyViewHolder(final View view){
             super(view);
+            //find the text box in the doctor_item
             doctorId = view.findViewById(R.id.textView9);
             doctorName = view.findViewById(R.id.textView8);
             view.setOnClickListener(this);
@@ -50,6 +58,7 @@ public class DoctorAdpter extends RecyclerView.Adapter<DoctorAdpter.MyViewHolder
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Doctor doctor = doctorList.get(position);
+        //fill the doctor_item
         if(doctor != null){
             String docId = doctor.getDoctorID();
             holder.doctorId.setText(docId);
@@ -67,6 +76,9 @@ public class DoctorAdpter extends RecyclerView.Adapter<DoctorAdpter.MyViewHolder
         void onClick(View v, int position);
     }
 
+    /*
+    clear the array containing all the doctors
+     */
     public void clear() {
         int size = doctorList.size();
         doctorList.clear();

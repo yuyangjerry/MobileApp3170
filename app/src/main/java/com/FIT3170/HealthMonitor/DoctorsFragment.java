@@ -36,13 +36,11 @@ public class DoctorsFragment extends Fragment {
     public final static int QR_CODE_REQUEST_CODE = 1;
     public final static int CAMERA_PERMISSION_REQUEST_CODE = 2;
 
-    //========
     private ArrayList<Doctor> doctorList;
     private RecyclerView recyclerView;
     private DoctorAdpter.RecyclerViewClickListener listener;
     private DoctorAdpter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
-    //========
 
     private Button linkDoctorButton;
 
@@ -56,17 +54,17 @@ public class DoctorsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        //=======
         recyclerView = view.findViewById(R.id.doctorList);
         doctorList = new ArrayList<>();
 
-        //setDoctorInfo();
         setAdapter();
         getDoctor();
-        //=======
 
+        //user can pull down the doctor list to update the list
+        //ref: https://www.youtube.com/watch?v=Ffa0Mtd21_M
         swipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
         swipeRefreshLayout.setOnRefreshListener(() -> {
+            //clear the doctor list and get all the doctors profile again
             adapter.clear();
             getDoctor();
             swipeRefreshLayout.setRefreshing(false);
@@ -144,13 +142,21 @@ public class DoctorsFragment extends Fragment {
         }
     }
 
+    /*
+    this function will get all the doctors linked and get the profile
+     */
     private void getDoctor(){
-        // 1. get all doctor ids
+        //clear the list
         adapter.clear();
+        // 1. get all doctor ids
         String doctorIds[] = UserProfile.getLinkedDoctorIds();
         if(doctorIds == null || doctorIds.length == 0){
-            //Well, seems like there are no linkded doctors
-            //TODO: display that there are no linked doctors
+            //Well, seems like there are no linked doctors
+            new AlertDialog.Builder(getContext())
+                    .setTitle("0 doctors linked")
+                    .setMessage("There are no doctors linked")
+                    .setPositiveButton("Ok", null)
+                    .show();
         }else{
             DoctorProfile doctors[] = new DoctorProfile[doctorIds.length];
 
@@ -165,21 +171,21 @@ public class DoctorsFragment extends Fragment {
                         Log.i("DOCTORS", "Couldn't get doctor profile :(");
                         //oops, something went wrong, probably a network error
                     } else if (doctors[index] != null) {
-                        //Success!, we can use doctors[imdex] now
+                        //Success!, we can use doctors[index] now
                         DoctorProfile doc = doctors[index];
                         Log.i("DOCTORS", "Got doctor profile!" + doc.getUid());
-                        //TODO: put doc into a vew in the doctor list
                         doctorList.add(new Doctor(doc.getUid(), doc.getGivenName(), doc.getFamilyName(), doc.getEmail(), doc.getPhoneNumber(), doc.getPlaceOfPractice()));
+                        //update the doctor array and UI
                         adapter.notifyDataSetChanged();
-                        //TODO: when the user clicks on "view doctor profile button"
-                        // for this user, put doctorIds[index] into an intent and send it to the doctor
-                        // profile fragment/activity
                     }
                 });
             }
         }
     }
 
+    /*
+    initialise adapter
+     */
     private void setAdapter(){
         setOnClickListener();
         adapter = new DoctorAdpter(doctorList, listener);
@@ -191,9 +197,10 @@ public class DoctorsFragment extends Fragment {
 
     private void setOnClickListener() {
         listener = (v, position) -> {
-            // Create an intent to go to the doctor profile.
+            // Create an intent to go to the doctor profile page.
             Context context = getContext();
             Intent intent = new Intent(context, DoctorProfileActivity.class);
+            //send extra information, doctor profile
             intent.putExtra("doctorid", doctorList.get(position).getDoctorID());
             intent.putExtra("doctorgivenname", doctorList.get(position).getDoctorGivenName());
             intent.putExtra("doctorfamilyname", doctorList.get(position).getDoctorFamilyName());
@@ -204,14 +211,6 @@ public class DoctorsFragment extends Fragment {
         };
     }
 
-//    private void setDoctorInfo(){
-//        doctorList.add(new Doctor("papa", "sa"));
-//        doctorList.add(new Doctor("dada","as"));
-//        doctorList.add(new Doctor("dada","as"));
-//        doctorList.add(new Doctor("dada","as"));
-//        doctorList.add(new Doctor("dada","as"));
-//    }
-
     /**
      * Perform the actual linking after scanning the qr code
      * @param qrCodeData
@@ -221,6 +220,7 @@ public class DoctorsFragment extends Fragment {
         QrCodeValidator validator = new QrCodeValidator(qrCodeData);
 
         if(validator.isValid()){
+            //verify successful
             new AlertDialog.Builder(getContext())
                     .setTitle("Are you sure?")
                     .setMessage("This doctor will have access to your sensor data after linking")
@@ -233,26 +233,19 @@ public class DoctorsFragment extends Fragment {
                                     dialog.dismiss();
 
                                     if(error != null){
+                                        //link unsuccessful, notify user
                                         new AlertDialog.Builder(getContext())
                                                 .setTitle("Unable to link doctor")
                                                 .setMessage(error.getMessage())
                                                 .setPositiveButton("Ok", null)
                                                 .show();
                                     }else{
+                                        //link successful, notify user
                                         new AlertDialog.Builder(getContext())
                                                 .setTitle("Linked successfully!")
                                                 .setPositiveButton("Ok", null)
                                                 .show();
-
-                                        //TODO: Updated the UI after linking a new doctor
-
-//                                        getFragmentManager().beginTransaction()
-//                                                .detach(this)
-//                                                .attach(this)
-//                                                .commit();
-
-                                        //doctorList.add(new Doctor(validator.getDoctorId(), validator.getInviteId(), validator.getInviteId(), validator.getInviteId(), validator.getInviteId(), validator.getInviteId()));
-                                        //adapter.notifyDataSetChanged();
+                                        //get the doctor profile and update the UI
                                         getDoctor();
                                     }
                                 }
@@ -262,6 +255,7 @@ public class DoctorsFragment extends Fragment {
                     .show();
 
         }else{
+            //verify unsuccessful
             new AlertDialog.Builder(getContext())
                     .setTitle("Invalid QR-Code")
                     .setMessage("The scanned QR-Code is invalid")
