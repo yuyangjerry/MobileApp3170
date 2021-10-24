@@ -27,6 +27,7 @@ public class PeakToPeakAlgorithm implements Algorithm {
         prevPeakDistance = 0;
     }
 
+    // Calculate BPM functiion.
     @Override
     public double getBPM(DataPacket dataPacket) {
         // Set the lastPeakDistance value to be prevPeakDistance

@@ -40,6 +40,7 @@ public class DashBoardFragment extends Fragment {
     private int mConnectionStatus;
     private BluetoothServiceModel model;
     private DataPacket mDataPacket;
+    // Change this ECGAlorithm to be another Algorithm class if needed
     private ECGAlgorithm algorithm;
 
     private Button maChartBtn, ecgChartBtn;
@@ -77,6 +78,7 @@ public class DashBoardFragment extends Fragment {
         mainTextView = view.findViewById(R.id.dashboard_main_text);
 
         // Create algorithm class
+        // Change this ECGAlorithm to be another Algorithm class if needed
         algorithm = new ECGAlgorithm(new PeakToPeakAlgorithm());
         chartManager = new ChartManager(getContext(), bPMLineChart);
 
