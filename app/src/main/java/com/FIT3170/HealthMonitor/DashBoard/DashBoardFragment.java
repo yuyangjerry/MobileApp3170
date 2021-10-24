@@ -1,5 +1,7 @@
 package com.FIT3170.HealthMonitor.DashBoard;
 
+import static java.lang.Thread.sleep;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -23,9 +25,6 @@ import com.FIT3170.HealthMonitor.database.DataPacket;
 import com.FIT3170.HealthMonitor.database.ECGAlgorithm;
 import com.FIT3170.HealthMonitor.database.PeakToPeakAlgorithm;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.data.LineData;
-
-import java.util.concurrent.ThreadLocalRandom;
 
 public class DashBoardFragment extends Fragment {
 
@@ -44,6 +43,7 @@ public class DashBoardFragment extends Fragment {
     private ECGAlgorithm algorithm;
 
     private Button maChartBtn, ecgChartBtn;
+    private TextView mainTextView;
 
 
     public DashBoardFragment(Activity mActivity) {
@@ -74,6 +74,7 @@ public class DashBoardFragment extends Fragment {
 
         bPMLineChart = view.findViewById(R.id.line_chart);
         heartRateTextView = view.findViewById(R.id.heart_rate_text);
+        mainTextView = view.findViewById(R.id.dashboard_main_text);
 
         // Create algorithm class
         algorithm = new ECGAlgorithm(new PeakToPeakAlgorithm());
@@ -81,17 +82,14 @@ public class DashBoardFragment extends Fragment {
 
 
         maChartBtn = view.findViewById(R.id.ma_chart_btn);
-        maChartBtn.setOnClickListener(v -> chartManager.switchGraph(ChartManager.ChartType.MovingAverage));
+        maChartBtn.setOnClickListener(v -> chartManager.switchChart(ChartManager.ChartType.MovingAverage));
 
 
         ecgChartBtn = view.findViewById(R.id.ecg_chart_btn);
-        ecgChartBtn.setOnClickListener(v -> chartManager.switchGraph(ChartManager.ChartType.DefaultECG));
+        ecgChartBtn.setOnClickListener(v -> chartManager.switchChart(ChartManager.ChartType.DefaultECG));
 
-        //show toast to notify user no device is connected.
-        chartManager.switchGraph(ChartManager.ChartType.DefaultECG);
-        if (mService == null) {
-            Toast.makeText(getContext(), "No device connected", Toast.LENGTH_LONG).show();
-        }
+
+        chartManager.switchChart(ChartManager.ChartType.DefaultECG);
 
 
     }
@@ -108,13 +106,8 @@ public class DashBoardFragment extends Fragment {
                 else{
                     Log.d("debug", "onChanged: bound to service.");
                     mService = bluetoothBinder.getService();
-
-                    mConnectionStatus = mService.getConnectionStatus().getValue();
                     mService.getConnectionStatus().observe(getActivity(), connectionStatusObserver);
-
-                    mDataPacket = mService.getDataPacket().getValue();
-                    mService.getDataPacket().observe(getActivity(), dataPacketObserver);
-
+                    mService.getDataPacketShortDuration().observe(getActivity(), dataPacketObserver);
                 }
             }
         });
@@ -156,7 +149,7 @@ public class DashBoardFragment extends Fragment {
         Log.d("debug","Observers Removed");
         if(mService != null){
             // Remove Observers
-            mService.getDataPacket().removeObserver(dataPacketObserver);
+            mService.getDataPacketShortDuration().removeObserver(dataPacketObserver);
             mService.getConnectionStatus().removeObserver(connectionStatusObserver);
         }
     }
@@ -191,7 +184,7 @@ public class DashBoardFragment extends Fragment {
 
             // Dummy Code
             // Sensor Is Spitting Millivolt Values that are
-            chartManager.UpdateCharts(dataPacket, bpm);
+            chartManager.UpdateCharts(new DataResult(bpm, dataPacket));
 
         }
     };
@@ -199,7 +192,16 @@ public class DashBoardFragment extends Fragment {
     Observer<Integer> connectionStatusObserver = new Observer<Integer>() {
         @Override
         public void onChanged(Integer integer) {
-            Log.d("debug", "Connection status: "+integer.toString());
+            if (mainTextView != null) {
+                if (integer != mService.CONNECTION_SUBSCRIBED) {
+                    mainTextView.setText("ECG device not connected");
+                    Toast.makeText(getContext(), "Device unconnected", Toast.LENGTH_LONG);
+                } else {
+                    mainTextView.setText("Battery: 50%");
+
+                }
+            }
+            Log.d("debug", "Connection status: " + integer.toString());
         }
     };
 

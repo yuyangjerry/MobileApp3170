@@ -1,31 +1,22 @@
 package com.FIT3170.HealthMonitor.services;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
 import androidx.lifecycle.LifecycleService;
 import androidx.lifecycle.Observer;
 
-import com.FIT3170.HealthMonitor.NotificationBuilder;
 import com.FIT3170.HealthMonitor.bluetooth.BluetoothService;
 import com.FIT3170.HealthMonitor.bluetooth.BluetoothServiceModel;
 import com.FIT3170.HealthMonitor.database.DataPacket;
-import com.FIT3170.HealthMonitor.database.ECGAlgorithm;
-import com.FIT3170.HealthMonitor.database.PeakToPeakAlgorithm;
+import com.FIT3170.HealthMonitor.database.ReadingUploader;
 
 public class UploadingService extends LifecycleService {
 
     private BluetoothServiceModel model;
     private BluetoothService mService;
-    private int mConnectionStatus;
-    private DataPacket mDataPacket;
-
-    public static final int ABNORMAL_HEART_RATE = 120;
 
     /**
      * First method called when the service is instantiated.
@@ -68,7 +59,7 @@ public class UploadingService extends LifecycleService {
     private void removeObservers() {
         if(mService != null){
             // Remove Observers
-            mService.getDataPacket().removeObserver(dataPacketObserver);
+            mService.getDataPacketShortDuration().removeObserver(dataPacketObserver);
         }
     }
 
@@ -97,10 +88,18 @@ public class UploadingService extends LifecycleService {
                 else {
                     Log.d("debug", "onChanged: bound to service.");
                     mService = bluetoothBinder.getService();
-                    mService.getDataPacket().observe(UploadingService.this, dataPacketObserver);
+
+                    mService.getDataPacketLongDuration().observe(UploadingService.this, dataPacketObserver);
                 }
             }
         });
+    }
+
+    // Do some uploading here
+    private void handlePacket(DataPacket dataPacket) {
+
+        Log.d("d","uploading packet");
+        ReadingUploader.getInstance().uploadPacket(dataPacket);
     }
 
     /**
@@ -111,12 +110,7 @@ public class UploadingService extends LifecycleService {
     Observer<DataPacket> dataPacketObserver = new Observer<DataPacket>() {
         @Override
         public void onChanged(DataPacket dataPacket) {
-            Log.d("debug","-----------------------------");
-            Log.d("debug", "Data Packet Size: "+ dataPacket.getData().size()+"");
-            Log.d("debug","-----------------------------");
-            // change implementation
-            // store algorithm class as local
-            Log.d("d","uploading packet");
+            handlePacket(dataPacket);
         }
     };
 

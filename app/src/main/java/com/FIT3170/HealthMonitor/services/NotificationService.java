@@ -17,7 +17,16 @@ import com.FIT3170.HealthMonitor.bluetooth.BluetoothServiceModel;
 import com.FIT3170.HealthMonitor.database.DataPacket;
 import com.FIT3170.HealthMonitor.database.ECGAlgorithm;
 import com.FIT3170.HealthMonitor.database.PeakToPeakAlgorithm;
+import com.FIT3170.HealthMonitor.database.UserProfile;
+import com.google.firebase.firestore.auth.User;
 
+import java.sql.Timestamp;
+import java.util.Date;
+
+
+/**
+ * This services handles the observing and firing of bpm heart rate alerts
+ */
 public class NotificationService extends LifecycleService {
 
     private BluetoothServiceModel model;
@@ -25,27 +34,23 @@ public class NotificationService extends LifecycleService {
     private int mConnectionStatus;
     private DataPacket mDataPacket;
     private ECGAlgorithm algorithm;
+    private Timestamp lastNotification;
+    private final int minuteCool = 5;
 
-    public static final int ABNORMAL_HEART_RATE = 120;
-
-    // FOR DEBUG PURPOSES ONLY
-    // !!
-    // !!
-    // !!
-    private Boolean hasNotificationBeenServed = false;
-    // !!
-    // !!
-    // !!
+    public static final int ABNORMAL_HIGH_HEART_RATE = 190 - UserProfile.getAge();
+    public static final int ABNORMAL_LOW_HEART_RATE = 40;
 
 
     /**
      * First method called when the service is instantiated.
      * Binds to the bluetooth service, then begins to observe it.
-     * Also creates the notifcation channel
+     * Also creates the notification channel
      */
     @Override
     public void onCreate() {
         super.onCreate();
+        // Magic number, change after algorithm is working properly
+        lastNotification = new Timestamp(System.currentTimeMillis()- (minuteCool * 60000));
         model = new BluetoothServiceModel();
         algorithm = new ECGAlgorithm(new PeakToPeakAlgorithm());
         bindToBluetoothService();
@@ -78,10 +83,13 @@ public class NotificationService extends LifecycleService {
         }
     }
 
+    /**
+     * Stop observing any other services
+     */
     private void removeObservers() {
         if(mService != null){
             // Remove Observers
-            mService.getDataPacket().removeObserver(dataPacketObserver);
+            mService.getDataPacketShortDuration().removeObserver(dataPacketObserver);
         }
     }
 
@@ -110,7 +118,7 @@ public class NotificationService extends LifecycleService {
                 else {
                     Log.d("debug", "onChanged: bound to service.");
                     mService = bluetoothBinder.getService();
-                    mService.getDataPacket().observe(NotificationService.this, dataPacketObserver);
+                    mService.getDataPacketShortDuration().observe(NotificationService.this, dataPacketObserver);
                 }
             }
         });
@@ -119,7 +127,6 @@ public class NotificationService extends LifecycleService {
     /**
      * This is the observer object that represents this class.
      * The onChanged method is called everytime new data is sent to the phone via bluetooth
-     *
      */
     Observer<DataPacket> dataPacketObserver = new Observer<DataPacket>() {
         @Override
@@ -128,42 +135,48 @@ public class NotificationService extends LifecycleService {
             Log.d("debug", "Data Packet Size: "+ dataPacket.getData().size()+"");
             Log.d("debug","-----------------------------");
             // change implementation
-            // store algorithm class as local
+            // TODO: store algorithm class as local
             double bpm = algorithm.calculate(dataPacket);
+
             Log.d("notification service", bpm + "");
             checkAbnormalHeartRate(bpm);
         }
     };
-
-//    Observer<Integer> connectionStatusObserver = new Observer<Integer>() {
-//        @Override
-//        public void onChanged(Integer integer) {
-//            Log.d("debug", "Connection status: "+integer.toString());
-//        }
-//    };
 
     /**
      * Checks to see if the heart rate is abnormal, triggers notification if so
      * @param bpm Most recent bpm value
      */
     private void checkAbnormalHeartRate(double bpm) {
-        if(bpm > ABNORMAL_HEART_RATE && !hasNotificationBeenServed) {
-            sendNotification();
-            storeNotification();
-            // Please Remove This Line Of Code after we fix the abnormal heart rate algorithm
-            hasNotificationBeenServed = true;
+        long lastMili = lastNotification.getTime();
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        // heart rate too high and notification off cool-down
+        if(bpm > ABNORMAL_HIGH_HEART_RATE && now.getTime() > lastMili + minuteCool * 60000) {
+            lastNotification = new Timestamp(System.currentTimeMillis());
+            String title = "Abnormally High Heart Rate";
+            String description = "An abnormal high heart rate of " + java.lang.Math.round(bpm) + " was detected. We recommend you get proper medical "
+                    + "assistance.";
+            sendNotification(lastNotification, title, description);
+        }
+        // or too low
+        else if (bpm < ABNORMAL_LOW_HEART_RATE && now.getTime() > lastMili + minuteCool * 60000){
+            String title = "Abnormally Low Heart Rate";
+            String description = "An abnormal low heart rate of " + java.lang.Math.round(bpm) + " was detected. We recommend you get proper medical "
+                    + "assistance.";
+
+            lastNotification = new Timestamp(System.currentTimeMillis());
+            sendNotification(lastNotification, title, description);
         }
     }
 
     /**
-     * Need to investigate its purpose.
-     * Allows for notifications to be sent
+     * Creates the settings for heart rate notifications to be sent through: id, name, importance
      */
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Test";//getString(R.string.channel_name);
+            CharSequence name = "Test"; // TODO: Set a meaningful name and description
             String description = "Description"; //getString(R.string.channel_description);
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel("com.FIT3170.HealthMonitor",
@@ -173,26 +186,27 @@ public class NotificationService extends LifecycleService {
             // or other notification behaviors after this
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
-
         }
     }
 
     /**
-     * Sends the notification to the phone
+     * Sends the abnormal heart rate notification to the phone
      */
-    private void sendNotification() {
+    private void sendNotification(Timestamp time, String title, String description) {
+
         NotificationBuilder builder = new NotificationBuilder();
 
-        builder.createNotification(this, "Abnormal Heart Rate",
-                "An abnormal heart rate was detected. We recommend you get proper medical "
-                        + "assistance.");
-
+        builder.createNotification(this, title, description);
+        storeNotification(title, description, time);
     }
 
     /**
-     * TODO: Implement functionality to store a sent notification in firebase
+     * Store the notification by making a database call
      */
-    private void storeNotification() {
+    private void storeNotification(String title, String description, Timestamp time) {
+        Date timeDate = new Date(time.getTime());
+
+        UserProfile.uploadNotification(title, description, timeDate);
 
     }
 

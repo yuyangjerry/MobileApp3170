@@ -33,7 +33,8 @@ public class BluetoothService extends Service {
     private MutableLiveData<Boolean> mIsScanning = new MutableLiveData<>(false);
     private MutableLiveData<BleDevice> mBleDevice = new MutableLiveData<>(); //Connect to the device
     private MutableLiveData<BleDevice> mScanResult = new MutableLiveData<>();
-    private MutableLiveData<DataPacket> mDataPointSink = new MutableLiveData<>();
+    private MutableLiveData<DataPacket> mDataPointShortSink = new MutableLiveData<>();
+    private MutableLiveData<DataPacket> mDataPointLongSink = new MutableLiveData<>();
     // Connection States
     private MutableLiveData<Integer> connectionStatus = new MutableLiveData<>(CONNECTION_DISCONNECTED);
     public static final int CONNECTION_DISCONNECTED = 1;
@@ -46,11 +47,12 @@ public class BluetoothService extends Service {
 //    private BluetoothGattService bluetoothGattService;
 //    private List<BluetoothGattCharacteristic> bluetoothGattCharacteristics;
     private BluetoothGattCharacteristic mNotifyCharacteristic;
-    private List<DataPoint> buffer = new ArrayList<DataPoint>();
-
+    private List<DataPoint> shortBuffer = new ArrayList<DataPoint>();
+    private List<DataPoint> longBuffer = new ArrayList<DataPoint>();
     // Handler
     Handler mHandler = new Handler();
-    private static final int SINK_DURATION = 1000;
+    private static final int SINK_SHORT_DURATION = 5000; // 1 sec
+    private static final int SINK_LONG_DURATION = 10000; // 1 minute
 
     @Nullable
     @Override
@@ -110,7 +112,9 @@ public class BluetoothService extends Service {
 
     public MutableLiveData<BleDevice> getmScanResult() {return mScanResult; }
 
-    public MutableLiveData<DataPacket> getDataPacket() {return mDataPointSink; }
+    public MutableLiveData<DataPacket> getDataPacketShortDuration() {return mDataPointShortSink; }
+
+    public MutableLiveData<DataPacket> getDataPacketLongDuration() {return mDataPointLongSink; }
 
     public MutableLiveData<Integer> getConnectionStatus() {return  connectionStatus;}
 
@@ -127,7 +131,7 @@ public class BluetoothService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mHandler.removeCallbacks(transferBufferToSink);
+        mHandler.removeCallbacks(transferDataPointShortSink);
         BleManager.getInstance().disconnectAllDevice();
     }
 
@@ -209,7 +213,7 @@ public class BluetoothService extends Service {
                 mBleDevice.getValue(),
                 mNotifyCharacteristic.getService().getUuid().toString(),
                 mNotifyCharacteristic.getUuid().toString());
-            mHandler.removeCallbacks(transferBufferToSink);
+            mHandler.removeCallbacks(transferDataPointShortSink);
         }
         BleManager.getInstance().disconnectAllDevice();
     }
@@ -274,7 +278,8 @@ public class BluetoothService extends Service {
             return;
         }
         // Clear The Buffer
-        buffer.clear();
+        shortBuffer.clear();
+        longBuffer.clear();
         BleManager.getInstance().notify(
                 bleDevice,
                 mNotifyCharacteristic.getService().getUuid().toString(),
@@ -286,14 +291,16 @@ public class BluetoothService extends Service {
 //                        handler = new Handler();
 //                        handler.postDelayed(graphing, handlerInterval);
                         connectionStatus.postValue(CONNECTION_SUBSCRIBED);
-                        mHandler.postDelayed(transferBufferToSink,SINK_DURATION);
+                        mHandler.postDelayed(transferDataPointShortSink, SINK_SHORT_DURATION);
+                        mHandler.postDelayed(transferDataPointLongSink, SINK_LONG_DURATION);
                     }
 
                     @Override
                     public void onNotifyFailure(final BleException exception) {
                         Log.d("debug","Failed to Subscribe to Sensor (Raw)");
                         connectionStatus.postValue(CONNECTION_FAILURE);
-                        mHandler.removeCallbacks(transferBufferToSink);
+                        mHandler.removeCallbacks(transferDataPointShortSink);
+                        mHandler.removeCallbacks(transferDataPointLongSink);
                     }
 
                     @Override
@@ -301,20 +308,33 @@ public class BluetoothService extends Service {
 //                        Integer heartBeat = data[0] | data[1] << 8;
                         Integer heartBeatInt = Integer.parseInt(decodeResult(data));
 //                        Log.d("debug",heartBeat.toString());
-                        buffer.add(new DataPoint(heartBeatInt,System.currentTimeMillis()));
+                        shortBuffer.add(new DataPoint(heartBeatInt,System.currentTimeMillis()));
+                        longBuffer.add(new DataPoint(heartBeatInt,System.currentTimeMillis()));
                     }
                 });
     }
 
-    Runnable transferBufferToSink = new Runnable() {
+    Runnable transferDataPointShortSink = new Runnable() {
         @Override
         public void run() {
-            List<DataPoint> tempRef = buffer;
+            List<DataPoint> tempRef = shortBuffer;
 //            Log.d("debug", "Sink: "+tempRef.size()+" packets");
-            mDataPointSink.postValue(new DataPacket(tempRef));
+            mDataPointShortSink.postValue(new DataPacket(tempRef));
             // Don't use buffer.clear(). This will destroy the data before it is sent to fragments
-            buffer = new ArrayList<DataPoint>();
-            mHandler.postDelayed(this,SINK_DURATION);
+            shortBuffer = new ArrayList<DataPoint>();
+            mHandler.postDelayed(this, SINK_SHORT_DURATION);
+        }
+    };
+
+    Runnable transferDataPointLongSink = new Runnable() {
+        @Override
+        public void run() {
+            List<DataPoint> tempRef = longBuffer;
+//            Log.d("debug", "Sink: "+tempRef.size()+" packets");
+            mDataPointLongSink.postValue(new DataPacket(tempRef));
+            // Don't use buffer.clear(). This will destroy the data before it is sent to fragments
+            longBuffer = new ArrayList<DataPoint>();
+            mHandler.postDelayed(this, SINK_LONG_DURATION);
         }
     };
 

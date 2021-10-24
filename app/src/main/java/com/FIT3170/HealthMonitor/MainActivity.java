@@ -140,57 +140,50 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    private int currentFragmentID;
     public void selectDrawerItem(MenuItem item) {
         Fragment fragment = null;
         //Add more items via res/menu/drawermenu.xml
-        switch(item.getItemId()) {
-
-            case R.id.Home:
-//                Intent history = new Intent(MainActivity.this, UserProfileActivity.class);
-//                startActivity(history);
-                loadFragment(new HomeFragment());
-                break;
-
-            case R.id.dashboard:
-                loadFragment(new DashBoardFragment(this));
-                break;
-
-            case R.id.doctors:
-                loadFragment(new DoctorsFragment());
-                break;
-
-            case R.id.user_profile:
-                loadFragment(new UserProfileFragment());
-                break;
-
-            case R.id.notifications:
-                loadFragment(new NotificationHistory());
-                break;
-
-            case R.id.signOut:
-                mAuth.signOut();
-                FireBaseAuthClient.signOut();
-                drawerLayout.closeDrawer(GravityCompat.START);
-                SendUserToLogin();
-                break;
-
-//            case R.id.settings:
-//                fragment = new SettingsActivity();
-//                replaceFragments(fragment);
-//                nav_drawer.closeDrawer(GravityCompat.START);
-//                break;
-//
+        int id = item.getItemId();
+        if (currentFragmentID == id) {
+            item.setChecked(true);
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return;
+        }
+        if (id == R.id.Home) {
+            loadFragment(new HomeFragment());
+        }
+        if (id == R.id.dashboard) {
+            loadFragment(new DashBoardFragment(this));
+        }
+        if (id == R.id.doctors) {
+            loadFragment(new DoctorsFragment());
+        }
+        if (id == R.id.user_profile) {
+            loadFragment(new UserProfileFragment());
+        }
+        if (id == R.id.notifications) {
+            loadFragment(new NotificationHistory());
+        }
+        if (id == R.id.signOut) {
+            mAuth.signOut();
+            FireBaseAuthClient.signOut();
+            drawerLayout.closeDrawer(GravityCompat.START);
+            SendUserToLogin();
         }
         item.setChecked(true);
         drawerLayout.closeDrawer(GravityCompat.START);
+        currentFragmentID = id;
     }
+
+
     //load fragment used for bottom nav view.
     public boolean loadFragment(Fragment fragment) {
+
         if (fragment != null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragment_container, fragment).addToBackStack("null")
+                    .replace(R.id.fragment_container, fragment).addToBackStack(null)
                     .commit();
             return true;
         }

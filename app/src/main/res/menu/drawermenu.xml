@@ -20,9 +20,6 @@
             android:id="@+id/doctors"
             android:icon="@drawable/ic_baseline_add_24"
             android:title="Doctors" />
-        <item
-            android:id="@+id/settings"
-            android:title="Settings" />
 
 
         <item

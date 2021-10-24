@@ -1,15 +1,32 @@
 package com.FIT3170.HealthMonitor.database;
 
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
 import com.FIT3170.HealthMonitor.FireBaseAuthClient;
+import com.FIT3170.HealthMonitor.Notification;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +59,9 @@ public class UserProfile {
     public static final String GENDER_KEY = "gender";
     public static final String MARITAL_STATUS_KEY = "maritalStatus";
     public static final String PHONE_KEY = "phone";
+    public static final String NOTIFICATION_TITLE = "notificationTitle";
+    public static final String NOTIFICATION_DESCRIPTION = "notificationDescription";
+    public static final String NOTIFICATION_TIME = "notificationTime";
 
     private static UserProfile instance = null;
     private FirebaseFirestore db;
@@ -421,6 +441,24 @@ public class UserProfile {
         instance.modifiableProfile.put(DATE_OF_BIRTH_KEY, timestamp);
     }
 
+    static public int getAge() {
+        Calendar dob = Calendar.getInstance();
+        dob.setTime(instance.getDateOfBirth().toDate());
+        Calendar today = Calendar.getInstance();
+
+
+        int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
+
+        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)){
+            age--;
+        }
+
+        Integer ageInt = new Integer(age);
+
+        return ageInt;
+    }
+
+
     static public String[] getLinkedDoctorIds(){
         Object o = instance.modifiableProfile.get(DOCTORS_KEY);
         if(o == null){
@@ -469,6 +507,36 @@ public class UserProfile {
 
     static public void setPhone(String phone){
         instance.modifiableProfile.put(PHONE_KEY, phone);
+    }
+
+
+    /**
+     * Add new notification to the db under the current user
+     * @param title the notification title
+     * @param description the notification description
+     * @param datetime the time and date the notification took place
+     */
+    static public void uploadNotification(String title, String description, Date datetime) {
+        Timestamp time = new Timestamp(datetime);
+
+        Log.i("d", "Uploading");
+        HashMap<String, Object> toUpload = new HashMap<>();
+        toUpload.put(NOTIFICATION_TITLE, title);
+        toUpload.put(NOTIFICATION_DESCRIPTION, description);
+        toUpload.put(NOTIFICATION_TIME, time);
+
+        instance.db
+                .collection("patients")
+                .document(instance.uid)
+                .collection("notificationHistory")
+                .add(toUpload)
+                .addOnCompleteListener(l -> {
+                    if (l.isSuccessful()) {
+                        Log.i("d", "upload successful");
+                    } else {
+                        Log.i("d", "upload unsuccessful");
+                    }
+                });
     }
 
 }

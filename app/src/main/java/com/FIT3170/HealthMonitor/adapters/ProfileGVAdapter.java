@@ -14,11 +14,21 @@ import com.FIT3170.HealthMonitor.R;
 
 import java.util.ArrayList;
 
+/**
+ * Adapter used for displaying the information for the user profile screen
+ */
 public class ProfileGVAdapter extends ArrayAdapter<ProfileAttributeModel> {
     public ProfileGVAdapter(@NonNull Context context, ArrayList<ProfileAttributeModel> profileModelArrayList) {
         super(context, 0, profileModelArrayList);
     }
 
+    /**
+     * Called for every attribute in the array, extracts data from model and outputs to screen
+     * @param position
+     * @param convertView
+     * @param parent
+     * @return
+     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
