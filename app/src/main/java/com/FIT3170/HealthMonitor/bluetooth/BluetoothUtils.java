@@ -7,22 +7,11 @@ import android.widget.Toast;
 import java.util.UUID;
 
 /**
- * Created by Kelvin on 5/8/16.
+ * Utility class that houses dependencies that may be suspect to change. This includes the manually
+ * assigned UUID of the service and GATT characteristic that stores the Notification Channel for Heart Rate sensor
+ * values
  */
-public class Utils {
-    public static final int PROPERTY_NOTIFY = 1;
-    public static final int PROPERTY_READ = 2;
-    public static final int PROPERTY_WRITE = 3;
-    public static final int PROPERTY_WRITE_NO_RESPONSE = 4;
-    public static final int PROPERTY_INDICATE = 5;
-
-
-//    public static void toast(Context context, String string) {
-//
-//        Toast toast = Toast.makeText(context, string, Toast.LENGTH_SHORT);
-//        toast.setGravity(Gravity.CENTER | Gravity.BOTTOM, 0, 0);
-//        toast.show();
-//    }
+public class BluetoothUtils {
 
     // Returns of the preassigned service that has the heart-rate values
     public static UUID getSensorServiceUUID() {

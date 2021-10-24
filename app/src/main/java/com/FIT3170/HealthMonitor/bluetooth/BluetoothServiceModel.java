@@ -8,6 +8,10 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+/**
+ * Middleman class for binding to the BluetoothService
+ * @author Lasith Koswatta Gamage
+ */
 public class BluetoothServiceModel {
     MutableLiveData<BluetoothService.BluetoothBinder> binder = new MutableLiveData<>();
 
